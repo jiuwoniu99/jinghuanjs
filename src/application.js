@@ -23,7 +23,7 @@ debug.log = console.log.bind(console);
  * @type {module.Application}
  */
 module.exports = class Application {
-
+    
     /**
      * constructor
      */
@@ -32,7 +32,7 @@ module.exports = class Application {
         if (!options.APP_PATH) {
             // app 目录为 babel编译后的目录
             let appPath = path.join(options.ROOT_PATH, 'app');
-
+            
             // 是否使用babel编译后的文件
             if (!options.transpiler && !helper.isDirectory(appPath)) {
                 appPath = path.join(options.ROOT_PATH, 'src');
@@ -40,38 +40,50 @@ module.exports = class Application {
             options.APP_PATH = appPath;
         }
         this.options = options;
-
+        
         Object.defineProperty(jinghuan, 'ROOT_PATH', {
             get() {
                 return options.ROOT_PATH;
             }
         });
-
+        
         Object.defineProperty(jinghuan, 'APP_PATH', {
             get() {
                 return options.APP_PATH;
             }
         });
-
+        
         Object.defineProperty(jinghuan, 'JH_PATH', {
             get() {
                 return path.join(__dirname, '..');
             }
         });
-
+        
         Object.defineProperty(jinghuan.app, 'modules', {
             get() {
                 return options.modules.slice();
             }
         });
-
+        
         Object.defineProperty(jinghuan, 'env', {
             get() {
                 return options.env;
             }
         });
+        
+        Object.defineProperty(jinghuan, 'PORT', {
+            get() {
+                return options.port || '8360';
+            }
+        });
+        
+        Object.defineProperty(jinghuan, 'HOST', {
+            get() {
+                return options.host;
+            }
+        });
     }
-
+    
     /**
      *
      * @param err
@@ -89,7 +101,7 @@ module.exports = class Application {
             message: err.message
         }, notifier[1]));
     }
-
+    
     /**
      * 监控文件变化的回调
      * @param fileInfo
@@ -101,7 +113,7 @@ module.exports = class Application {
             this.masterInstance.forceReloadWorkers();
         }
     }
-
+    
     /**
      * 启动文件监控
      */
@@ -119,7 +131,7 @@ module.exports = class Application {
         }, fileInfo => this._watcherCallBack(fileInfo));
         instance.watch();
     }
-
+    
     /**
      *
      * @return {{}}
@@ -137,7 +149,7 @@ module.exports = class Application {
         }
         return options;
     }
-
+    
     /**
      *
      * @param argv
@@ -145,8 +157,8 @@ module.exports = class Application {
      * @private
      */
     _getMasterInstance(argv) {
-        const port = argv.port || jinghuan.config('port');
-        const host = jinghuan.config('host');
+        const port = argv.port || jinghuan.PORT
+        const host = jinghuan.HOST;
         const instance = new Server.Master({
             port,
             host,
@@ -159,23 +171,23 @@ module.exports = class Application {
         jinghuan.logger.info(`Workers: ${instance.options.workers}`);
         return instance;
     }
-
+    
     /**
      *
      * @param argv
      */
     runInMaster(argv) {
         return jinghuan.beforeStartServer()
-        .catch(err => {
-            jinghuan.logger.error(err);
-        }).then(() => {
-            const instance = this._getMasterInstance(argv);
-            return instance.startServer();
-        }).then(() => {
-            jinghuan.app.emit('appReady');
-        });
+            .catch(err => {
+                jinghuan.logger.error(err);
+            }).then(() => {
+                const instance = this._getMasterInstance(argv);
+                return instance.startServer();
+            }).then(() => {
+                jinghuan.app.emit('appReady');
+            });
     }
-
+    
     /**
      *
      * @param argv
@@ -183,8 +195,8 @@ module.exports = class Application {
      * @private
      */
     _getWorkerInstance(argv) {
-        const port = argv.port || jinghuan.config('port');
-        const host = jinghuan.config('host');
+        const port = argv.port || jinghuan.PORT;
+        const host = jinghuan.HOST;
         const instance = new Server.Worker({
             port,
             host,
@@ -195,23 +207,23 @@ module.exports = class Application {
         });
         return instance;
     }
-
+    
     /**
      * 子进程下运行
      * @param argv
      */
     runInWorker(argv) {
         return jinghuan.beforeStartServer()
-        .catch(err => {
-            jinghuan.logger.error(err);
-        }).then(() => {
-            const instance = this._getWorkerInstance(argv);
-            return instance.startServer();
-        }).then(() => {
-            jinghuan.app.emit('appReady');
-        });
+            .catch(err => {
+                jinghuan.logger.error(err);
+            }).then(() => {
+                const instance = this._getWorkerInstance(argv);
+                return instance.startServer();
+            }).then(() => {
+                jinghuan.app.emit('appReady');
+            });
     }
-
+    
     /**
      *
      * @param argv
@@ -225,7 +237,7 @@ module.exports = class Application {
     //         exitOnEnd: true
     //     }, jinghuan.app);
     // }
-
+    
     /**
      * 运行
      * @return {*}
@@ -234,12 +246,12 @@ module.exports = class Application {
         if (pm2.isClusterMode) {
             throw new Error('can not use pm2 cluster mode, please change exec_mode to fork');
         }
-
+        
         if (cluster.isMaster) {
             // 主进程下监控文件变化
             this.startWatcher();
         }
-
+        
         const loaders = new Loaders(this.options);
         const argv = this.parseArgv();
         try {

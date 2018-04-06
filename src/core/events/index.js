@@ -1,7 +1,7 @@
 //
 //const _ = require('lodash');
 const debug = require('debug')(`JH:core/events[${process.pid}]`);
-const helper =require('../helper');
+const helper = require('../helper');
 //
 const EVENTS = Symbol('events');
 
@@ -12,14 +12,14 @@ class Events {
     constructor() {
         this[EVENTS] = {};
     }
-
+    
     /**
      *
      * @param name
      * @param listener
      * @return {Promise<void>}
      */
-    async on(name, listener) {
+    on(name, listener) {
         debug(`on ${name}`);
         if (!helper.isFunction(listener)) {
             throw TypeError('listener must be a function');
@@ -27,7 +27,7 @@ class Events {
         this[EVENTS][name] = this[EVENTS]['name'] || [];
         this[EVENTS][name].push(listener);
     }
-
+    
     /**
      *
      * @param name
@@ -45,14 +45,14 @@ class Events {
             }
         }
     }
-
+    
     /**
      *
      * @param name
      * @param listener
      * @return {Promise<void>}
      */
-    async un(name, listener) {
+    un(name, listener) {
         debug(`un ${name}`);
         let listeners = this[EVENTS][name];
         if (helper.isArray(listeners)) {
@@ -62,6 +62,15 @@ class Events {
                 }
             }
         }
+    }
+    
+    /**
+     *
+     * @param name
+     * @return {boolean}
+     */
+    isEvent(name) {
+        return this[EVENTS][name] != null && this[EVENTS][name].length > 0
     }
 }
 

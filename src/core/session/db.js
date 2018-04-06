@@ -1,5 +1,6 @@
 const assert = require('assert');
 const initSessionData = Symbol('jinghuan-session-db-init');
+const time = require('locutus/php/datetime/time');
 
 /**
  *
@@ -14,12 +15,12 @@ class DbSession {
         assert(options.table, '.table required');
         //
         this.options = options;
-
+        
         //
         this.key = 'id';
         this.content = 'data';
         this.expires = 'expires';
-
+        
         //
         if (this.options.fields) {
             let {key, content, expires} = this.options.fields;
@@ -27,14 +28,14 @@ class DbSession {
             this.content = content || this.content;
             this.expires = expires || this.expires;
         }
-
+        
         //
         this.ctx = ctx;
-        this.ctx.res.once('finish', async() => {
+        this.ctx.res.once('finish', async () => {
             await this.flush();
         });
     }
-
+    
     /**
      *
      * @return {Promise<void>}
@@ -44,18 +45,18 @@ class DbSession {
         }
         else {
             // 查询数据
-            let data = await this.ctx.knex(this.options.table)
-            .where(this.key, this.options.cookie)
-            .first();
-
+            let data = await this.ctx.db(this.options.table)
+                .where(this.key, this.options.cookie)
+                .first();
+            
             if (data == null) {
                 let val = {};
                 val[this.key] = this.options.cookie;
                 val[this.content] = JSON.stringify({});
-                val[this.expires] = ~~(Date.now() / 1000) + this.options.maxAge;
-
+                val[this.expires] = time() + this.options.maxAge;
+                
                 // 创建数据
-                await this.ctx.knex(this.options.table).insert(val);
+                await this.ctx.db(this.options.table).insert(val);
                 this.data = {};
             } else {
                 // 解析数据
@@ -64,15 +65,15 @@ class DbSession {
                 } catch (ex) {
                     this.data = {};
                 }
-
+                
                 // session 过时
-                if (data[this.expires] < Date.now()) {
+                if (data[this.expires] < time()) {
                     this.delete();
                 }
             }
         }
     }
-
+    
     /**
      *
      * @param name
@@ -82,7 +83,7 @@ class DbSession {
         await this[initSessionData]();
         return name ? this.data[name] : this.data;
     }
-
+    
     /**
      *
      * @param name
@@ -96,9 +97,9 @@ class DbSession {
         } else {
             this.data[name] = value;
         }
-
+        
     }
-
+    
     /**
      *
      * @return {Promise<void>}
@@ -107,7 +108,7 @@ class DbSession {
         // this.status = -1;
         this.data = {};
     }
-
+    
     /**
      *
      * @return {Promise<void>}
@@ -115,13 +116,13 @@ class DbSession {
     async flush() {
         let val = {};
         val[this.content] = JSON.stringify(this.data);
-        val[this.expires] = ~~(Date.now() / 1000) + this.options.maxAge;
-
-        await this.ctx.knex(this.options.table)
-        .where(this.key, this.options.cookie)
-        .update(val);
+        val[this.expires] = time() + this.options.maxAge;
+        
+        await this.ctx.db(this.options.table)
+            .where(this.key, this.options.cookie)
+            .update(val);
     }
-
+    
     /**
      * gc
      */
