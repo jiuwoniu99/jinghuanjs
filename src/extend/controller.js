@@ -5,14 +5,14 @@ const assert = require('assert');
  * extend controller
  */
 module.exports = {
-
+    
     /**
      *
      */
     get body() {
         return this.ctx.body;
     },
-
+    
     /**
      *
      * @param value
@@ -20,14 +20,14 @@ module.exports = {
     set body(value) {
         this.ctx.body = value;
     },
-
+    
     /**
      *
      */
     get ip() {
         return this.ctx.ip;
     },
-
+    
     /**
      *
      * @return {*|Array|string|string[]}
@@ -35,14 +35,14 @@ module.exports = {
     get ips() {
         return this.ctx.ips;
     },
-
+    
     /**
      *
      */
     get status() {
         return this.ctx.status;
     },
-
+    
     /**
      *
      * @param status
@@ -50,14 +50,14 @@ module.exports = {
     set status(status) {
         this.ctx.status = status;
     },
-
+    
     /**
      *
      */
     get type() {
         return this.ctx.type;
     },
-
+    
     /**
      *
      * @param contentType
@@ -65,21 +65,21 @@ module.exports = {
     set type(contentType) {
         this.ctx.type = contentType;
     },
-
+    
     /**
      *
      */
     get userAgent() {
         return this.ctx.userAgent;
     },
-
+    
     /**
      *
      */
     get method() {
         return this.ctx.method;
     },
-
+    
     /**
      *
      * @return {*|boolean}
@@ -87,7 +87,7 @@ module.exports = {
     get isGet() {
         return this.ctx.isGet;
     },
-
+    
     /**
      *
      * @return {*|boolean}
@@ -95,7 +95,7 @@ module.exports = {
     get isPost() {
         return this.ctx.isPost;
     },
-
+    
     /**
      *
      * @return {*|boolean}
@@ -103,7 +103,7 @@ module.exports = {
     get isCli() {
         return this.ctx.isCli;
     },
-
+    
     /**
      *
      * @param name
@@ -114,7 +114,7 @@ module.exports = {
     config(name, value, m = this.ctx.module) {
         return jinghuan.config(name, value, m);
     },
-
+    
     /**
      *
      * @param method
@@ -123,7 +123,7 @@ module.exports = {
     isMethod(method) {
         return this.ctx.isMethod(method);
     },
-
+    
     /**
      *
      * @param method
@@ -132,7 +132,7 @@ module.exports = {
     isAjax(method) {
         return this.ctx.isAjax(method);
     },
-
+    
     /**
      *
      * @param callbackField
@@ -141,7 +141,7 @@ module.exports = {
     isJsonp(callbackField) {
         return this.ctx.isJsonp(callbackField);
     },
-
+    
     /**
      *
      * @param data
@@ -150,7 +150,7 @@ module.exports = {
     jsonp(data, callbackField) {
         return this.ctx.jsonp(data, callbackField);
     },
-
+    
     /**
      *
      * @param data
@@ -158,7 +158,7 @@ module.exports = {
     json(data) {
         return this.ctx.json(data);
     },
-
+    
     /**
      *
      * @param data
@@ -167,7 +167,7 @@ module.exports = {
     success(data, message) {
         return this.ctx.success(data, message);
     },
-
+    
     /**
      *
      * @param errno
@@ -177,7 +177,7 @@ module.exports = {
     fail(errno, errmsg, data) {
         return this.ctx.fail(errno, errmsg, data);
     },
-
+    
     /**
      *
      * @param time
@@ -185,7 +185,7 @@ module.exports = {
     expires(time) {
         return this.ctx.expires(time);
     },
-
+    
     /**
      *
      * @param name
@@ -194,7 +194,7 @@ module.exports = {
     get(name, value) {
         return this.ctx.param(name, value);
     },
-
+    
     /**
      *
      * @param name
@@ -203,7 +203,7 @@ module.exports = {
     query(name, value) {
         return this.ctx.param(name, value);
     },
-
+    
     /**
      *
      * @param name
@@ -212,7 +212,7 @@ module.exports = {
     post(name, value) {
         return this.ctx.post(name, value);
     },
-
+    
     /**
      *
      * @param name
@@ -221,7 +221,7 @@ module.exports = {
     file(name, value) {
         return this.ctx.file(name, value);
     },
-
+    
     /**
      *
      * @param name
@@ -231,7 +231,7 @@ module.exports = {
     cookie(name, value, options) {
         return this.ctx.cookie(name, value, options);
     },
-
+    
     /**
      *
      * @param name
@@ -252,7 +252,7 @@ module.exports = {
             return this.ctx.set(name);
         }
     },
-
+    
     /**
      *
      * @param onlyHost
@@ -260,7 +260,7 @@ module.exports = {
     referrer(onlyHost) {
         return this.ctx.referer(onlyHost);
     },
-
+    
     /**
      *
      * @param onlyHost
@@ -268,7 +268,7 @@ module.exports = {
     referer(onlyHost) {
         return this.ctx.referer(onlyHost);
     },
-
+    
     /**
      *
      * @param url
@@ -279,7 +279,7 @@ module.exports = {
         this.ctx.redirect(url, alt);
         return false;
     },
-
+    
     /**
      *
      * @param name
@@ -294,7 +294,7 @@ module.exports = {
         assert(Cls, `can not find controller: ${name}`);
         return new Cls(this.ctx);
     },
-
+    
     /**
      *
      * @param args
@@ -302,7 +302,7 @@ module.exports = {
     // service(...args) {
     //     return jinghuan.service(...args);
     // },
-
+    
     /**
      *
      * @param controller
@@ -332,7 +332,7 @@ module.exports = {
             return data;
         });
     },
-
+    
     /**
      *
      * @param filepath
@@ -341,7 +341,7 @@ module.exports = {
     download(filepath, filename) {
         return this.ctx.download(filepath, filename);
     },
-
+    
     /**
      *
      * @param name
@@ -350,5 +350,9 @@ module.exports = {
      */
     session(name, value, options) {
         return this.ctx.session(name, value, options);
+    },
+    
+    db(a, b) {
+        return this.ctx.db(a, b)
     }
 };

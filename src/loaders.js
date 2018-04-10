@@ -13,7 +13,7 @@ require('./jinghuan.js');
  * @type {module.exports}
  */
 module.exports = class Loaders {
-
+    
     /**
      *
      * @param options
@@ -21,14 +21,14 @@ module.exports = class Loaders {
     constructor(options = {}) {
         this.options = options;
     }
-
+    
     /**
      * init path
      */
     initPath() {
-
+    
     }
-
+    
     /**
      * load app data
      */
@@ -44,7 +44,7 @@ module.exports = class Loaders {
         // jinghuan.app.validators = jinghuan.loader.loadValidator();
         jinghuan.app.sql = this.loader.loadSql();
     }
-
+    
     /**
      * 加载中间件
      */
@@ -54,16 +54,16 @@ module.exports = class Loaders {
             jinghuan.app.use(middleware);
         });
     }
-
+    
     /**
      * 加载扩展
      */
     loadExtend() {
-
+        
         let {JH_PATH, ROOT_PATH} = jinghuan;
-
-        let exts = this.loader.loadExtend(path.join(JH_PATH, 'lib'));
-
+        
+        let exts = this.loader.loadExtend(path.join(JH_PATH));
+        
         let list = [
             ['jinghuan', jinghuan],
             ['application', jinghuan.app],
@@ -74,16 +74,16 @@ module.exports = class Loaders {
             //['logic', jinghuan.Logic.prototype],
             //['service', jinghuan.Service.prototype]
         ];
-
+        
         list.forEach(item => {
             if (!exts[item[0]]) {
                 return;
             }
             Loader.extend(item[1], exts[item[0]]);
         });
-
+        
         exts = this.loader.loadExtend(path.join(ROOT_PATH, 'common'));
-
+        
         list = [
             ['jinghuan', jinghuan],
             ['application', jinghuan.app],
@@ -94,7 +94,7 @@ module.exports = class Loaders {
             //['logic', jinghuan.Logic.prototype],
             //['service', jinghuan.Service.prototype]
         ];
-
+        
         list.forEach(item => {
             if (!exts[item[0]]) {
                 return;
@@ -102,7 +102,7 @@ module.exports = class Loaders {
             Loader.extend(item[1], exts[item[0]]);
         });
     }
-
+    
     /**
      * 加载定时任务
      */
@@ -111,7 +111,7 @@ module.exports = class Loaders {
         const instance = new Crontab(crontab, jinghuan.app);
         instance.runTask();
     }
-
+    
     /**
      * 保存配置
      * @param config
@@ -121,34 +121,34 @@ module.exports = class Loaders {
     //     helper.mkdir(configFilepath);
     //     fs.writeFileSync(`${configFilepath}/${jinghuan.env}.json`, JSON.stringify(config, undefined, 2));
     // }
-
+    
     /**
      * load all data
      */
     loadAll(type, isCli) {
-
+        
         this.initPath();
-
+        
         this.loader = new Loader();
-
+        
         const config = this.loader.loadConfig(jinghuan.env);
-
+        
         jinghuan.config = Config(config);
-
+        
         this.loader.loadBootstrap(type);
-
+        
         if (type !== 'master') {
             // this.writeConfig(config);
             // 加载 扩展
             this.loadExtend();
-
+            
             this.loadData();
             this.loadMiddleware();
             if (!isCli) {
                 this.loadCrontab();
             }
         }
-
+        
     }
 };
 

@@ -55,7 +55,7 @@ module.exports = class Application {
         
         Object.defineProperty(jinghuan, 'JH_PATH', {
             get() {
-                return path.join(__dirname, '..');
+                return path.join(__dirname);
             }
         });
         

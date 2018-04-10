@@ -14,7 +14,7 @@ const helper = require('../helper');
  * load config
  */
 class Config {
-
+    
     /**
      * load config and merge
      * @param {Object} config
@@ -30,7 +30,7 @@ class Config {
             }
         });
     }
-
+    
     /**
      *
      * @param configPaths
@@ -44,7 +44,7 @@ class Config {
         //this.loadConfigByName(config, configPaths, `${name}.${env}.js`);
         return config;
     }
-
+    
     /**
      *
      * @param adapterPath
@@ -70,7 +70,7 @@ class Config {
         });
         return ret;
     }
-
+    
     /**
      *
      * @param config
@@ -111,7 +111,7 @@ class Config {
         }
         return config;
     }
-
+    
     /**
      *
      * @param appPath
@@ -121,35 +121,35 @@ class Config {
      * @return {{}}
      */
     load(/*appPath, jinghuanPath, env, modules*/) {
-
+        
         let {ROOT_PATH, JH_PATH, env} = jinghuan;
-
+        
         // let appPath = jinghuan.APP_PATH;
         // let jinghuanPath = jinghuan.JH_PATH;
         // let env = jinghuan.env;
         // let modules = jinghuan.app.modules;
-
+        
         // 核心配置文件
-        const jinghuanConfig = this.loadConfigFile(path.join(JH_PATH, 'lib', 'config'));
-
+        const jinghuanConfig = this.loadConfigFile(path.join(JH_PATH, 'config'));
+        
         // 应用程序默认配置
         const commonConfig = this.loadConfigFile(path.join(ROOT_PATH, 'common', 'config'));
-
+        
         // 应用配置
         const envConfig = this.loadConfigFile(path.join(ROOT_PATH, 'config', env));
-
+        
         const paths = [
-            path.join(JH_PATH, 'lib/bootstrap'),
+            path.join(JH_PATH, 'bootstrap'),
             path.join(ROOT_PATH, 'common/bootstrap')
         ];
-
+        
         const config = this.loadConfig(paths, env);
-
+        
         const result = helper.extend({}, config, jinghuanConfig, commonConfig, envConfig, true);
-
+        
         return result;
     }
-
+    
     /**
      *
      * @param configPath
@@ -163,7 +163,7 @@ class Config {
         });
         return config;
     }
-
+    
 }
 
 module.exports = Config;

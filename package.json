@@ -1,7 +1,7 @@
 {
   "name": "jinghuanjs",
   "version": "1.0.0",
-  "main": "lib/application.js",
+  "main": "index.js",
   "scripts": {
     "babel": "babel src --out-dir lib --copy-files --watch"
   },

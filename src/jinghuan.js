@@ -45,12 +45,8 @@ jinghuan.messenger = messenger;
 /**
  * base controller class
  */
-jinghuan.Controller = class {
-    constructor(ctx) {
-        this.ctx = ctx;
-    }
-    
-};
+jinghuan.Controller = function () {
+}
 
 /**
  * base logic class

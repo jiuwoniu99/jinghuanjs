@@ -34,7 +34,7 @@ class LexerSplitter {
 					_part = "\\n";
 					break;
 				case " ":
-					_part = "\\s";
+					_part = "\\s+";
 					break;
 				case "/":
 					_part = "\\/";

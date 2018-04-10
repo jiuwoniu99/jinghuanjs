@@ -142,7 +142,7 @@ class Middleware {
      */
     loadFiles(appPath, jinghuanPath) {
         const appMiddlewarePath = path.join(jinghuan.ROOT_PATH, 'common/middleware');
-        return helper.extend({}, this.getFiles(path.join(jinghuanPath, 'lib/middleware')), this.getFiles(appMiddlewarePath));
+        return helper.extend({}, this.getFiles(path.join(jinghuanPath, 'middleware')), this.getFiles(appMiddlewarePath));
     }
 
     /**

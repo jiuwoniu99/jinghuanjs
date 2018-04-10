@@ -277,11 +277,11 @@ module.exports = {
             keys: options.keys,
             secure: this.request.secure
         });
-
+        
         if (!this[COOKIE_STORE]) {
             this[COOKIE_STORE] = {};
         }
-
+        
         // get cookie
         if (value === undefined) {
             if (this[COOKIE_STORE][name] !== undefined) {
@@ -341,6 +341,6 @@ module.exports = {
         }
         return this._slog;
     },
-    knex,
+    db: knex,
     session,
 };
