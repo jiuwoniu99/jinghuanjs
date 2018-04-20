@@ -352,7 +352,20 @@ module.exports = {
         return this.ctx.session(name, value, options);
     },
     
+    /**
+     *
+     * @param a
+     * @param b
+     */
     db(a, b) {
         return this.ctx.db(a, b)
+    },
+    
+    /**
+     *
+     * @param msg
+     */
+    slog(msg) {
+        this.ctx.slog.info(msg);
     }
 };

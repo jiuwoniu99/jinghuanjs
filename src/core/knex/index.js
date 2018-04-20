@@ -237,12 +237,10 @@ builder.prototype.ctx = null;
 /**
  *
  * @param ctx
- * @param knex
  * @return {builder}
  */
-builder.prototype.context = function (ctx, knex) {
+builder.prototype.context = function (ctx) {
     this.ctx = ctx;
-    this._knex = knex;
     return this;
 };
 
@@ -256,7 +254,7 @@ const clone = builder.prototype.clone;
  *
  */
 builder.prototype.clone = function () {
-    return clone.call(this).context(this.ctx, this._knex);
+    return clone.call(this).context(this.ctx);
 };
 
 /**
@@ -293,34 +291,32 @@ builder.prototype.then = async function () {
     //    } catch (ex) {
     //
     //    }
-    //} else {
-    //
     //}
-    //let fields = this.client.config.fields[table] || null;
-    //if (fields) {
-    //    //for (let idx in this._statements) {
-    //    //    let _state = this._statements[idx];
-    //    //    switch (_state.grouping) {
-    //    //        case "columns":
-    //    //
-    //    //    }
-    //    //}
-    //
-    //
-    //    //switch (this._method) {
-    //    //    case "first":
-    //    //    case "select":
-    //    //        let _statements = [];
-    //    //        for (let idx in this._statements) {
-    //    //            let _state = this._statements[idx];
-    //    //            if (_state.column && fields[_state.column]) {
-    //    //                _statements.push(_state);
-    //    //            }
-    //    //        }
-    //    //        this._statements = _statements;
-    //    //        break;
-    //    //}
-    //}
+    
+    for (let idx in this._statements) {
+        let _state = this._statements[idx];
+        let {column, grouping, value} = _state;
+        
+        // _mapping字段映射只针对查询字段和查询条件
+        switch (grouping) {
+            case "columns":
+                for (let i in value) {
+                    if (isString(value[i])) {
+                        let [field, asField] = value[i].split(' as ');
+                        if (this._mapping && this._mapping[field]) {
+                            value[i] = this._mapping[field] + (asField ? ` as ${asField}` : '')
+                        }
+                    }
+                }
+                break;
+            case "where":
+                if (this._mapping && this._mapping[column]) {
+                    _state.column = this._mapping[column];
+                }
+                break;
+        }
+    }
+    
     const result = this.client.runner(this).run()
     return result.then.apply(result, arguments);
 };
@@ -331,8 +327,32 @@ builder.prototype.then = async function () {
  */
 builder.prototype.sql = function (name) {
     let {module} = this.ctx;
+    this._mapping = {};
     if (jinghuan.app.sql && jinghuan.app.sql[module] && jinghuan.app.sql[module][name]) {
         let sql = jinghuan.app.sql[module][name];
+        let lines = sql.split('\n');
+        let notes = [];
+        let codes = [];
+        
+        for (let i in lines) {
+            if (lines[i].startsWith('#')) {
+                notes.push(lines[i]);
+            } else {
+                codes.push(lines[i])
+            }
+        }
+        
+        
+        for (let i in notes) {
+            let [field, mapping] = notes[i].substr(1).split(/\s+/);
+            if (field && mapping) {
+                this._mapping[field] = mapping
+            }
+        }
+        
+        
+        sql = codes.join('\n')
+        
         let lexer = new JSSQLLexer();
         let tokens = lexer.split(sql);
         let pts = ParseTokens(tokens);
@@ -346,16 +366,14 @@ builder.prototype.sql = function (name) {
             this.whereRaw(pts.where);
         }
         if (pts.order) {
-            this.orderByRaw(knex.raw(pts.group));
+            this.orderByRaw(pts.group);
         }
         if (pts.group) {
-            this.groupByRaw(knex.raw(pts.group));
+            this.groupByRaw(pts.group);
         }
         if (pts.having) {
-            this.havingRaw(knex.raw(pts.group));
+            this.havingRaw(pts.group);
         }
-        
-        //this.from(this._knex.raw('(' + sql + ') as jh_table', []));
     }
     return this;
 };
