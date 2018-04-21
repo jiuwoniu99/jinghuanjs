@@ -13,7 +13,6 @@ const Watcher = require('./core/watcher');
 const Loaders = require('./loaders.js');
 const Server = require('./core/server');
 const debug = require('debug');
-// require('./decorators');
 
 //
 debug.log = console.log.bind(console);

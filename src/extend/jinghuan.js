@@ -1,6 +1,6 @@
-const actionProps = require('../decorators/action');
+const action = require('../props/action');
 module.exports = {
-    decorators: {
-        actionProps
+    props: {
+        action
     }
 };

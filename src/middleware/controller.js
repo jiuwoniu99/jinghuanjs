@@ -1,5 +1,5 @@
 const helper = require('../core/helper');
-const action = require('../decorators/action');
+const action = require('../props/action');
 
 const symbol = action.name;
 
@@ -58,14 +58,6 @@ function invokeController(options, app) {
                 return false;
             }
             let method = ctx.action;
-            // .replace(/_([a-zA-Z])/g, (a, b) => {
-            //     return b.toUpperCase();
-            // });
-
-            // if (!actions[method]) {
-            //     method = '__call';
-            // }
-
             if (actions[method]) {
                 // pre set request status
                 if (ctx.body === undefined && options.preSetStatus) {
