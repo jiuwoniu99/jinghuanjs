@@ -24,8 +24,27 @@ function isExist(dir) {
 }
 
 if (isFile(srcPaht)) {
-    module.exports = require(srcPaht)
+    // 测试环境运行 需要babel编译
+    require('babel-register')({
+        ignore: (filename) => {
+            if (filename.startsWith(__dirname + '/src/')) {
+                return false
+            }
+            else if (/node_modules/.test(filename)) {
+                return true;
+            }
+            return false;
+        },
+        cache: true
+    });
+    
+    let Appliaction = require('./src/application');
+    Appliaction.prototype.buildPath = "src";
+    module.exports = Appliaction;
 }
 if (isFile(libPaht)) {
-    module.exports = require(libPaht)
+    // 生产环境运行
+    let Appliaction = require('./lib/application');
+    Appliaction.prototype.buildPath = "app";
+    module.exports = Appliaction;
 }

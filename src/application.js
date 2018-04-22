@@ -1,5 +1,6 @@
 const path = require('path');
 const cluster = require('cluster');
+const process = require('process');
 // const http = require('http');
 //
 const assert = require('assert');
@@ -30,12 +31,11 @@ module.exports = class Application {
         assert(options.ROOT_PATH, 'options.ROOT_PATH must be set');
         if (!options.APP_PATH) {
             // app 目录为 babel编译后的目录
-            let appPath = path.join(options.ROOT_PATH, 'app');
-            
+            let appPath = path.join(options.ROOT_PATH, this.buildPath);
             // 是否使用babel编译后的文件
-            if (!options.transpiler && !helper.isDirectory(appPath)) {
-                appPath = path.join(options.ROOT_PATH, 'src');
-            }
+            //if (!options.transpiler && !helper.isDirectory(appPath)) {
+            //    appPath = path.join(options.ROOT_PATH, 'src');
+            //}
             options.APP_PATH = appPath;
         }
         this.options = options;
@@ -204,6 +204,9 @@ module.exports = class Application {
             onUncaughtException: jinghuan.config('onUncaughtException'),
             onUnhandledRejection: jinghuan.config('onUnhandledRejection')
         });
+        
+        jinghuan.logger.info(`Worker: ${cluster.worker.process.pid}`);
+        
         return instance;
     }
     
