@@ -41,3 +41,4 @@ demo/
 
 package-lock.json
 test/
+lib/
