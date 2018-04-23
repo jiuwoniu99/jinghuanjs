@@ -278,4 +278,4 @@ module.exports = class Application {
     }
 };
 
-module.exports.jinghuan = global.jinghuan;
+//module.exports.jinghuan = global.jinghuan;
