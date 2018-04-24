@@ -101,6 +101,7 @@ log4js.configure({
         default: {appenders: ['console'], level: 'all'}
     }
 });
+
 jinghuan.logger = log4js.getLogger();
 
 jinghuan.events = new events();

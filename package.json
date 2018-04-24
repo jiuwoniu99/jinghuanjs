@@ -1,9 +1,9 @@
 {
     "name": "jinghuanjs",
-    "version": "1.0.3",
+    "version": "1.0.4",
     "main": "index.js",
     "scripts": {
-        "babel": "babel src --out-dir lib --copy-files --watch",
+        "babel": "babel src --out-dir lib --copy-files --source-maps --watch",
         "publish": "babel src --out-dir lib --copy-files"
     },
     "author": "李强",
@@ -16,6 +16,7 @@
         "events": "^2.0.0",
         "formidable": "^1.2.1",
         "inflation": "^2.0.0",
+        "jinghuanjs-props": "^1.0.2",
         "knex": "^0.14.6",
         "koa": "^2.5.0",
         "koa-compress": "^3.0.0",
@@ -27,10 +28,8 @@
         "node-schedule": "^1.3.0",
         "on-finished": "^2.3.0",
         "path-to-regexp": "^2.2.0",
-        "redis": "^2.8.0",
         "source-map-support": "^0.5.4",
         "stack-trace": "0.0.10",
-        "string-hash": "^1.1.3",
         "xml2js": "^0.4.19"
     },
     "devDependencies": {

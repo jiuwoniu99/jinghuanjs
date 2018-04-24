@@ -108,46 +108,46 @@ module.exports = {
     /**
      * send success data
      */
-    success(data = '', message = '') {
-        const obj = {
-            [this.config('errnoField')]: 0,
-            [this.config('errmsgField')]: message,
-            data
-        };
-        this.type = this.config('jsonContentType');
-        this.body = obj;
-        return false;
-    },
+    //success(data = '', message = '') {
+    //    const obj = {
+    //        [this.config('errnoField')]: 0,
+    //        [this.config('errmsgField')]: message,
+    //        data
+    //    };
+    //    this.type = this.config('jsonContentType');
+    //    this.body = obj;
+    //    return false;
+    //},
     /**
      * send fail data
      */
-    fail(errno, errmsg = '', data = '') {
-        let obj;
-        if (helper.isObject(errno)) {
-            obj = errno;
-        } else {
-            if (/^[A-Z_]+$/.test(errno)) {
-                const messages = jinghuan.app.validators.messages || {};
-                const msg = messages[errno];
-                if (jinghuan.isArray(msg)) {
-                    [errno, errmsg] = msg;
-                }
-            }
-            if (!jinghuan.isNumber(errno)) {
-                [data, errmsg, errno] = [errmsg, errno, this.config('defaultErrno')];
-            }
-            obj = {
-                [this.config('errnoField')]: errno,
-                [this.config('errmsgField')]: errmsg
-            };
-            if (data) {
-                obj.data = data;
-            }
-        }
-        this.type = this.config('jsonContentType');
-        this.body = obj;
-        return false;
-    },
+    //fail(errno, errmsg = '', data = '') {
+    //    let obj;
+    //    if (helper.isObject(errno)) {
+    //        obj = errno;
+    //    } else {
+    //        if (/^[A-Z_]+$/.test(errno)) {
+    //            const messages = jinghuan.app.validators.messages || {};
+    //            const msg = messages[errno];
+    //            if (jinghuan.isArray(msg)) {
+    //                [errno, errmsg] = msg;
+    //            }
+    //        }
+    //        if (!jinghuan.isNumber(errno)) {
+    //            [data, errmsg, errno] = [errmsg, errno, this.config('defaultErrno')];
+    //        }
+    //        obj = {
+    //            [this.config('errnoField')]: errno,
+    //            [this.config('errmsgField')]: errmsg
+    //        };
+    //        if (data) {
+    //            obj.data = data;
+    //        }
+    //    }
+    //    this.type = this.config('jsonContentType');
+    //    this.body = obj;
+    //    return false;
+    //},
     /**
      * set expires header
      */
@@ -310,9 +310,9 @@ module.exports = {
      * @param {String} name
      * @param {String} m
      */
-    service(...args) {
-        return jinghuan.service(...args);
-    },
+    //service(...args) {
+    //    return jinghuan.service(...args);
+    //},
     /**
      * download
      * @param {String} filepath
@@ -341,6 +341,10 @@ module.exports = {
         }
         return this._slog;
     },
-    db: knex,
-    session,
+    get db() {
+        return knex;
+    },
+    get session() {
+        return session;
+    },
 };

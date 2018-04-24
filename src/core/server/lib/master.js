@@ -1,8 +1,8 @@
-const cluster = require('cluster');
+//const cluster = require('cluster');
 const util = require('./util.js');
-const net = require('net');
-const stringHash = require('string-hash');
-const redis = require('redis');
+//const net = require('net');
+//const stringHash = require('string-hash');
+//const redis = require('redis');
 
 let waitReloadWorkerTimes = 0;
 

@@ -1,6 +1,5 @@
 const helper = require('../core/helper');
-const action = require('../props/action');
-
+const action = require('../../props/action');
 const symbol = action.name;
 
 const defaultOptions = {
@@ -10,17 +9,17 @@ const defaultOptions = {
 };
 
 function invokeController(options, app) {
-
+    
     options = Object.assign({}, defaultOptions, options);
-
+    
     return (ctx, next) => {
-
+        
         let controllers = app.controllers || {};
-
+        
         if (!ctx.module || !ctx.controller || !ctx.action) {
             return ctx.throw(404);
         }
-
+        
         //
         if (controllers) {
             // if (!controllers[ctx.module]) {
@@ -29,7 +28,7 @@ function invokeController(options, app) {
             controllers = controllers[ctx.module] || {};
         }
         let Controller = controllers[ctx.controller];
-
+        
         //
         if (helper.isEmpty(Controller)) {
             const emptyController = options.emptyController;
@@ -39,19 +38,19 @@ function invokeController(options, app) {
                 return next();
             }
         }
-
+        
         const instance = new Controller(ctx);
         if (helper.isEmpty(instance.ctx)) {
             instance.ctx = ctx;
         }
         let actions = instance[symbol] || {};
-
+        
         let promise = Promise.resolve();
-
+        
         if (instance.__before) {
             promise = Promise.resolve(instance.__before());
         }
-
+        
         //
         return promise.then(data => {
             if (data === false) {
@@ -68,9 +67,9 @@ function invokeController(options, app) {
                 } else if (actions[method].initializer) {
                     return actions[method].initializer.call(instance)();
                 } else {
-
+                
                 }
-
+                
             }
         }).then(data => {
             if (data === false) {

@@ -24,6 +24,7 @@ function isExist(dir) {
 }
 
 if (isFile(srcPaht)) {
+    
     // 测试环境运行 需要babel编译
     require('babel-register')({
         ignore: (filename) => {
@@ -39,12 +40,20 @@ if (isFile(srcPaht)) {
     });
     
     let Appliaction = require('./src/application');
-    Appliaction.prototype.buildPath = "src";
+    Object.defineProperty(Appliaction.prototype, 'buildPath', {
+        get() {
+            return "src";
+        }
+    });
     module.exports = Appliaction;
 }
-if (isFile(libPaht)) {
+else if (isFile(libPaht)) {
     // 生产环境运行
     let Appliaction = require('./lib/application');
-    Appliaction.prototype.buildPath = "app";
+    Object.defineProperty(Appliaction.prototype, 'buildPath', {
+        get() {
+            return "app";
+        }
+    });
     module.exports = Appliaction;
 }

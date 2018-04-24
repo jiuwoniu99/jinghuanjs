@@ -1,8 +1,9 @@
-module.exports = function(props) {
-    return function(target, name, descriptor) {
+const symbol = Symbol('action');
+const action = function (props) {
+    return function (target, name, descriptor) {
         let {initializer, value} = descriptor;
         // console.log(target, name, descriptor);
-
+        
         if (!target[symbol]) {
             Object.defineProperty(target, symbol, {
                 configurable: false,
@@ -11,7 +12,7 @@ module.exports = function(props) {
                 value: {}
             });
         }
-
+        
         Object.defineProperty(target[symbol], name, {
             configurable: false,
             enumerable: false,
@@ -25,10 +26,10 @@ module.exports = function(props) {
     };
 };
 
-const symbol = Symbol('action');
-Object.defineProperty(module.exports, 'name', {
+Object.defineProperty(action, 'name', {
     configurable: false,
     enumerable: false,
     writable: false,
     value: symbol
 });
+module.exports = action;
