@@ -12,7 +12,7 @@ const pm2 = require('./core/pm2');
 // const mockHttp = require('./core/mock-http');
 const Watcher = require('./core/watcher');
 const Loaders = require('./loaders.js');
-const Server = require('./core/server');
+const Cluster = require('./core/cluster');
 const debug = require('debug');
 
 //
@@ -29,15 +29,11 @@ module.exports = class Application {
      */
     constructor(options = {}) {
         assert(options.ROOT_PATH, 'options.ROOT_PATH must be set');
+        
         if (!options.APP_PATH) {
-            // app 目录为 babel编译后的目录
-            let appPath = path.join(options.ROOT_PATH, this.buildPath);
-            // 是否使用babel编译后的文件
-            //if (!options.transpiler && !helper.isDirectory(appPath)) {
-            //    appPath = path.join(options.ROOT_PATH, 'src');
-            //}
-            options.APP_PATH = appPath;
+            options.APP_PATH = path.join(options.ROOT_PATH, this.buildPath);
         }
+        
         this.options = options;
         
         Object.defineProperty(jinghuan, 'ROOT_PATH', {
@@ -128,6 +124,7 @@ module.exports = class Application {
         const instance = new Watcher({
             srcPath: srcPath,
         }, fileInfo => this._watcherCallBack(fileInfo));
+        
         instance.watch();
     }
     
@@ -137,15 +134,15 @@ module.exports = class Application {
      */
     parseArgv() {
         const options = {};
-        const argv2 = process.argv[2];
-        const portRegExp = /^\d{2,5}$/;
-        if (argv2) {
-            if (!portRegExp.test(argv2)) {
-                options.path = argv2;
-            } else {
-                options.port = argv2;
-            }
-        }
+        //const argv2 = process.argv[2];
+        //const portRegExp = /^\d{2,5}$/;
+        //if (argv2) {
+        //    if (!portRegExp.test(argv2)) {
+        //        options.path = argv2;
+        //    } else {
+        //        options.port = argv2;
+        //    }
+        //}
         return options;
     }
     
@@ -158,13 +155,13 @@ module.exports = class Application {
     _getMasterInstance(argv) {
         const port = argv.port || jinghuan.PORT
         const host = jinghuan.HOST;
-        const instance = new Server.Master({
+        const instance = new Cluster.Master({
             port,
             host,
             workers: jinghuan.config('workers'),
         });
         this.masterInstance = instance;
-        jinghuan.logger.info(`Server running at http://${host || '127.0.0.1'}:${port}`);
+        jinghuan.logger.info(`Cluster running at http://${host || '127.0.0.1'}:${port}`);
         jinghuan.logger.info(`JinghuanJs version: ${jinghuan.version}`);
         jinghuan.logger.info(`Enviroment: ${jinghuan.env}`);
         jinghuan.logger.info(`Workers: ${instance.options.workers}`);
@@ -196,14 +193,19 @@ module.exports = class Application {
     _getWorkerInstance(argv) {
         const port = argv.port || jinghuan.PORT;
         const host = jinghuan.HOST;
-        const instance = new Server.Worker({
-            port,
-            host,
-            logger: jinghuan.logger.error.bind(jinghuan.logger),
-            processKillTimeout: jinghuan.config('processKillTimeout'),
-            onUncaughtException: jinghuan.config('onUncaughtException'),
-            onUnhandledRejection: jinghuan.config('onUnhandledRejection')
-        });
+        const instance = new Cluster.Worker(
+            {
+                port,
+                host,
+                //logger: jinghuan.logger.error.bind(jinghuan.logger),
+                // 自定义的进程启动超时
+                processKillTimeout: jinghuan.config('processKillTimeout'),
+                // 进程未捕获的异常
+                onUncaughtException: jinghuan.config('onUncaughtException'),
+                // promise 未捕获的异常
+                onUnhandledRejection: jinghuan.config('onUnhandledRejection')
+            }
+        );
         
         jinghuan.logger.info(`Worker: ${cluster.worker.process.pid}`);
         
@@ -255,7 +257,9 @@ module.exports = class Application {
         }
         
         const loaders = new Loaders(this.options);
+        
         const argv = this.parseArgv();
+        
         try {
             // 用处不大 先屏蔽了
             // if (argv.path) {

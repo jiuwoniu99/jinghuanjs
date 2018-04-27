@@ -45,7 +45,7 @@ jinghuan.messenger = messenger;
 /**
  * base controller class
  */
-jinghuan.Controller = function () {
+jinghuan.Controller = class Controller {
 }
 
 /**
@@ -79,6 +79,11 @@ jinghuan.Controller = function () {
 // before start server
 const promises = [];
 
+/**
+ *
+ * @param fn
+ * @return {*}
+ */
 jinghuan.beforeStartServer = fn => {
     if (fn) {
         assert(helper.isFunction(fn), 'fn in jinghuan.beforeStartServer must be a function');
@@ -93,6 +98,9 @@ jinghuan.beforeStartServer = fn => {
     return Promise.race([promise, timeoutPromise]);
 };
 
+/**
+ *
+ */
 log4js.configure({
     appenders: {
         console: {type: 'console', layout: {type: 'pattern', pattern: '%[[%d] [%z] [%p]%] - %m'}}
@@ -102,6 +110,14 @@ log4js.configure({
     }
 });
 
+/**
+ *
+ * @type {Logger}
+ */
 jinghuan.logger = log4js.getLogger();
 
+/**
+ *
+ * @type {Events}
+ */
 jinghuan.events = new events();

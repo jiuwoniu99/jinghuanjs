@@ -1,25 +1,26 @@
 {
-  "presets": [
-    [
-      "es2015",
-      {
-        "loose": true
-      }
+    "presets": [
+        [
+            "es2015",
+            {
+                "loose": true
+            }
+        ],
+        "react",
+        "stage-1"
     ],
-    "react",
-    "stage-1"
-  ],
-  "plugins": [
-    [
-      "transform-runtime",
-      {
-        "helpers": false,
-        "polyfill": false,
-        "regenerator": true,
-        "moduleName": "babel-runtime"
-      }
+    "plugins": [
+        [
+            "transform-runtime",
+            {
+                "helpers": false,
+                "polyfill": false,
+                "regenerator": true,
+                "moduleName": "babel-runtime"
+            }
+        ],
+        "transform-decorators-legacy",
+        "transform-export-extensions"
     ],
-    "transform-decorators-legacy",
-    "transform-export-extensions"
-  ]
+    "comments": false
 }
