@@ -17,11 +17,15 @@ let count = 0;
  * Messenger class
  */
 class Messenger extends events {
+    
+    /**
+     *
+     */
     constructor() {
         super();
         this.bindEvent();
     }
-
+    
     /**
      *
      * @param type
@@ -36,7 +40,7 @@ class Messenger extends events {
             return [aliveWorkers[0]];
         }
     }
-
+    
     /**
      *
      */
@@ -88,7 +92,7 @@ class Messenger extends events {
             });
         }
     }
-
+    
     /**
      *
      * @param action
@@ -103,7 +107,7 @@ class Messenger extends events {
             target: 'all'
         });
     }
-
+    
     /**
      * @param action
      * @param mapData
@@ -126,14 +130,14 @@ class Messenger extends events {
         });
         return defer.promise;
     }
-
+    
     /**
      * @param callback
      */
     runInOne(callback) {
         return this.consume(callback);
     }
-
+    
     /**
      * @param action
      * @param data
@@ -145,7 +149,7 @@ class Messenger extends events {
             const taskId = count + '' + process.pid;
             action = `jinghuan-messenger-${taskId}`;
             this.once(action, callback);
-
+            
             helper.timeout(10000).then(() => this.removeAllListeners(action));
         } else {
             assert(this.listenerCount(action) > 0, `can not find \`${action}\` listeners`);

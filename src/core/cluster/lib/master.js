@@ -16,6 +16,7 @@ const defaultOptions = {
 };
 
 /**
+ * 集群环境 主进程
  * Master class
  */
 class Master {

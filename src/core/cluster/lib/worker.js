@@ -20,7 +20,8 @@ const defaultOptions = {
 };
 
 /**
- * Worker
+ * 集群环境 子进程
+ * Worker class
  */
 class Worker {
     /**
