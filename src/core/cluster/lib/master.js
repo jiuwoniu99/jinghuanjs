@@ -26,7 +26,13 @@ class Master {
      * @param options
      */
     constructor(options) {
-        options = util.parseOptions(options);
+        
+        const port = jinghuan.PORT;
+        const host = jinghuan.HOST;
+        const workers = jinghuan.config('workers');
+        
+        options = util.parseOptions({port, host, workers});
+        
         this.options = Object.assign({}, defaultOptions, options);
     }
     

@@ -153,18 +153,11 @@ module.exports = class Application {
      * @private
      */
     _getMasterInstance(argv) {
-        const port = argv.port || jinghuan.PORT
-        const host = jinghuan.HOST;
-        const instance = new Cluster.Master({
-            port,
-            host,
-            workers: jinghuan.config('workers'),
-        });
+        // 初始化集群中的主线程类
+        const instance = new Cluster.Master();
+        
         this.masterInstance = instance;
-        jinghuan.logger.info(`Cluster running at http://${host || '127.0.0.1'}:${port}`);
-        jinghuan.logger.info(`JinghuanJs version: ${jinghuan.version}`);
-        jinghuan.logger.info(`Enviroment: ${jinghuan.env}`);
-        jinghuan.logger.info(`Workers: ${instance.options.workers}`);
+        
         return instance;
     }
     
@@ -173,13 +166,21 @@ module.exports = class Application {
      * @param argv
      */
     runInMaster(argv) {
+        
+        let instance;
         return jinghuan.beforeStartServer()
             .catch(err => {
                 jinghuan.logger.error(err);
             }).then(() => {
-                const instance = this._getMasterInstance(argv);
+                instance = this._getMasterInstance(argv);
                 return instance.startServer();
             }).then(() => {
+                
+                jinghuan.logger.info(`[Cluster] running at http://${jinghuan.HOST || '127.0.0.1'}:${jinghuan.PORT}`);
+                jinghuan.logger.info(`[Cluster] JinghuanJs version: ${jinghuan.version}`);
+                jinghuan.logger.info(`[Cluster] Enviroment: ${jinghuan.env}`);
+                jinghuan.logger.info(`[Cluster] Workers: ${instance.options.workers}`);
+                
                 jinghuan.app.emit('appReady');
             });
     }
@@ -191,24 +192,8 @@ module.exports = class Application {
      * @private
      */
     _getWorkerInstance(argv) {
-        const port = argv.port || jinghuan.PORT;
-        const host = jinghuan.HOST;
-        const instance = new Cluster.Worker(
-            {
-                port,
-                host,
-                //logger: jinghuan.logger.error.bind(jinghuan.logger),
-                // 自定义的进程启动超时
-                processKillTimeout: jinghuan.config('processKillTimeout'),
-                // 进程未捕获的异常
-                onUncaughtException: jinghuan.config('onUncaughtException'),
-                // promise 未捕获的异常
-                onUnhandledRejection: jinghuan.config('onUnhandledRejection')
-            }
-        );
-        
-        jinghuan.logger.info(`Worker: ${cluster.worker.process.pid}`);
-        
+        const instance = new Cluster.Worker();
+        //jinghuan.logger.info(`Worker: ${cluster.worker.process.pid}`);
         return instance;
     }
     
@@ -224,6 +209,10 @@ module.exports = class Application {
                 const instance = this._getWorkerInstance(argv);
                 return instance.startServer();
             }).then(() => {
+                jinghuan.logger.info(`[Worker] running at http://${jinghuan.HOST || '127.0.0.1'}:${jinghuan.PORT}`);
+                jinghuan.logger.info(`[Worker] JinghuanJs version: ${jinghuan.version}`);
+                jinghuan.logger.info(`[Worker] Enviroment: ${jinghuan.env}`);
+                
                 jinghuan.app.emit('appReady');
             });
     }

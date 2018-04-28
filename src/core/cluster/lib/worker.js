@@ -29,7 +29,18 @@ class Worker {
      * @param {Object} options
      */
     constructor(options) {
-        options = util.parseOptions(options);
+        const port = jinghuan.PORT;
+        const host = jinghuan.HOST;
+        
+        //logger: jinghuan.logger.error.bind(jinghuan.logger),
+        // 自定义的进程启动超时
+        const processKillTimeout = jinghuan.config('processKillTimeout');
+        // 进程未捕获的异常
+        const onUncaughtException = jinghuan.config('onUncaughtException');
+        // promise 未捕获的异常
+        const onUnhandledRejection = jinghuan.config('onUnhandledRejection');
+        
+        options = util.parseOptions({port, host, processKillTimeout, onUncaughtException, onUnhandledRejection});
         this.options = Object.assign({}, defaultOptions, options);
     }
     
