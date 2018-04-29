@@ -1,6 +1,6 @@
 const path = require('path');
 const cluster = require('cluster');
-const process = require('process');
+//const process = require('process');
 // const http = require('http');
 //
 const assert = require('assert');
@@ -167,19 +167,19 @@ module.exports = class Application {
      */
     runInMaster(argv) {
         
-        let instance;
+        
         return jinghuan.beforeStartServer()
             .catch(err => {
                 jinghuan.logger.error(err);
             }).then(() => {
-                instance = this._getMasterInstance(argv);
+                let instance = this._getMasterInstance(argv);
                 return instance.startServer();
             }).then(() => {
                 
                 jinghuan.logger.info(`[Cluster] running at http://${jinghuan.HOST || '127.0.0.1'}:${jinghuan.PORT}`);
                 jinghuan.logger.info(`[Cluster] JinghuanJs version: ${jinghuan.version}`);
                 jinghuan.logger.info(`[Cluster] Enviroment: ${jinghuan.env}`);
-                jinghuan.logger.info(`[Cluster] Workers: ${instance.options.workers}`);
+                jinghuan.logger.info(`[Cluster] Workers: ${jinghuan.config('workers')}`);
                 
                 jinghuan.app.emit('appReady');
             });

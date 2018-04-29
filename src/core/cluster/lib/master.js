@@ -76,6 +76,8 @@ class Master {
             waitReloadWorkerTimes++;
             return;
         }
+    
+        jinghuan.logger.info(`[Cluster] Reload Workers`);
         
         waitReloadWorkerTimes = 1;
         

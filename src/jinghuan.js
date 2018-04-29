@@ -2,6 +2,7 @@ const Koa = require('koa');
 const bluebird = require('bluebird');
 const assert = require('assert');
 const log4js = require('log4js');
+const jwt = require('jsonwebtoken');
 //const _ =require("lodash");
 //
 const pkg = require('../package.json');
@@ -121,3 +122,12 @@ jinghuan.logger = log4js.getLogger();
  * @type {Events}
  */
 jinghuan.events = new events();
+
+/**
+ *
+ */
+Object.defineProperty(jinghuan, 'jwt', {
+    get() {
+        return jwt;
+    }
+});

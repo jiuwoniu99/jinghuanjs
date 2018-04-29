@@ -1,6 +1,6 @@
 {
     "name": "jinghuanjs",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "main": "index.js",
     "scripts": {
         "babel": "babel src --out-dir lib --copy-files --source-maps --watch",
@@ -17,6 +17,7 @@
         "formidable": "^1.2.1",
         "inflation": "^2.0.0",
         "jinghuanjs-props": "^1.0.2",
+        "jsonwebtoken": "^8.2.1",
         "knex": "^0.14.6",
         "koa": "^2.5.0",
         "koa-compress": "^3.0.0",

@@ -99,17 +99,15 @@ class Worker {
             return;
         }
         worker[WORKER_RELOAD] = true;
-        
+        jinghuan.logger.info(`[Worker] Reload`);
         if (sendSignal) {
             
             // 通知主进程 该子进程要从集群中要开始断开
             worker.send(util.JH_GRACEFUL_DISCONNECT);
             
             worker.once('message', message => {
-                
                 // 主进程响应 新的子进程已启动
                 if (message === util.JH_GRACEFUL_FORK) {
-                    
                     // 结束当前进程
                     this.closeServer();
                 }
