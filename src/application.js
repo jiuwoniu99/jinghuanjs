@@ -30,15 +30,22 @@ module.exports = class Application {
     constructor(options = {}) {
         assert(options.ROOT_PATH, 'options.ROOT_PATH must be set');
         
-        if (!options.APP_PATH) {
-            options.APP_PATH = path.join(options.ROOT_PATH, this.buildPath);
-        }
-        
         this.options = options;
+        
+        
+        if (!options.APP_PATH) {
+            options.APP_PATH = path.join(options.ROOT_PATH, options.source);
+        }
         
         Object.defineProperty(jinghuan, 'ROOT_PATH', {
             get() {
                 return options.ROOT_PATH;
+            }
+        });
+        
+        Object.defineProperty(jinghuan, 'source', {
+            get() {
+                return options.source;
             }
         });
         
@@ -117,10 +124,14 @@ module.exports = class Application {
             return;
         }
         const srcPath = [
-            path.join(this.options.ROOT_PATH, 'src'),
-            path.join(this.options.ROOT_PATH, 'common'),
             path.join(this.options.ROOT_PATH, 'config', this.options.env),
         ];
+        
+        for (let i in this.options.modules) {
+            srcPath.push(path.join(this.options.ROOT_PATH, jinghuan.source, this.options.modules[i]),)
+        }
+        
+        
         const instance = new Watcher({
             srcPath: srcPath,
         }, fileInfo => this._watcherCallBack(fileInfo));

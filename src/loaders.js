@@ -82,7 +82,7 @@ module.exports = class Loaders {
             Loader.extend(item[1], exts[item[0]]);
         });
         
-        exts = this.loader.loadExtend(path.join(ROOT_PATH, 'common'));
+        exts = this.loader.loadExtend(path.join(ROOT_PATH, jinghuan.source, 'common'));
         
         list = [
             ['jinghuan', jinghuan],

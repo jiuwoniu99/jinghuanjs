@@ -12,7 +12,7 @@ const interopRequire = require('./util.js').interopRequire;
  * 中间件加载器
  */
 class Middleware {
-
+    
     /**
      *
      * @param path
@@ -21,7 +21,7 @@ class Middleware {
     interopRequire(path) {
         return interopRequire(path);
     }
-
+    
     /**
      * check url matched
      */
@@ -33,7 +33,7 @@ class Middleware {
             return pathToRegexp(match);
         }
     }
-
+    
     /**
      * check rule match
      */
@@ -43,7 +43,7 @@ class Middleware {
         }
         return rule.test(ctx.path);
     }
-
+    
     /**
      *
      * @param middlewares
@@ -97,11 +97,11 @@ class Middleware {
             if (!item.match && !item.ignore) {
                 return item.handle;
             }
-
+            
             // 高级设置 设置忽略的请求
             const match = this.createRegexp(item.match);
             const ignore = this.createRegexp(item.ignore);
-
+            
             // has match or ignore
             return (ctx, next) => {
                 if ((match && !this.checkMatch(match, ctx)) ||
@@ -112,7 +112,7 @@ class Middleware {
             };
         });
     }
-
+    
     /**
      * 该方法会加载框架与应用中所有的中间件
      * @param middlewarePath
@@ -133,7 +133,7 @@ class Middleware {
         });
         return ret;
     }
-
+    
     /**
      * 加载系统和应用程序的中间件列表
      * @param appPath
@@ -141,10 +141,10 @@ class Middleware {
      * @return {*|Object}
      */
     loadFiles(appPath, jinghuanPath) {
-        const appMiddlewarePath = path.join(jinghuan.ROOT_PATH, 'common/middleware');
+        const appMiddlewarePath = path.join(jinghuan.ROOT_PATH, jinghuan.source, '/common/middleware');
         return helper.extend({}, this.getFiles(path.join(jinghuanPath, 'middleware')), this.getFiles(appMiddlewarePath));
     }
-
+    
     /**
      * 加载解析中间件
      * @param appPath
@@ -154,7 +154,7 @@ class Middleware {
      * @return {*}
      */
     load(appPath, jinghuanPath, modules, app) {
-        let filepath = path.join(jinghuan.ROOT_PATH, 'common/bootstrap/middleware.js');
+        let filepath = path.join(jinghuan.ROOT_PATH, jinghuan.source, '/common/bootstrap/middleware.js');
         if (!helper.isFile(filepath)) {
             return [];
         }

@@ -133,14 +133,14 @@ class Config {
         const jinghuanConfig = this.loadConfigFile(path.join(JH_PATH, 'config'));
         
         // 应用程序默认配置
-        const commonConfig = this.loadConfigFile(path.join(ROOT_PATH, 'common', 'config'));
+        const commonConfig = this.loadConfigFile(path.join(ROOT_PATH, jinghuan.source, '/common/config'));
         
         // 应用配置
         const envConfig = this.loadConfigFile(path.join(ROOT_PATH, 'config', env));
         
         const paths = [
             path.join(JH_PATH, 'bootstrap'),
-            path.join(ROOT_PATH, 'common/bootstrap')
+            path.join(ROOT_PATH, jinghuan.source, 'common/bootstrap')
         ];
         
         const config = this.loadConfig(paths, env);
