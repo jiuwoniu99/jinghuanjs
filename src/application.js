@@ -186,12 +186,13 @@ module.exports = class Application {
                 let instance = this._getMasterInstance(argv);
                 return instance.startServer();
             }).then(() => {
-                
-                jinghuan.logger.info(`[Cluster] running at http://${jinghuan.HOST || '127.0.0.1'}:${jinghuan.PORT}`);
-                jinghuan.logger.info(`[Cluster] JinghuanJs version: ${jinghuan.version}`);
-                jinghuan.logger.info(`[Cluster] Enviroment: ${jinghuan.env}`);
-                jinghuan.logger.info(`[Cluster] Workers: ${jinghuan.config('workers')}`);
-                
+                jinghuan.logger.info(`----------------------------------------------------------------------------------`);
+                jinghuan.logger.info(`[Master] running at http://${jinghuan.HOST || '127.0.0.1'}:${jinghuan.PORT}`);
+                jinghuan.logger.info(`[Master] JinghuanJs version: ${jinghuan.version}`);
+                jinghuan.logger.info(`[Master] Enviroment: ${jinghuan.env}`);
+                jinghuan.logger.info(`[Master] Source: ${jinghuan.source}`);
+                jinghuan.logger.info(`[Master] Workers: ${jinghuan.config('workers')}`);
+                jinghuan.logger.info(`----------------------------------------------------------------------------------`);
                 jinghuan.app.emit('appReady');
             });
     }
@@ -220,10 +221,12 @@ module.exports = class Application {
                 const instance = this._getWorkerInstance(argv);
                 return instance.startServer();
             }).then(() => {
+                jinghuan.logger.info(`==================================================================================`);
                 jinghuan.logger.info(`[Worker] running at http://${jinghuan.HOST || '127.0.0.1'}:${jinghuan.PORT}`);
                 jinghuan.logger.info(`[Worker] JinghuanJs version: ${jinghuan.version}`);
                 jinghuan.logger.info(`[Worker] Enviroment: ${jinghuan.env}`);
-                
+                jinghuan.logger.info(`[Worker] Source: ${jinghuan.source}`);
+                jinghuan.logger.info(`==================================================================================`);
                 jinghuan.app.emit('appReady');
             });
     }
