@@ -1,13 +1,15 @@
 {
     "presets": [
         [
-            "es2015",
+            "env",
             {
-                "loose": true
+                "targets": {
+                    "node": "9"
+                }
             }
         ],
         "react",
-        "stage-1"
+        "stage-0"
     ],
     "plugins": [
         [

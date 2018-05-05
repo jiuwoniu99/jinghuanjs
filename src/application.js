@@ -125,6 +125,7 @@ module.exports = class Application {
         }
         const srcPath = [
             path.join(this.options.ROOT_PATH, 'config', this.options.env),
+            path.join(this.options.ROOT_PATH, 'src/common'),
         ];
         
         for (let i in this.options.modules) {
