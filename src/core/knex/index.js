@@ -9,7 +9,8 @@ import {
 import strtolower from 'locutus/php/strings/strtolower';
 import trim from 'locutus/php/strings/trim';
 
-const JSSQLLexer = require('./lib/lexer/JSSQLLexer');
+import JSSQLLexer from './lib/lexer/JSSQLLexer';
+
 const log = require('debug')('code.knex');
 //
 

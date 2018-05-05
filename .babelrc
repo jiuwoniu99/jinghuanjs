@@ -1,5 +1,6 @@
 {
     "presets": [
+        "minify",
         [
             "env",
             {
@@ -12,17 +13,22 @@
         "stage-0"
     ],
     "plugins": [
-        [
-            "transform-runtime",
-            {
-                "helpers": false,
-                "polyfill": false,
-                "regenerator": true,
-                "moduleName": "babel-runtime"
-            }
-        ],
-        "transform-decorators-legacy",
-        "transform-export-extensions"
+        //[
+        //    "transform-runtime",
+        //    {
+        //        "helpers": false,
+        //        "polyfill": false,
+        //        "regenerator": true,
+        //        "moduleName": "babel-runtime"
+        //    }
+        //],
+        "transform-decorators-legacy"
+        //"transform-export-extensions"
     ],
-    "comments": false
+    //"comments": false,
+    //"compact": true,
+    //"minified": true,
+    //"passPerPreset": true,
+    "babelrc": false,
+    "sourceMaps": true
 }
