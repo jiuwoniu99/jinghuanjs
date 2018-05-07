@@ -19,9 +19,9 @@ module.exports = function (option) {
         
         
         require('babel-register')({
-            ignore:  function (filename) {
+            ignore: function (filename) {
                 if (filename.startsWith(__dirname + '/src/')) {
-                    console.log(filename)
+                    //console.log(filename)
                     return false
                 }
                 else if (/node_modules/.test(filename)) {
@@ -29,7 +29,7 @@ module.exports = function (option) {
                 }
                 return false;
             },
-            cache: false,
+            cache: true,
             "presets": [
                 [
                     "env",

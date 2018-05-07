@@ -1,14 +1,14 @@
-const Koa = require('koa');
-const bluebird = require('bluebird');
-const assert = require('assert');
-const log4js = require('log4js');
-const jwt = require('jsonwebtoken');
+import Koa from "koa"
+import bluebird from "bluebird"
+import assert from "assert"
+import log4js from "log4js"
+import jwt from "jsonwebtoken"
 //const _ =require("lodash");
 //
-const pkg = require('../package.json');
-const helper = require('./core/helper');
+import pkg from "../package.json"
+import helper from "./core/helper"
 const messenger = require('./core/cluster').messenger;
-const events = require('./core/events');
+import events from "./core/events"
 
 /**
  * use bluebird instead of default Promise
