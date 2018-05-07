@@ -104,7 +104,10 @@ jinghuan.beforeStartServer = fn => {
  */
 log4js.configure({
     appenders: {
-        console: {type: 'console', layout: {type: 'pattern', pattern: '%[%d{yyyy-MM-dd hh:mm:ss} [%6z] [%5.5p] %] - %m'}}
+        console: {
+            type: 'console',
+            layout: {type: 'pattern', pattern: '%[%d{yyyy-MM-dd hh:mm:ss} [%6z] [%5.5p] %] - %m'}
+        }
     },
     categories: {
         default: {appenders: ['console'], level: 'all'}

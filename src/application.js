@@ -1,19 +1,21 @@
-const path = require('path');
-const cluster = require('cluster');
-//const process = require('process');
-// const http = require('http');
+import './jinghuan'
+
+import path from "path";
+import cluster from "cluster";
+//import process from "process";
+// import http from "http";
 //
-const assert = require('assert');
-//const _ = require("lodash");
+import assert from "assert";
+//import _ from "lodash";
 //
-const helper = require('./core/helper');
-// const Cluster = require('./core/cluster');
-const pm2 = require('./core/pm2');
-// const mockHttp = require('./core/mock-http');
-const Watcher = require('./core/watcher');
-const Loaders = require('./loaders.js');
-const Cluster = require('./core/cluster');
-const debug = require('debug');
+import helper from "./core/helper";
+// import Cluster from "./core/cluster";
+import pm2 from "./core/pm2";
+// import mockHttp from "./core/mock-http";
+import Watcher from "./core/watcher";
+import Loaders from "./loaders.js";
+import Cluster from "./core/cluster";
+import debug from "debug";
 
 //
 debug.log = console.log.bind(console);

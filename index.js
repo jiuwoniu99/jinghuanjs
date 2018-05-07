@@ -19,8 +19,9 @@ module.exports = function (option) {
         
         
         require('babel-register')({
-            ignore: (filename) => {
+            ignore:  function (filename) {
                 if (filename.startsWith(__dirname + '/src/')) {
+                    console.log(filename)
                     return false
                 }
                 else if (/node_modules/.test(filename)) {
@@ -28,7 +29,23 @@ module.exports = function (option) {
                 }
                 return false;
             },
-            cache: true
+            cache: false,
+            "presets": [
+                [
+                    "env",
+                    {
+                        "targets": {
+                            "node": "9"
+                        }
+                    }
+                ],
+                "react",
+                "stage-0"
+            ],
+            "plugins": [
+                "transform-decorators-legacy"
+            ],
+            "babelrc": false,
         });
         
         let Appliaction = require('./src/application');
