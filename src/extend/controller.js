@@ -1,6 +1,7 @@
-const debug = require('debug')('JH:extend/controller');
-const assert = require('assert');
-//const _ = require('lodash');
+import debug from "debug";
+import assert from "assert";
+
+const log = debug("JH:extend/controller");
 /**
  * extend controller
  */
@@ -242,7 +243,7 @@ module.exports = {
             return this.ctx.header[name];
         }
         if (this.ctx.res.headersSent) {
-            debug(`headers has already sent, url: ${this.ctx.url}`);
+            log(`headers has already sent, url: ${this.ctx.url}`);
             return;
         }
         if (value !== undefined) {

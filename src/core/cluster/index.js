@@ -1,6 +1,12 @@
-const Messenger = require('./lib/messenger.js');
+import Messenger from "./lib/messenger.js"
 
-exports.Worker = require('./lib/worker.js');
-exports.Master = require('./lib/master.js');
+let Worker = require('./lib/worker.js');
+let Master = require('./lib/master.js');
 
-exports.messenger = new Messenger();
+let messenger = new Messenger();
+
+export default {
+    Worker,
+    Master,
+    messenger,
+}

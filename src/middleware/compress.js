@@ -1,4 +1,4 @@
-let compress = require('koa-compress')
+import compress from 'koa-compress';
 
 /**
  *
@@ -6,12 +6,14 @@ let compress = require('koa-compress')
  * @param app
  * @return {Function}
  */
-module.exports = function (options, app) {
-	/**
-	 *
-	 */
-	return compress({
-		threshold: 1,
-		flush: require('zlib').Z_SYNC_FLUSH
-	})
+function invokeCompress(options, app) {
+    /**
+     *
+     */
+    return compress({
+        threshold: 1,
+        flush: require('zlib').Z_SYNC_FLUSH
+    })
 }
+
+export default invokeCompress;

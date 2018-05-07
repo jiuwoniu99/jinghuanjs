@@ -1,5 +1,6 @@
-const helper = require('../core/helper');
-const action = require('../../props/action');
+import helper from "../core/helper"
+import action from "../../props/action"
+
 const symbol = action.name;
 
 const defaultOptions = {
@@ -86,4 +87,4 @@ function invokeController(options, app) {
     };
 }
 
-module.exports = invokeController;
+export default invokeController;

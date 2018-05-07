@@ -1,17 +1,15 @@
-const path = require('path');
-const fs = require('fs');
+import path from "path";
+import fs from "fs";
 //
-const assert = require('assert');
-const Cookies = require('cookies');
-const url = require('url');
-const onFinished = require('on-finished');
-const destroy = require('destroy');
-//const _ = require('lodash');
-//
-const helper = require('../core/helper');
-const Slog = require('../core/slog');
-const knex = require('../core/knex');
-const session = require('../core/session');
+import assert from "assert";
+import Cookies from "cookies";
+import url from "url";
+import onFinished from "on-finished";
+import destroy from "destroy";
+import helper from "../core/helper";
+import Slog from "../core/slog";
+import knex from "../core/knex";
+import session from "../core/session";
 //
 const PARAM = Symbol('context-param');
 const POST = Symbol('context-post');

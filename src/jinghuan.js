@@ -3,11 +3,11 @@ import bluebird from "bluebird"
 import assert from "assert"
 import log4js from "log4js"
 import jwt from "jsonwebtoken"
-//const _ =require("lodash");
-//
 import pkg from "../package.json"
 import helper from "./core/helper"
+
 const messenger = require('./core/cluster').messenger;
+
 import events from "./core/events"
 
 /**

@@ -2,16 +2,9 @@ import './jinghuan'
 
 import path from "path";
 import cluster from "cluster";
-//import process from "process";
-// import http from "http";
-//
 import assert from "assert";
-//import _ from "lodash";
-//
 import helper from "./core/helper";
-// import Cluster from "./core/cluster";
 import pm2 from "./core/pm2";
-// import mockHttp from "./core/mock-http";
 import Watcher from "./core/watcher";
 import Loaders from "./loaders.js";
 import Cluster from "./core/cluster";

@@ -1,8 +1,9 @@
-const helper = require('../helper');
-const path = require('path');
-const fs = require('fs');
-const assert = require('assert');
-const Debounce = require('../debounce');
+import helper from "../helper"
+import path from "path"
+import fs from "fs"
+import assert from "assert"
+import Debounce from "../debounce"
+
 const debounceInstance = new Debounce();
 const readFile = helper.promisify(fs.readFile, fs);
 const writeFile = helper.promisify(fs.writeFile, fs);
@@ -22,7 +23,7 @@ class FileStore {
         assert(storePath && path.isAbsolute(storePath), 'storePath need be an absolute path');
         this.storePath = storePath;
     }
-
+    
     /**
      * get file path
      * @param  {String} relativePath [description]
@@ -33,7 +34,7 @@ class FileStore {
         assert(filePath.indexOf(this.storePath) === 0, 'the file should be in storePath');
         return filePath;
     }
-
+    
     /**
      * get file data
      * @param  {String} relativePath   [relativePath]
@@ -45,7 +46,7 @@ class FileStore {
         if (!helper.isFile(filePath)) {
             return Promise.resolve();
         }
-
+        
         function getFileContent(times = 1) {
             return readFile(filePath, {encoding: 'utf8'}).then(content => {
                 if (!content && times <= 3) {
@@ -61,10 +62,10 @@ class FileStore {
                 return Promise.reject(err);
             });
         }
-
+        
         return debounceInstance.debounce(filePath, () => getFileContent());
     }
-
+    
     /**
      * set file content
      * @param {String} relativePath     [relativePath]
@@ -78,7 +79,7 @@ class FileStore {
             return helper.chmod(filePath);
         });
     }
-
+    
     /**
      * delete file
      * @param  {String} relativePath [relativePath]
@@ -93,4 +94,4 @@ class FileStore {
     }
 }
 
-module.exports = FileStore;
+export default FileStore;

@@ -1,5 +1,5 @@
-const fs = require('fs');
-const helper = require('../core/helper');
+//import fs from "fs"
+//import helper from "../core/helper"
 
 /**
  * 程序在初始化时开始执行
@@ -7,7 +7,7 @@ const helper = require('../core/helper');
  * @param app
  * @return {function(*=, *)}
  */
-module.exports = (options, app) => {
+function invokeStart(options, app) {
     /**
      *
      */
@@ -32,3 +32,5 @@ module.exports = (options, app) => {
         }
     };
 };
+
+export default invokeStart;

@@ -1,11 +1,11 @@
-'use strict';
+import debug from 'debug';
+import {resolve} from 'path';
+import assert from "assert"
+import helper from "../core/helper"
+import send from "koa-send"
 
-const debug = require('debug')(`JH:middleware/resource[${process.pid}]`);
-const resolve = require('path').resolve;
-const assert = require('assert');
-const helper = require('../core/helper');
-const send = require('koa-send');
-//const _ = require('lodash');
+
+const log = debug(`JH:middleware/resource[${process.pid}]`);
 /**
  *
  * @type {{root: string, publicPath: string, index: string, hidden: boolean, format: boolean, gzip: boolean, extensions: boolean, maxage: number, setHeaders: boolean, notFoundNext: boolean}}
@@ -61,20 +61,20 @@ const matchRoute = (path, route) => {
  * @param options
  * @returns {serve}
  */
-module.exports = function(options) {
+function invokeResource(options) {
     options = helper.extend({}, defaultOptions, options || {});
-
+    
     const root = options.root;
     assert(root, 'root directory is required to serve files');
-    debug('static "%s" %j', root, options);
+    log('static "%s" %j', root, options);
     options.root = resolve(root);
-
+    
     let publicPath = options.publicPath;
     assert(helper.isRegExp(publicPath) || helper.isString(publicPath), 'publicPath must be regexp or string');
     options.publicPath = prefixPath(publicPath);
-
+    
     const notFoundNext = options.notFoundNext;
-
+    
     /**
      * serve
      */
@@ -89,3 +89,5 @@ module.exports = function(options) {
         return next();
     };
 };
+
+export default invokeResource;

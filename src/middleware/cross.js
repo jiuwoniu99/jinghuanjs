@@ -1,10 +1,11 @@
-const defaultOption = {
-    module: 'home',
-    controller: 'index',
-    action: 'index'
-}
-
-module.exports = function (options, app) {
+/**
+ *
+ * @param options
+ * @param app
+ * @return {Function}
+ */
+function invokeCross(options, app) {
+    
     /**
      *
      */
@@ -40,3 +41,5 @@ module.exports = function (options, app) {
         }
     }
 }
+
+export default invokeCross

@@ -1,4 +1,4 @@
-const pathToRegexp = require('path-to-regexp');
+//import pathToRegexp from "path-to-regexp"
 
 /**
  *
@@ -6,7 +6,7 @@ const pathToRegexp = require('path-to-regexp');
  * @param app
  * @return {Function}
  */
-module.exports = function (options, app) {
+function invokeRouter(options, app) {
     /**
      *
      */
@@ -27,3 +27,5 @@ module.exports = function (options, app) {
         await next();
     };
 };
+
+export default invokeRouter;

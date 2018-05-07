@@ -1,18 +1,12 @@
-const path = require('path');
-const fs = require('fs');
-const Config = require('./core/config');
-const Logger = require('./core/logger');
-const Loader = require('./core/loader');
-const helper = require('./core/helper');
-const Crontab = require('./core/crontab');
-
-require('./jinghuan.js');
+import path from "path";
+import Config from "./core/config";
+import Loader from "./core/loader";
 
 /**
  *
  * @type {module.exports}
  */
-module.exports = class Loaders {
+class Loaders {
     
     /**
      *
@@ -106,11 +100,11 @@ module.exports = class Loaders {
     /**
      * 加载定时任务
      */
-    loadCrontab() {
-        const crontab = this.loader.loadCrontab();
-        const instance = new Crontab(crontab, jinghuan.app);
-        instance.runTask();
-    }
+    //loadCrontab() {
+    //    const crontab = this.loader.loadCrontab();
+    //    const instance = new Crontab(crontab, jinghuan.app);
+    //    instance.runTask();
+    //}
     
     /**
      * 保存配置
@@ -144,11 +138,12 @@ module.exports = class Loaders {
             
             this.loadData();
             this.loadMiddleware();
-            if (!isCli) {
-                this.loadCrontab();
-            }
+            //if (!isCli) {
+            //    this.loadCrontab();
+            //}
         }
         
     }
 };
 
+export default Loaders;

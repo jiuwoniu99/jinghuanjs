@@ -1,6 +1,6 @@
-const Validator = require('think-validator');
-const helper = require('../core/helper');
-//const _ = require('lodash');
+import Validator from "think-validator";
+import helper from "../core/helper";
+//import _ from "lodash";
 
 const VALIDATE_INVOKED = Symbol('logic-validate-invoked');
 
