@@ -1,13 +1,14 @@
-const path = require('path');
-const helper = require('../helper');
-const assert = require('assert');
-const util = require('./util.js');
-const interopRequire = util.interopRequire;
-const extendObj = util.extend;
-const debug = require('debug')(`JH:core/loader/extend[${process.pid}]`);
+import path from "path"
+import helper from "../helper"
+//import assert from "assert"
+import util from "./util.js"
+import interopRequire from '../helper/interopRequire';
+import debug from 'debug';
+
+const log = debug(`JH:core/loader/extend[${process.pid}]`);
 
 const ExtendLoader = {
-
+    
     allowExtends: [
         'jinghuan',
         'application',
@@ -18,34 +19,33 @@ const ExtendLoader = {
         // 'logic',
         // 'service'
     ],
-
+    
     /**
      *
-     * @param path
+     * @param extendPath
      * @param modules
-     * @return {{}}
      */
     load(extendPath, modules) {
         const allowExtends = ExtendLoader.allowExtends;
         const ret = {};
-
+        
         function assign(type, ext) {
             if (!ret[type]) {
                 ret[type] = {};
             }
-            ret[type] = extendObj(ret[type], ext);
+            ret[type] = util.extend(ret[type], ext);
         }
-
+        
         // system extend
         allowExtends.forEach(type => {
             const filepath = path.join(extendPath, `extend/${type}.js`);
             if (!helper.isFile(filepath)) {
                 return;
             }
-            debug(`load file: ${filepath}`);
+            log(`load file: ${filepath}`);
             assign(type, interopRequire(filepath));
         });
-
+        
         // application extend
         // allowExtends.forEach(type => {
         //     const filepath = path.join(jinghuan.ROOT_PATH, `common/extend/${type}.js`);
@@ -59,4 +59,4 @@ const ExtendLoader = {
     }
 };
 
-module.exports = ExtendLoader;
+export default ExtendLoader;

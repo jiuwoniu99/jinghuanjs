@@ -1,24 +1,27 @@
-const cluster = require('cluster');
-const helper = require('../../helper');
+import cluster from "cluster"
+import helper from "../../helper"
+import debug from 'debug';
 
 const cpus = require('os').cpus().length;
-const debug = require('debug')(`JH:core/server/lib/util[${process.pid}]`);
 const WORKER_REALOD = Symbol('worker-reload');
 const NEED_KILLED = Symbol('need-killed');
+const log = debug(`JH:core/server/lib/util[${process.pid}]`);
+const util = {};
 
 let jhProcessId = 1;
 
-exports.JH_RELOAD_SIGNAL = 'jinghuan-reload-signal';
-exports.JH_GRACEFUL_FORK = 'jinghuan-graceful-fork';
-exports.JH_GRACEFUL_DISCONNECT = 'jinghuan-graceful-disconnect';
-exports.JH_STICKY_CLUSTER = 'jinghuan-sticky-cluster';
-exports.WORKER_REALOD = WORKER_REALOD;
-exports.NEED_KILLED = NEED_KILLED;
+
+util.JH_RELOAD_SIGNAL = 'jinghuan-reload-signal';
+util.JH_GRACEFUL_FORK = 'jinghuan-graceful-fork';
+util.JH_GRACEFUL_DISCONNECT = 'jinghuan-graceful-disconnect';
+util.JH_STICKY_CLUSTER = 'jinghuan-sticky-cluster';
+util.WORKER_REALOD = WORKER_REALOD;
+util.NEED_KILLED = NEED_KILLED;
 
 /**
  * parse options
  */
-exports.parseOptions = function (options = {}) {
+util.parseOptions = function (options = {}) {
     options.workers = options.workers || cpus;
     return options;
 };
@@ -28,7 +31,7 @@ exports.parseOptions = function (options = {}) {
  * @param worker
  * @return {boolean}
  */
-exports.isAliveWorker = worker => {
+util.isAliveWorker = worker => {
     const state = worker.state;
     if (state === 'disconnected' || state === 'dead') return false;
     if (worker[NEED_KILLED] || worker[WORKER_REALOD]) return false;
@@ -39,11 +42,11 @@ exports.isAliveWorker = worker => {
  * 获取所有活动中的worker
  * @return {Array}
  */
-exports.getAliveWorkers = () => {
+util.getAliveWorkers = () => {
     const workers = [];
     for (const id in cluster.workers) {
         const worker = cluster.workers[id];
-        if (!exports.isAliveWorker(worker)) continue;
+        if (!util.isAliveWorker(worker)) continue;
         workers.push(worker);
     }
     return workers;
@@ -52,7 +55,7 @@ exports.getAliveWorkers = () => {
 /**
  * fork worker
  */
-exports.forkWorker = function (env = {}) {
+util.forkWorker = function (env = {}) {
     const deferred = helper.defer();
     
     env.JH_PROCESS_ID = jhProcessId++;
@@ -61,35 +64,35 @@ exports.forkWorker = function (env = {}) {
     // 接收到主进程消息
     worker.on('message', message => {
         if (worker[WORKER_REALOD]) return;
-        if (message === exports.JH_GRACEFUL_DISCONNECT) {
-            debug(`refork worker, receive message 'jinghuan-graceful-disconnect'`);
+        if (message === util.JH_GRACEFUL_DISCONNECT) {
+            log(`refork worker, receive message 'jinghuan-graceful-disconnect'`);
             worker[WORKER_REALOD] = true;
-            exports.forkWorker(env).then(() => {
+            util.forkWorker(env).then(() => {
                 //
-                worker.send(exports.JH_GRACEFUL_FORK);
+                worker.send(util.JH_GRACEFUL_FORK);
             });
         }
     });
     
     // 子进程连线
     worker.once('online', () => {
-        debug(`worker online`);
+        log(`worker online`);
     });
     
     // 子进程断开
     worker.once('disconnect', () => {
         if (worker[WORKER_REALOD]) return;
-        debug(`worker disconnect`);
+        log(`worker disconnect`);
         worker[WORKER_REALOD] = true;
-        exports.forkWorker(env);
+        util.forkWorker(env);
     });
     
     // 子进程退出
     worker.once('exit', (code, signal) => {
         if (worker[WORKER_REALOD]) return;
-        debug(`worker exit, code:${code}, signal:${signal}`);
+        log(`worker exit, code:${code}, signal:${signal}`);
         worker[WORKER_REALOD] = true;
-        exports.forkWorker(env);
+        util.forkWorker(env);
     });
     
     // 子进程开始监听
@@ -101,3 +104,5 @@ exports.forkWorker = function (env = {}) {
     //
     return deferred.promise;
 };
+
+export default util;

@@ -1,14 +1,12 @@
-const path = require('path');
-//
-//const _ = require('lodash');
-const each = require('lodash/each');
+import path from "path"
+import each from "lodash/each"
+import assert from "assert"
+import loadFiles from "../helper/loadFiles"
+import helper from "../helper"
+import debug from 'debug';
+import interopRequire from '../helper/interopRequire';
 
-const assert = require('assert');
-const debug = require('debug')(`JH:core/loader/config[${process.pid}]`);
-//
-const interopRequire = require('./util.js').interopRequire;
-const loadFiles = require('../helper/loadFiles');
-const helper = require('../helper');
+const log = debug(`JH:core/loader/config[${process.pid}]`);
 
 /**
  * load config
@@ -25,7 +23,7 @@ class Config {
         configPaths.forEach(configPath => {
             const filepath = path.join(configPath, name);
             if (helper.isFile(filepath)) {
-                debug(`load file: ${filepath}`);
+                log(`load file: ${filepath}`);
                 config = helper.extend(config, require(filepath));
             }
         });
@@ -65,7 +63,7 @@ class Config {
                 ret[item[0]] = {};
             }
             const filepath = path.join(adapterPath, file);
-            debug(`load adapter file: ${filepath}`);
+            log(`load adapter file: ${filepath}`);
             ret[item[0]][item[1]] = interopRequire(filepath);
         });
         return ret;
@@ -166,4 +164,4 @@ class Config {
     
 }
 
-module.exports = Config;
+export default Config;

@@ -1,5 +1,5 @@
-const preg_quote = require('locutus/php/pcre/preg_quote');
-const implode = require('locutus/php/strings/implode');
+import preg_quote from "locutus/php/pcre/preg_quote"
+import implode from "locutus/php/strings/implode"
 
 class LexerSplitter {
     

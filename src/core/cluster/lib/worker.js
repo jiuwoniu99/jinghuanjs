@@ -1,7 +1,9 @@
-const util = require('./util.js');
-const cluster = require('cluster');
-const helper = require('../../helper');
-const debug = require('debug')(`JH:cluster/lib/worker[${process.pid}]`);
+import util from "./util.js"
+import cluster from "cluster"
+import helper from "../../helper"
+import debug from 'debug';
+
+const log = debug(`JH:cluster/lib/worker[${process.pid}]`);
 const KEEP_ALIVE = Symbol('keep-alive');
 const WORKER_RELOAD = Symbol('worker-reload');
 
@@ -69,21 +71,21 @@ class Worker {
         const killTimeout = this.options.processKillTimeout;
         if (killTimeout) {
             const timer = setTimeout(() => {
-                debug(`process exit by killed(timeout: ${killTimeout}ms), pid: ${process.pid}`);
+                log(`process exit by killed(timeout: ${killTimeout}ms), pid: ${process.pid}`);
                 process.exit(1);
             }, killTimeout);
             timer.unref && timer.unref();
         }
         const worker = cluster.worker;
-        debug(`start close server, pid: ${process.pid}`);
+        log(`start close server, pid: ${process.pid}`);
         
         
         this.server.close(() => {
-            debug(`server closed, pid: ${process.pid}`);
+            log(`server closed, pid: ${process.pid}`);
             try {
                 worker.disconnect();
             } catch (e) {
-                debug(`already disconnect, pid:${process.pid}`);
+                log(`already disconnect, pid:${process.pid}`);
             }
         });
     }
@@ -197,4 +199,4 @@ class Worker {
     }
 }
 
-module.exports = Worker;
+export default Worker;

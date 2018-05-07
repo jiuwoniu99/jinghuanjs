@@ -1,11 +1,9 @@
-const cluster = require('cluster');
-const events = require('events');
-const assert = require('assert');
-//const _ = require('lodash');
-//
-const util = require('./util.js');
-const helper = require('../../helper');
-//
+import cluster from "cluster"
+import events from "events"
+import assert from "assert"
+import util from "./util.js"
+import helper from "../../helper"
+
 const BIND_EVENT = Symbol('bind-event');
 const MESSENGER = 'jinghuan-messenger';
 const mapPromise = new Map();
@@ -163,4 +161,4 @@ class Messenger extends events {
     }
 }
 
-module.exports = Messenger;
+export default Messenger;

@@ -12,6 +12,7 @@ import debug from "debug";
 
 //
 debug.log = console.log.bind(console);
+//console.log(Cluster);
 
 /**
  * 应用程序启动入口文件

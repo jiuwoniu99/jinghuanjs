@@ -1,8 +1,8 @@
-const assert = require('assert');
-const debug = require('debug')(`JH:core/gc[${process.pid}]`);
-//const _ = require('lodash');
-//
-const helper = require('../helper');
+import assert from "assert"
+import helper from "../helper"
+import debug from 'debug';
+
+const log = debug(`JH:core/gc[${process.pid}]`);
 // min interval, 1 hour
 const MIN_STEP = 3600 * 1000;
 let intervalTimes = 0;
@@ -13,8 +13,8 @@ function gc(instance, interval = MIN_STEP, MIN_INTERVAL = MIN_STEP) {
     assert(instance && helper.isFunction(instance.gc), 'instance.gc must be a function');
     assert(instance && helper.isString(instance.gcType), 'instance.gcType must be a string');
     if (gcTypes[instance.gcType]) return;
-
-    gcTypes[instance.gcType] = function() {
+    
+    gcTypes[instance.gcType] = function () {
         if (helper.isFunction(interval)) {
             if (!interval()) return;
         } else {
@@ -22,10 +22,10 @@ function gc(instance, interval = MIN_STEP, MIN_INTERVAL = MIN_STEP) {
             const num = Math.floor(interval / MIN_INTERVAL);
             if (intervalTimes % num !== 0) return;
         }
-        debug(`run gc, type: ${instance.gcType}`);
+        log(`run gc, type: ${instance.gcType}`);
         instance.gc();
     };
-
+    
     if (!timerStart) {
         timerStart = true;
         const timer = setInterval(() => {
@@ -38,4 +38,4 @@ function gc(instance, interval = MIN_STEP, MIN_INTERVAL = MIN_STEP) {
     }
 }
 
-module.exports = gc;
+export default gc;

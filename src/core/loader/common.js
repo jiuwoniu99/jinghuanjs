@@ -1,10 +1,15 @@
-const path = require('path');
-//const _ = require('lodash');
-const debug = require('debug')(`JH:core/loader/common[${process.pid}]`);
-//
-const helper = require('../helper');
-const interopRequire = require('./util.js').interopRequire;
+import path from "path";
+import helper from "../helper";
+import debug from 'debug';
+//import util from './util'
+import interopRequire from '../helper/interopRequire';
 
+const log = debug(`JH:core/loader/common[${process.pid}]`);
+
+/**
+ *
+ * @type {{loadFiles(*=): {}, sort(*=): {}, load(*=, *=, *): {}}}
+ */
 const CommonLoader = {
     /**
      *
@@ -25,7 +30,7 @@ const CommonLoader = {
             if (helper.isFunction(fileExport)) {
                 fileExport.prototype.__filename = filepath;
             }
-            debug(`load file: ${filepath}`);
+            log(`load file: ${filepath}`);
             cache[name] = fileExport;
         });
         return cache;
@@ -88,4 +93,4 @@ const CommonLoader = {
     }
 };
 
-module.exports = CommonLoader;
+export default CommonLoader;

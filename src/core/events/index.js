@@ -1,8 +1,7 @@
-//
-//const _ = require('lodash');
-const debug = require('debug')(`JH:core/events[${process.pid}]`);
-const helper = require('../helper');
-//
+import helper from "../helper"
+import debug from 'debug';
+
+const log = debug(`JH:core/events[${process.pid}]`);
 const EVENTS = Symbol('events');
 
 /**
@@ -20,7 +19,7 @@ class Events {
      * @return {Promise<void>}
      */
     on(name, listener) {
-        debug(`on ${name}`);
+        log(`on ${name}`);
         if (!helper.isFunction(listener)) {
             throw TypeError('listener must be a function');
         }
@@ -35,7 +34,7 @@ class Events {
      * @return {Promise<void>}
      */
     async emit(name, ...args) {
-        debug(`emit ${name}`);
+        log(`emit ${name}`);
         let listeners = this[EVENTS][name];
         if (helper.isArray(listeners)) {
             for (let listener of listeners) {
@@ -53,7 +52,7 @@ class Events {
      * @return {Promise<void>}
      */
     un(name, listener) {
-        debug(`un ${name}`);
+        log(`un ${name}`);
         let listeners = this[EVENTS][name];
         if (helper.isArray(listeners)) {
             for (let i in listeners) {
@@ -74,4 +73,4 @@ class Events {
     }
 }
 
-module.exports = Events;
+export default Events;

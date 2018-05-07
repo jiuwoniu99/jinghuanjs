@@ -1,11 +1,11 @@
-const strlen = require('locutus/php/strings/strlen');
-const substr = require('locutus/php/strings/substr');
-const is_string = require('locutus/php/var/is_string');
-const count = require('locutus/php/array/count');
-const is_numeric = require('locutus/php/var/is_numeric');
-const array_values = require('locutus/php/array/array_values');
-const strtoupper = require('locutus/php/strings/strtoupper');
-const {preg_split} = require('../bridge');
+import strlen from "locutus/php/strings/strlen"
+import substr from "locutus/php/strings/substr"
+import is_string from "locutus/php/var/is_string"
+import count from "locutus/php/array/count"
+import is_numeric from "locutus/php/var/is_numeric"
+import array_values from "locutus/php/array/array_values"
+import strtoupper from "locutus/php/strings/strtoupper"
+import {preg_split} from "../bridge"
 import LexerSplitter from './LexerSplitter';
 
 class JSSQLLexer {

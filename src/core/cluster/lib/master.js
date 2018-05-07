@@ -1,8 +1,4 @@
-//const cluster = require('cluster');
-const util = require('./util.js');
-//const net = require('net');
-//const stringHash = require('string-hash');
-//const redis = require('redis');
+import util from "./util.js"
 
 let waitReloadWorkerTimes = 0;
 
@@ -76,7 +72,7 @@ class Master {
             waitReloadWorkerTimes++;
             return;
         }
-    
+        
         jinghuan.logger.info(`[Cluster] Reload Workers`);
         
         waitReloadWorkerTimes = 1;
@@ -149,4 +145,4 @@ class Master {
     }
 }
 
-module.exports = Master;
+export default Master;

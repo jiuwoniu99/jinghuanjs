@@ -1,7 +1,7 @@
-const helper = require('../helper');
-const knex = require('knex');
-const builder = require('knex/lib/query/builder');
-const compiler = require('knex/lib/query/compiler');
+//import helper from "../helper"
+import knex from "knex"
+import builder from "knex/lib/query/builder"
+//import compiler from "knex/lib/query/compiler"
 import {
     assign, bind, compact, groupBy, isEmpty, isString, isUndefined, map, omitBy,
     reduce
@@ -384,7 +384,7 @@ builder.prototype.sql = function (name) {
  * @param tableName 表名
  * @param typeName 配置名称
  */
-module.exports = function (tableName = null, typeName = 'default') {
+export default function (tableName = null, typeName = 'default') {
     
     //数据库配置
     let config = jinghuan.config(`database.${typeName}`);

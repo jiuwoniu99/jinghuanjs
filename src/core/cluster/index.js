@@ -1,12 +1,10 @@
+import util from "./lib/util";
 import Messenger from "./lib/messenger.js"
-
-let Worker = require('./lib/worker.js');
-let Master = require('./lib/master.js');
+import Worker from "./lib/worker.js"
+import Master from "./lib/master.js"
 
 let messenger = new Messenger();
 
 export default {
-    Worker,
-    Master,
-    messenger,
+    Worker, Master, messenger
 }

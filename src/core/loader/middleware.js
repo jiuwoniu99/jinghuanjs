@@ -1,12 +1,11 @@
-const path = require('path');
-//
-const assert = require('assert');
-const pathToRegexp = require('path-to-regexp');
-const debug = require('debug')(`JH:core/loader/middleware[${process.pid}]`);
-//const _ = require('lodash');
-//
-const helper = require('../helper');
-const interopRequire = require('./util.js').interopRequire;
+import path from "path"
+import assert from "assert"
+import pathToRegexp from "path-to-regexp"
+import helper from "../helper"
+import interopRequire from '../helper/interopRequire';
+import debug from 'debug';
+
+const log = debug(`JH:core/loader/middleware[${process.pid}]`);
 
 /**
  * 中间件加载器
@@ -127,7 +126,7 @@ class Middleware {
             const match = file.match(/(.+)\.\w+$/);
             if (match && match[1]) {
                 const filepath = path.join(middlewarePath, file);
-                debug(`load file: ${filepath}`);
+                log(`load file: ${filepath}`);
                 ret[match[1]] = this.interopRequire(filepath);
             }
         });
@@ -158,10 +157,10 @@ class Middleware {
         if (!helper.isFile(filepath)) {
             return [];
         }
-        debug(`load file: ${filepath}`);
+        log(`load file: ${filepath}`);
         const middlewares = this.interopRequire(filepath);
         return this.parse(middlewares, this.loadFiles(appPath, jinghuanPath), app);
     }
 }
 
-module.exports = Middleware;
+export default Middleware;

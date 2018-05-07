@@ -1,5 +1,6 @@
-const helper = require('../helper');
-const each = require('lodash/each');
+import helper from "../helper"
+
+//import each from "lodash/each"
 
 /**
  * config manage
@@ -12,7 +13,7 @@ class Config {
     constructor(config = {}) {
         this.config = config;
     }
-
+    
     /**
      *
      * @param name
@@ -38,7 +39,7 @@ class Config {
         });
         return config;
     }
-
+    
     /**
      * set config
      * set('name', 'value'), set('foo.bar', 'value')
@@ -80,4 +81,4 @@ function getConfigFn(configs) {
     };
 }
 
-module.exports = getConfigFn;
+export default getConfigFn;

@@ -3,21 +3,21 @@ const helper = require('../helper');
 /**
  * interop require
  */
-exports.interopRequire = function(obj, safe) {
-    if (helper.isString(obj)) {
-        if (safe) {
-            try {
-                obj = require(obj);
-            } catch (e) {
-                console.error(e);
-                obj = null;
-            }
-        } else {
-            obj = require(obj);
-        }
-    }
-    return obj && obj.__esModule ? obj.default : obj;
-};
+//exports.interopRequire = function(obj, safe) {
+//    if (helper.isString(obj)) {
+//        if (safe) {
+//            try {
+//                obj = require(obj);
+//            } catch (e) {
+//                console.error(e);
+//                obj = null;
+//            }
+//        } else {
+//            obj = require(obj);
+//        }
+//    }
+//    return obj && obj.__esModule ? obj.default : obj;
+//};
 
 /**
  * extend, support getter/setter
