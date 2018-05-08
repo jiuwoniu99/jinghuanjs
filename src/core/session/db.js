@@ -131,4 +131,4 @@ class DbSession {
     }
 }
 
-module.exports = DbSession;
+export default DbSession;

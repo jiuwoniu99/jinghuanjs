@@ -1,6 +1,7 @@
 import helper from "../helper"
 import path from "path"
 import debug from 'debug';
+import interopRequire from '../helper/interopRequire'
 
 const log = debug(`JH:core/loader/bootstrap[${process.pid}]`);
 
@@ -12,7 +13,7 @@ function loadBootstrap(appPath, modules, type = 'worker') {
     const filepath = path.join(bootstrapPath, `${type}.js`);
     if (helper.isFile(filepath)) {
         log(`load file: ${filepath}`);
-        return require(filepath);
+        return interopRequire(filepath);
     }
 }
 

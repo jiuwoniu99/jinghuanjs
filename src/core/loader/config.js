@@ -24,7 +24,7 @@ class Config {
             const filepath = path.join(configPath, name);
             if (helper.isFile(filepath)) {
                 log(`load file: ${filepath}`);
-                config = helper.extend(config, require(filepath));
+                config = helper.extend(config, interopRequire(filepath));
             }
         });
     }

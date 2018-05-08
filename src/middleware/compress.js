@@ -1,4 +1,5 @@
 import compress from 'koa-compress';
+import interopRequire from '../core/helper/interopRequire'
 
 /**
  *
@@ -12,7 +13,7 @@ function invokeCompress(options, app) {
      */
     return compress({
         threshold: 1,
-        flush: require('zlib').Z_SYNC_FLUSH
+        flush: interopRequire('zlib').Z_SYNC_FLUSH
     })
 }
 

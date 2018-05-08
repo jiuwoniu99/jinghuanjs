@@ -1,9 +1,6 @@
-//
-const assert = require('assert');
-//const _ = require('lodash');
-//
-const helper = require('../../helper');
-//
+import assert from "assert"
+import helper from "../../helper"
+
 const SESSION = Symbol('jinghuan-context-session');
 
 /**
@@ -48,7 +45,7 @@ class Session {
         assert(helper.isFunction(this.options.handle), 'session.handle must be a function');
         this.cookieOptions = Object.assign({}, defaultCookieOptions, ctx.config('cookie'), this.options.cookie);
     }
-
+    
     /**
      * get session instance
      */
@@ -84,7 +81,7 @@ class Session {
         }
         return this.ctx[SESSION];
     }
-
+    
     /**
      *
      * @param name
