@@ -1,6 +1,7 @@
-const assert = require('assert');
+import assert from "assert"
+import time from "locutus/php/datetime/time"
+
 const initSessionData = Symbol('jinghuan-session-db-init');
-const time = require('locutus/php/datetime/time');
 
 /**
  *

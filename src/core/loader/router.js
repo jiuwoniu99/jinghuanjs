@@ -1,13 +1,19 @@
 //
-const path = require('path');
-const assert = require('assert');
-const debug = require('debug')(`JH:/core/loader/router[${process.pid}]`);
-//const _ = require('lodash');
-//
-const interopRequire = require('./util.js').interopRequire;
-const helper = require('../helper');
-const RouterLoader = {
+import path from "path"
+import assert from "assert"
+import helper from "../helper";
+import debug from 'debug';
+import interopRequire from '../helper/interopRequire';
 
+const log = debug(`JH:/core/loader/router[${process.pid}]`);
+
+
+/**
+ *
+ * @type {{load(*=, *): *}}
+ */
+const RouterLoader = {
+    
     /**
      * route loader
      */
@@ -17,12 +23,12 @@ const RouterLoader = {
             if (!helper.isFile(commonRouterFile)) {
                 return [];
             }
-            debug(`load file: ${commonRouterFile}`);
+            log(`load file: ${commonRouterFile}`);
             const commonRouter = interopRequire(commonRouterFile);
             if (helper.isArray(commonRouter)) {
                 return commonRouter;
             }
-
+            
             /**
              *
              */
@@ -37,7 +43,7 @@ const RouterLoader = {
                     commonRouter[name].rules = commonRouter[name].rules || [];
                     continue;
                 }
-                debug(`load file: ${moduleRouterFile}`);
+                log(`load file: ${moduleRouterFile}`);
                 const moduleRouter = interopRequire(moduleRouterFile);
                 assert(helper.isArray(moduleRouter), `${name}/config/router.js must be an array`);
                 commonRouter[name].rules = moduleRouter;
@@ -48,7 +54,7 @@ const RouterLoader = {
             if (!helper.isFile(routerFile)) {
                 return [];
             }
-            debug(`load file: ${routerFile}`);
+            log(`load file: ${routerFile}`);
             const router = interopRequire(routerFile);
             assert(helper.isArray(router), 'config/router must be an array');
             return router;

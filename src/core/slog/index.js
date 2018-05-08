@@ -1,27 +1,26 @@
-const php = require('locutus/php');
-const isString = require('lodash/isString');
-const isArray = require('lodash/isArray');
-const isObject = require('lodash/isObject');
+import date from "locutus/php/datetime/date"
+import isString from "lodash/isString"
+//import isArray from "lodash/isArray"
+//import isObject from "lodash/isObject"
+import http from "http"
 
-const http = require('http');
-
-const style = {
-    error: 'font-size:12px;color:#d9534f;',
-    info: 'font-size:12px;color:#00a65a;',
-    debug: 'font-size:12px;color:#337ab7;',
-    warn: 'font-size:12px;color:#f0ad4e;'
-};
+//const style = {
+//    error: 'font-size:12px;color:#d9534f;',
+//    info: 'font-size:12px;color:#00a65a;',
+//    debug: 'font-size:12px;color:#337ab7;',
+//    warn: 'font-size:12px;color:#f0ad4e;'
+//};
 
 const logger = (jinghuan && jinghuan.logger) || console;
 const trigger = 'jinghuanjs';
+
 /**
  * Slog 远程日志类
  */
-module.exports = class Slog {
+class Slog {
     
     /**
      *
-     * @param config
      * @param ctx
      */
     constructor(ctx) {
@@ -107,7 +106,7 @@ module.exports = class Slog {
         let config = jinghuan.config('slog') || {};
         
         let {ctx} = this;
-        let info = `[REQUEST] ${php.datetime.date('Y-m-d H:i:s')} ${ctx.method} ${ctx.host}${ctx.url} ${ctx.status} ${time}ms`;
+        let info = `[REQUEST] ${date('Y-m-d H:i:s')} ${ctx.method} ${ctx.host}${ctx.url} ${ctx.status} ${time}ms`;
         
         logger.info(info);
         
@@ -125,7 +124,7 @@ module.exports = class Slog {
             'logs': this.logInfo,
             'force_client_id': config.force_client_id,
             'url': `${ctx.host}${ctx.url} ${ctx.status} ${time}ms`,
-            'file': config.serverLog ? `${jinghuan.env}/${php.datetime.date('Y-m-d')}.log` : false,
+            'file': config.serverLog ? `${jinghuan.env}/${date('Y-m-d')}.log` : false,
             'ip': this.ctx.ip,
         });
         
@@ -148,8 +147,4 @@ module.exports = class Slog {
     }
     
 };
-
-//module.exports = function (ctx, options, app) {
-//	// 加载 Slog
-//	ctx.slog = new Slog(options, ctx);
-//}
+export default Slog;

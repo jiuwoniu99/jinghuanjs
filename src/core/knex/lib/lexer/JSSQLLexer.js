@@ -5,8 +5,9 @@ import count from "locutus/php/array/count"
 import is_numeric from "locutus/php/var/is_numeric"
 import array_values from "locutus/php/array/array_values"
 import strtoupper from "locutus/php/strings/strtoupper"
-import {preg_split} from "../bridge"
-import LexerSplitter from './LexerSplitter';
+import LexerSplitter from './LexerSplitter'
+import bridge from "../bridge.js"
+
 
 class JSSQLLexer {
     constructor() {
@@ -33,7 +34,7 @@ class JSSQLLexer {
         if (!is_string(_sql)) {
             throw new Error("no SQL string to parse: \n" + _sql);
         }
-        _tokens = preg_split(this.splitters.getSplittersRegexPattern(), _sql, null, "PREG_SPLIT_DELIM_CAPTURE" | "PREG_SPLIT_NO_EMPTY");
+        _tokens = bridge.preg_split(this.splitters.getSplittersRegexPattern(), _sql);
         _tokens = this.concatComments(_tokens);
         _tokens = this.concatEscapeSequences(_tokens);
         _tokens = this.balanceBackticks(_tokens);

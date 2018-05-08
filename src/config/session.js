@@ -1,8 +1,8 @@
-const fileSession = require('../core/session/file');
-const dbSession = require('../core/session/db');
-const path = require('path');
+import fileSession from "../core/session/file"
+import dbSession from "../core/session/db"
+import path from "path"
 
-module.exports = {
+export default {
     type: 'file',
     file: {
         handle: fileSession,

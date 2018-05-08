@@ -1,9 +1,7 @@
-const path = require('path');
-const interopRequire = require('./util.js').interopRequire;
-const debug = require('debug')(`JH:core/loader/events[${process.pid}]`);
-const helper = require('../helper');
-//const _ = require('lodash');
-const each = require('lodash/each');
+import path from "path"
+import {interopRequire} from './util'
+import helper from "../helper"
+import each from "lodash/each"
 
 /**
  *
@@ -21,7 +19,7 @@ const events = {};
  *
  * @return {{}}
  */
-module.exports = function load() {
+export default function load() {
     let {APP_PATH} = jinghuan;
     let {modules} = jinghuan.app;
     

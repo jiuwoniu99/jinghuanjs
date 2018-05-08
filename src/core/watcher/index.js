@@ -1,11 +1,11 @@
-const fs = require('fs');
-const path = require('path');
+import fs from "fs"
+import path from "path"
+import helper from "../helper"
+import assert from "assert"
+import debug from 'debug';
+
 //
-const helper = require('../helper');
-const assert = require('assert');
-//const _ = require('lodash');
-//
-const debug = require('debug')(`JH:core/watcher[${process.pid}]`);
+const log = debug(`JH:core/watcher[${process.pid}]`);
 
 /**
  * default options
@@ -42,15 +42,15 @@ class Watcher {
     constructor(options, cb) {
         assert(helper.isFunction(cb), 'callback must be a function');
         options = this.buildOptions(options);
-
-        debug(`srcPath: ${options.srcPath}`);
-        debug(`diffPath: ${options.diffPath}`);
-
+    
+        log(`srcPath: ${options.srcPath}`);
+        log(`diffPath: ${options.diffPath}`);
+        
         this.options = options;
         this.cb = cb;
         this.lastMtime = {};
     }
-
+    
     /**
      *
      * @param options
@@ -79,7 +79,7 @@ class Watcher {
         }
         return options;
     }
-
+    
     /**
      *
      * @return {Array}
@@ -128,7 +128,7 @@ class Watcher {
         });
         return changedFiles;
     }
-
+    
     /**
      *
      * @param srcFiles
@@ -149,7 +149,7 @@ class Watcher {
             }
         });
     }
-
+    
     /**
      * remove file extname
      * @param {String} file
@@ -157,7 +157,7 @@ class Watcher {
     removeFileExtName(file) {
         return file.replace(/\.\w+$/, '');
     }
-
+    
     /**
      * watch files change
      */
@@ -166,7 +166,7 @@ class Watcher {
             const changedFiles = this.getChangedFiles();
             if (changedFiles.length) {
                 changedFiles.forEach(item => {
-                    debug(`file changed: path=${item.path}, file=${item.file}`);
+                    log(`file changed: path=${item.path}, file=${item.file}`);
                     this.cb(item);
                 });
             }
@@ -176,4 +176,4 @@ class Watcher {
     }
 }
 
-module.exports = Watcher;
+export default Watcher;

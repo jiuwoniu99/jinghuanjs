@@ -1,11 +1,11 @@
-const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
-const net = require('net');
-const cluster = require('cluster');
-const uuid = require('uuid');
-const ms = require('ms');
-const {
+import fs from "fs"
+import path from "path"
+import crypto from "crypto"
+import net from "net"
+import cluster from "cluster"
+import uuid from "uuid"
+import ms from "ms"
+import {
     isArray,
     isBoolean,
     isNull,
@@ -21,7 +21,8 @@ const {
     isFunction,
     isPrimitive,
     isBuffer
-} = require('core-util-is');
+} from 'core-util-is';
+
 
 const fsRmdir = promisify(fs.rmdir, fs);
 const fsUnlink = promisify(fs.unlink, fs);
@@ -150,7 +151,7 @@ exports.camelCase = camelCase;
  * @return {String}     []
  */
 function snakeCase(str) {
-    return str.replace(/([^A-Z])([A-Z])/g, function($0, $1, $2) {
+    return str.replace(/([^A-Z])([A-Z])/g, function ($0, $1, $2) {
         return $1 + '_' + $2.toLowerCase();
     });
 };
@@ -277,34 +278,34 @@ exports.escapeHtml = escapeHtml;
  * @param  {Date} date []
  * @return {String}      []
  */
-function datetime(date = new Date(), format = 'YYYY-MM-DD HH:mm:ss') {
-    const fn = d => {
-        return ('0' + d).slice(-2);
-    };
-
-    const d = new Date(date);
-    const formats = {
-        YYYY: d.getFullYear(),
-        MM: fn(d.getMonth() + 1),
-        DD: fn(d.getDate()),
-        HH: fn(d.getHours()),
-        mm: fn(d.getMinutes()),
-        ss: fn(d.getSeconds())
-    };
-
-    return format.replace(/([a-z])\1+/ig, a => {
-        return formats[a] || a;
-    });
-}
-
-exports.datetime = datetime;
+//function datetime(date = new Date(), format = 'YYYY-MM-DD HH:mm:ss') {
+//    const fn = d => {
+//        return ('0' + d).slice(-2);
+//    };
+//
+//    const d = new Date(date);
+//    const formats = {
+//        YYYY: d.getFullYear(),
+//        MM: fn(d.getMonth() + 1),
+//        DD: fn(d.getDate()),
+//        HH: fn(d.getHours()),
+//        mm: fn(d.getMinutes()),
+//        ss: fn(d.getSeconds())
+//    };
+//
+//    return format.replace(/([a-z])\1+/ig, a => {
+//        return formats[a] || a;
+//    });
+//}
+//
+//exports.datetime = datetime;
 
 /**
  * generate uuid
  * @param  {String} version [uuid RFC version]
  * @return {String}         []
  */
-exports.uuid = function(version) {
+exports.uuid = function (version) {
     if (version === 'v1') return uuid.v1();
     return uuid.v4();
 };
@@ -352,7 +353,7 @@ exports.parseAdapterConfig = (config = {}, ...extConfig) => {
 /**
  * transform humanize time to ms
  */
-exports.ms = function(time) {
+exports.ms = function (time) {
     if (typeof time === 'number') return time;
     const result = ms(time);
     if (result === undefined) {
@@ -364,7 +365,7 @@ exports.ms = function(time) {
 /**
  * omit some props in object
  */
-exports.omit = function(obj, props) {
+exports.omit = function (obj, props) {
     if (exports.isString(props)) {
         props = props.split(',');
     }

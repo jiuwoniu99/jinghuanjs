@@ -1,7 +1,7 @@
-const helper = require('./index');
-const path = require('path');
+import helper from "./index"
+import path from "path"
 
-module.exports = function(dir, ext) {
+export default function(dir, ext) {
     const ragexp = new RegExp('\\.' + ext + '$');
     const files = helper.getdirFiles(dir).filter(file => {
         return ragexp.test(file);

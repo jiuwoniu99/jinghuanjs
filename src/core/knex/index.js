@@ -1,19 +1,15 @@
-//import helper from "../helper"
 import knex from "knex"
 import builder from "knex/lib/query/builder"
-//import compiler from "knex/lib/query/compiler"
 import {
     assign, bind, compact, groupBy, isEmpty, isString, isUndefined, map, omitBy,
     reduce
 } from 'lodash';
 import strtolower from 'locutus/php/strings/strtolower';
 import trim from 'locutus/php/strings/trim';
-
+import debug from 'debug';
 import JSSQLLexer from './lib/lexer/JSSQLLexer';
 
-const log = require('debug')('code.knex');
-//
-
+const log = debug('code.knex');
 const hasKnex = {};
 
 //var components = ['columns', 'join', 'where', 'union', 'group', 'having', 'order', 'limit', 'offset', 'lock'];

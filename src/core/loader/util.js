@@ -1,28 +1,7 @@
-const helper = require('../helper');
-//const _ = require('lodash');
-/**
- * interop require
- */
-//exports.interopRequire = function(obj, safe) {
-//    if (helper.isString(obj)) {
-//        if (safe) {
-//            try {
-//                obj = require(obj);
-//            } catch (e) {
-//                console.error(e);
-//                obj = null;
-//            }
-//        } else {
-//            obj = require(obj);
-//        }
-//    }
-//    return obj && obj.__esModule ? obj.default : obj;
-//};
-
 /**
  * extend, support getter/setter
  */
-exports.extend = function(target, source) {
+exports.extend = function (target, source) {
     const properties = Object.getOwnPropertyNames(source).concat(Object.getOwnPropertySymbols(source));
     const length = properties.length;
     for (let i = 0; i < length; i++) {

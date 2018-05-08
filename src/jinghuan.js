@@ -1,15 +1,15 @@
-import Koa from "koa"
-import bluebird from "bluebird"
-import assert from "assert"
-import log4js from "log4js"
-import jwt from "jsonwebtoken"
-import pkg from "../package.json"
-import helper from "./core/helper"
-
-const messenger = require('./core/cluster').messenger;
-
+import Koa from "koa";
+import bluebird from "bluebird";
+import assert from "assert";
+import log4js from "log4js";
+import jwt from "jsonwebtoken";
+import pkg from "../package.json";
+import helper from "./core/helper";
+import {messenger} from "./core/cluster";
 import events from "./core/events"
+import { render } from "react-dom";
 
+console.log(render)
 /**
  * use bluebird instead of default Promise
  */
