@@ -5,7 +5,9 @@ import net from "net"
 import cluster from "cluster"
 import uuid from "uuid"
 import ms from "ms"
-import {
+import core from 'core-util-is';
+
+const {
     isArray,
     isBoolean,
     isNull,
@@ -21,9 +23,7 @@ import {
     isFunction,
     isPrimitive,
     isBuffer
-} from 'core-util-is';
-
-
+} = core;
 const fsRmdir = promisify(fs.rmdir, fs);
 const fsUnlink = promisify(fs.unlink, fs);
 const fsReaddir = promisify(fs.readdir, fs);

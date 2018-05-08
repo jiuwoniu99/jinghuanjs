@@ -5,11 +5,9 @@ import log4js from "log4js";
 import jwt from "jsonwebtoken";
 import pkg from "../package.json";
 import helper from "./core/helper";
-import {messenger} from "./core/cluster";
-import events from "./core/events"
-import { render } from "react-dom";
+import c from "./core/cluster";
+import events from "./core/events";
 
-console.log(render)
 /**
  * use bluebird instead of default Promise
  */
@@ -41,7 +39,7 @@ jinghuan.version = pkg.version;
  * messenger
  * @type {Object}
  */
-jinghuan.messenger = messenger;
+jinghuan.messenger = c.messenger;
 
 /**
  * base controller class

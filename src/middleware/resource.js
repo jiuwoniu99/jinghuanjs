@@ -1,5 +1,5 @@
 import debug from 'debug';
-import {resolve} from 'path';
+import path from 'path';
 import assert from "assert"
 import helper from "../core/helper"
 import send from "koa-send"
@@ -67,7 +67,7 @@ function invokeResource(options) {
     const root = options.root;
     assert(root, 'root directory is required to serve files');
     log('static "%s" %j', root, options);
-    options.root = resolve(root);
+    options.root = path.resolve(root);
     
     let publicPath = options.publicPath;
     assert(helper.isRegExp(publicPath) || helper.isString(publicPath), 'publicPath must be regexp or string');

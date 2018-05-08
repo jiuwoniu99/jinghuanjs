@@ -1,5 +1,5 @@
 import path from "path"
-import {interopRequire} from './util'
+import interopRequire from '../helper/interopRequire'
 import helper from "../helper"
 import each from "lodash/each"
 

@@ -1,11 +1,8 @@
 import knex from "knex"
 import builder from "knex/lib/query/builder"
-import {
-    assign, bind, compact, groupBy, isEmpty, isString, isUndefined, map, omitBy,
-    reduce
-} from 'lodash';
 import strtolower from 'locutus/php/strings/strtolower';
 import trim from 'locutus/php/strings/trim';
+import isString from 'lodash/isString';
 import debug from 'debug';
 import JSSQLLexer from './lib/lexer/JSSQLLexer';
 

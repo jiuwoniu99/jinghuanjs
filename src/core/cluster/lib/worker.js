@@ -154,8 +154,8 @@ class Worker {
         let rejectTimes = 0;
         process.on('unhandledRejection', err => {
             rejectTimes++;
-            jinghuan.logger(`unhandledRejection, times: ${rejectTimes}, pid: ${process.pid}`);
-            jinghuan.logger(err);
+            jinghuan.logger.error(`unhandledRejection, times: ${rejectTimes}, pid: ${process.pid}`);
+            jinghuan.logger.error(err);
             const flag = this.options.onUnhandledRejection(err);
             if (rejectTimes === 1 && flag) {
                 this.disconnectWorker(true);
