@@ -17,17 +17,15 @@ function invokeStart(options, app) {
         try {
             if (!jinghuan.HOST || jinghuan.HOST === ctx.hostname) {
                 await next();
-                let et = new Date().getTime();
-                ctx.slog.send(et - st);
+                await ctx.events.emit('finish');
             } else {
-                let et = new Date().getTime();
                 ctx.status = 404;
-                ctx.slog.send(et - st);
             }
         } catch (ex) {
-            let et = new Date().getTime();
             ctx.status = 500;
             ctx.slog.error(ex);
+        } finally {
+            let et = new Date().getTime();
             ctx.slog.send(et - st);
         }
     };

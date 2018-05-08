@@ -6,7 +6,7 @@ import isString from 'lodash/isString';
  * @param safe
  * @return {*}
  */
-export default function (obj, safe) {
+export default function (obj, safe = true) {
     if (isString(obj)) {
         if (safe) {
             try {

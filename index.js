@@ -1,5 +1,11 @@
 const path = require('path');
+const sms = require('source-map-support');
+sms.install();
 
+/**
+ *
+ * @param option
+ */
 module.exports = function (option) {
     
     const filename = process.mainModule.filename;

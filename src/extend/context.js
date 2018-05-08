@@ -1,6 +1,5 @@
 import path from "path";
 import fs from "fs";
-//
 import assert from "assert";
 import Cookies from "cookies";
 import url from "url";
@@ -10,6 +9,7 @@ import helper from "../core/helper";
 import Slog from "../core/slog";
 import knex from "../core/knex";
 import session from "../core/session";
+import events from '../core/events';
 //
 const PARAM = Symbol('context-param');
 const POST = Symbol('context-post');
@@ -19,7 +19,7 @@ const COOKIE_STORE = Symbol('cookie-store');
 /**
  * extend context
  */
-module.exports = {
+export default {
     /**
      * get userAgent header
      */
@@ -345,4 +345,10 @@ module.exports = {
     get session() {
         return session;
     },
+    get events() {
+        if (!this._events) {
+            this._events = new events();
+        }
+        return this._events;
+    }
 };

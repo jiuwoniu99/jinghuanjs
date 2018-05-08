@@ -32,7 +32,7 @@ class DbSession {
         
         //
         this.ctx = ctx;
-        this.ctx.res.once('finish', async () => {
+        this.ctx.events.on('finish', async () => {
             await this.flush();
         });
     }
