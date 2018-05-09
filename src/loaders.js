@@ -43,6 +43,7 @@ class Loaders {
      * 加载中间件
      */
     loadMiddleware() {
+        
         const middlewares = this.loader.loadMiddleware(jinghuan.app);
         middlewares.forEach(middleware => {
             jinghuan.app.use(middleware);

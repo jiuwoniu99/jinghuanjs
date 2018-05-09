@@ -223,6 +223,7 @@ module.exports = class Application {
                 jinghuan.logger.info(`[Worker] JinghuanJs version: ${jinghuan.version}`);
                 jinghuan.logger.info(`[Worker] Enviroment: ${jinghuan.env}`);
                 jinghuan.logger.info(`[Worker] Source: ${jinghuan.source}`);
+                jinghuan.logger.info(`[Worker] Middleware: [${jinghuan.middlewares.join(',')}]`);
                 jinghuan.logger.info(`==================================================================================`);
                 jinghuan.app.emit('appReady');
             });

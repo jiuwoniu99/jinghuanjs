@@ -4,6 +4,7 @@ import pathToRegexp from "path-to-regexp"
 import helper from "../helper"
 import interopRequire from '../helper/interopRequire';
 import debug from 'debug';
+import keys from 'locutus/php/array/array_keys';
 
 const log = debug(`JH:core/loader/middleware[${process.pid}]`);
 
@@ -135,31 +136,51 @@ class Middleware {
     
     /**
      * 加载系统和应用程序的中间件列表
-     * @param appPath
-     * @param jinghuanPath
-     * @return {*|Object}
+     * @return {*}
      */
-    loadFiles(appPath, jinghuanPath) {
+    loadFiles() {
+        
         const appMiddlewarePath = path.join(jinghuan.ROOT_PATH, jinghuan.source, '/common/middleware');
-        return helper.extend({}, this.getFiles(path.join(jinghuanPath, 'middleware')), this.getFiles(appMiddlewarePath));
+        const jhMiddlewarePath = path.join(__dirname, '../../middleware');
+        
+        return helper.extend({},
+            this.getFiles(jhMiddlewarePath),
+            this.getFiles(appMiddlewarePath)
+        );
     }
     
     /**
      * 加载解析中间件
-     * @param appPath
-     * @param jinghuanPath
-     * @param modules
      * @param app
      * @return {*}
      */
-    load(appPath, jinghuanPath, modules, app) {
-        let filepath = path.join(jinghuan.ROOT_PATH, jinghuan.source, '/common/bootstrap/middleware.js');
-        if (!helper.isFile(filepath)) {
-            return [];
+    load(app) {
+        
+        let middlewares = jinghuan.config('middleware');
+        
+        if (!middlewares) {
+            let filepath = path.join(jinghuan.ROOT_PATH, jinghuan.source, '/common/bootstrap/middleware.js');
+            
+            if (!helper.isFile(filepath)) {
+                return [];
+            }
+            log(`load file: ${filepath}`);
+            
+            middlewares = this.interopRequire(filepath);
         }
-        log(`load file: ${filepath}`);
-        const middlewares = this.interopRequire(filepath);
-        return this.parse(middlewares, this.loadFiles(appPath, jinghuanPath), app);
+        let ms = [];
+        
+        middlewares.map((v, k) => {
+            ms.push(v.handle);
+        });
+        
+        Object.defineProperty(jinghuan, 'middlewares', {
+            get() {
+                return ms;
+            }
+        });
+        
+        return this.parse(middlewares, this.loadFiles(), app);
     }
 }
 

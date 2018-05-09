@@ -13,11 +13,9 @@ function invokeStart(options, app) {
      */
     return async (ctx, next) => {
         let st = new Date().getTime();
-        
         try {
             if (!jinghuan.HOST || jinghuan.HOST === ctx.hostname) {
                 await next();
-                //await ctx.events.emit('finish');
             } else {
                 ctx.status = 404;
             }

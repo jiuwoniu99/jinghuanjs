@@ -68,9 +68,11 @@ class Loader {
     
     /**
      * 加载中间件
+     * @param app
+     * @return {*}
      */
     loadMiddleware(app) {
-        return (new Middleware()).load(jinghuan.APP_PATH, jinghuan.JH_PATH, jinghuan.app.modules, app);
+        return (new Middleware()).load(app);
     }
     
     /**

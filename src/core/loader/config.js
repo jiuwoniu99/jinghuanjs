@@ -122,11 +122,6 @@ class Config {
         
         let {ROOT_PATH, JH_PATH, env} = jinghuan;
         
-        // let appPath = jinghuan.APP_PATH;
-        // let jinghuanPath = jinghuan.JH_PATH;
-        // let env = jinghuan.env;
-        // let modules = jinghuan.app.modules;
-        
         // 核心配置文件
         const jinghuanConfig = this.loadConfigFile(path.join(JH_PATH, 'config'));
         
@@ -143,9 +138,7 @@ class Config {
         
         const config = this.loadConfig(paths, env);
         
-        const result = helper.extend({}, config, jinghuanConfig, commonConfig, envConfig, true);
-        
-        return result;
+        return helper.extend({}, config, jinghuanConfig, commonConfig, envConfig, true);
     }
     
     /**
