@@ -1,6 +1,7 @@
 const symbol = Symbol('api');
 const action = function (props) {
     return function (target, name, descriptor) {
+        //console.log({target, name, descriptor})
         let {initializer, value} = descriptor;
         // console.log(target, name, descriptor);
         

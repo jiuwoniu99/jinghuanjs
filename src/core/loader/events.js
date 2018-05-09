@@ -1,6 +1,4 @@
 import path from "path"
-import interopRequire from '../helper/interopRequire'
-//import helper from "../helper"
 import each from "lodash/each"
 import loadFiles from '../helper/loadFiles';
 
@@ -16,7 +14,7 @@ export default function load() {
     each(modules, (val) => {
         let files = loadFiles(path.join(APP_PATH, val, 'events'), 'js')
         each(files, (file, name) => {
-            let event = interopRequire(file);
+            let event = require(file);
             events[name] = events[name] || {};
             events[name][event.index] = event.handle;
             if (!jinghuan.events.isEvent(name)) {

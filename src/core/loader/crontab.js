@@ -1,5 +1,4 @@
 const path = require('path');
-const interopRequire = require('./util.js').interopRequire;
 const helper = require('../helper');
 const debug = require('debug')(`JH:core/loader/crontab[${process.pid}]`);
 
@@ -12,7 +11,7 @@ module.exports = function loader(appPath, modules) {
         const filepath = path.join(appPath, `${m}/config/crontab.js`);
         if (helper.isFile(filepath)) {
             debug(`load file: ${filepath}`);
-            const data = interopRequire(filepath, true) || [];
+            const data = require(filepath, true) || [];
             crontab = crontab.concat(data);
         }
     });

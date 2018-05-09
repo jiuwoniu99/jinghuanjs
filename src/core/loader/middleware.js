@@ -2,9 +2,7 @@ import path from "path"
 import assert from "assert"
 import pathToRegexp from "path-to-regexp"
 import helper from "../helper"
-import interopRequire from '../helper/interopRequire';
 import debug from 'debug';
-import keys from 'locutus/php/array/array_keys';
 
 const log = debug(`JH:core/loader/middleware[${process.pid}]`);
 
@@ -13,14 +11,6 @@ const log = debug(`JH:core/loader/middleware[${process.pid}]`);
  */
 class Middleware {
     
-    /**
-     *
-     * @param path
-     * @return {*}
-     */
-    interopRequire(path) {
-        return interopRequire(path);
-    }
     
     /**
      * check url matched
@@ -128,7 +118,7 @@ class Middleware {
             if (match && match[1]) {
                 const filepath = path.join(middlewarePath, file);
                 log(`load file: ${filepath}`);
-                ret[match[1]] = this.interopRequire(filepath);
+                ret[match[1]] = require(filepath);
             }
         });
         return ret;
@@ -166,7 +156,7 @@ class Middleware {
             }
             log(`load file: ${filepath}`);
             
-            middlewares = this.interopRequire(filepath);
+            middlewares = this.require(filepath);
         }
         let ms = [];
         

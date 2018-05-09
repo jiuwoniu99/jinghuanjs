@@ -1,8 +1,6 @@
 import path from "path";
 import helper from "../helper";
 import debug from 'debug';
-//import util from './util'
-import interopRequire from '../helper/interopRequire';
 
 const log = debug(`JH:core/loader/common[${process.pid}]`);
 
@@ -25,7 +23,7 @@ const CommonLoader = {
             // replace \\ to / in windows
             const name = file.replace(/\\/g, '/').replace(/\.js$/, '');
             const filepath = path.join(dir, file);
-            const fileExport = interopRequire(filepath);
+            const fileExport = require(filepath);
             // add __filename to export when is class
             if (helper.isFunction(fileExport)) {
                 fileExport.prototype.__filename = filepath;

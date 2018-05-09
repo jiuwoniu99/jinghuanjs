@@ -35,7 +35,7 @@ module.exports = function (option) {
                 }
                 return false;
             },
-            cache: true,
+            cache: false,
             "presets": [
                 [
                     "env",
@@ -46,10 +46,12 @@ module.exports = function (option) {
                     }
                 ],
                 "react",
-                "stage-0"
+                "stage-0",
             ],
             "plugins": [
-                "transform-decorators-legacy"
+                require('babel-plugin-interop-require'),
+                "transform-decorators-legacy",
+            
             ],
             "babelrc": false,
         });

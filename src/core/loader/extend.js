@@ -1,8 +1,6 @@
 import path from "path"
 import helper from "../helper"
-//import assert from "assert"
 import util from "./util.js"
-import interopRequire from '../helper/interopRequire';
 import debug from 'debug';
 
 const log = debug(`JH:core/loader/extend[${process.pid}]`);
@@ -43,7 +41,7 @@ const ExtendLoader = {
                 return;
             }
             log(`load file: ${filepath}`);
-            assign(type, interopRequire(filepath));
+            assign(type, require(filepath));
         });
         
         // application extend
@@ -53,7 +51,7 @@ const ExtendLoader = {
         //         return;
         //     }
         //     debug(`load file: ${filepath}`);
-        //     assign(type, interopRequire(filepath));
+        //     assign(type, require(filepath));
         // });
         return ret;
     }

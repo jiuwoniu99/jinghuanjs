@@ -4,7 +4,6 @@ import assert from "assert"
 import loadFiles from "../helper/loadFiles"
 import helper from "../helper"
 import debug from 'debug';
-import interopRequire from '../helper/interopRequire';
 
 const log = debug(`JH:core/loader/config[${process.pid}]`);
 
@@ -24,7 +23,7 @@ class Config {
             const filepath = path.join(configPath, name);
             if (helper.isFile(filepath)) {
                 log(`load file: ${filepath}`);
-                config = helper.extend(config, interopRequire(filepath));
+                config = helper.extend(config, require(filepath));
             }
         });
     }
@@ -64,7 +63,7 @@ class Config {
             }
             const filepath = path.join(adapterPath, file);
             log(`load adapter file: ${filepath}`);
-            ret[item[0]][item[1]] = interopRequire(filepath);
+            ret[item[0]][item[1]] = require(filepath);
         });
         return ret;
     }
@@ -150,7 +149,7 @@ class Config {
         const configFiles = loadFiles(configPath, 'js');
         const config = {};
         each(configFiles, (path, name) => {
-            config[name] = interopRequire(path);
+            config[name] = require(path);
         });
         return config;
     }

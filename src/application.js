@@ -9,6 +9,7 @@ import Watcher from "./core/watcher";
 import Loaders from "./loaders.js";
 import Cluster from "./core/cluster";
 import debug from "debug";
+import action from '../props/action'
 
 //
 debug.log = console.log.bind(console);
@@ -86,6 +87,7 @@ module.exports = class Application {
      *
      * @param err
      */
+    @action()
     notifier(err) {
         if (!this.options.notifier) {
             return;

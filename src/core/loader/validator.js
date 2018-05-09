@@ -1,6 +1,5 @@
 import path from "path"
 import debug from 'debug';
-import interopRequire from '../helper/interopRequire';
 
 const log = debug(`JH:core/loader/validator[${process.pid}]`);
 
@@ -15,6 +14,6 @@ module.exports = function load(appPath, modules) {
         filepath = path.join(appPath, 'config/validator.js');
     }
     log(`load file: ${filepath}`);
-    const data = interopRequire(filepath, true) || {};
+    const data = require(filepath, true) || {};
     return data;
 };

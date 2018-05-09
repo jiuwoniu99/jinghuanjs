@@ -1,9 +1,7 @@
-//
 import path from "path"
 import assert from "assert"
 import helper from "../helper";
 import debug from 'debug';
-import interopRequire from '../helper/interopRequire';
 
 const log = debug(`JH:/core/loader/router[${process.pid}]`);
 
@@ -24,7 +22,7 @@ const RouterLoader = {
                 return [];
             }
             log(`load file: ${commonRouterFile}`);
-            const commonRouter = interopRequire(commonRouterFile);
+            const commonRouter = require(commonRouterFile);
             if (helper.isArray(commonRouter)) {
                 return commonRouter;
             }
@@ -44,7 +42,7 @@ const RouterLoader = {
                     continue;
                 }
                 log(`load file: ${moduleRouterFile}`);
-                const moduleRouter = interopRequire(moduleRouterFile);
+                const moduleRouter = require(moduleRouterFile);
                 assert(helper.isArray(moduleRouter), `${name}/config/router.js must be an array`);
                 commonRouter[name].rules = moduleRouter;
             }
@@ -55,7 +53,7 @@ const RouterLoader = {
                 return [];
             }
             log(`load file: ${routerFile}`);
-            const router = interopRequire(routerFile);
+            const router = require(routerFile);
             assert(helper.isArray(router), 'config/router must be an array');
             return router;
         }
