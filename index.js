@@ -38,20 +38,19 @@ module.exports = function (option) {
             cache: false,
             "presets": [
                 [
-                    "env",
+                    _safeRequire('babel-preset-env'),
                     {
                         "targets": {
                             "node": "9"
                         }
                     }
                 ],
-                "react",
-                "stage-0",
+                _safeRequire('babel-preset-react'),
+                _safeRequire('babel-preset-stage-0'),
             ],
             "plugins": [
-                require('babel-plugin-interop-require'),
-                "transform-decorators-legacy",
-            
+                _safeRequire('babel-plugin-safe-require'),
+                _safeRequire('babel-plugin-transform-decorators-legacy'),
             ],
             "babelrc": false,
         });
@@ -68,4 +67,13 @@ module.exports = function (option) {
         let app = new Appliaction(option);
         app.run();
     }
+}
+
+function _safeRequire(a, b = !0) {
+    if ("string" == typeof a) if (b) try {
+        a = require(a)
+    } catch (b) {
+        console.error(b), a = null
+    } else a = require(a);
+    return a && a.__esModule ? a.default : a
 }
