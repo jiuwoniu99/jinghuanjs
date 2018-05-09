@@ -22,7 +22,6 @@ export default function load() {
             if (!jinghuan.events.isEvent(name)) {
                 jinghuan.events.on(name, async (...args) => {
                     for (let i in events[name]) {
-                        console.log(events[name][i])
                         await events[name][i](...args);
                     }
                 })

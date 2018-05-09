@@ -19,7 +19,6 @@ bridge.preg_split = function (expr, str) {
         }
         return r;
     } catch (ex) {
-        console.log(ex);
     }
 }
 

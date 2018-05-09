@@ -17,7 +17,7 @@ function invokeStart(options, app) {
         try {
             if (!jinghuan.HOST || jinghuan.HOST === ctx.hostname) {
                 await next();
-                await ctx.events.emit('finish');
+                //await ctx.events.emit('finish');
             } else {
                 ctx.status = 404;
             }
