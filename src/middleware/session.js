@@ -1,5 +1,4 @@
-//import fs from "fs"
-//import helper from "../core/helper"
+import session from "../core/session";
 
 /**
  * 程序在初始化时开始执行
@@ -13,6 +12,11 @@ function invokeSession(options, app) {
      */
     return async (ctx, next) => {
         try {
+            Object.defineProperty(ctx, 'session', {
+                get() {
+                    return session;
+                }
+            });
             await next();
         } catch (ex) {
         } finally {

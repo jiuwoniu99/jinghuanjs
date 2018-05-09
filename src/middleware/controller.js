@@ -23,9 +23,6 @@ function invokeController(options, app) {
         
         //
         if (controllers) {
-            // if (!controllers[ctx.module]) {
-            //     ctx.module = options.emptyModule;
-            // }
             controllers = controllers[ctx.module] || {};
         }
         let Controller = controllers[ctx.controller];
@@ -59,18 +56,14 @@ function invokeController(options, app) {
             }
             let method = ctx.action;
             if (actions[method]) {
-                // pre set request status
-                if (ctx.body === undefined && options.preSetStatus) {
-                    ctx.status = options.preSetStatus;
-                }
+                let param = ctx.param();
+                let post = ctx.post();
+                
                 if (actions[method].value) {
-                    return actions[method].value.call(instance);
+                    return actions[method].value.call(instance, param, post);
                 } else if (actions[method].initializer) {
-                    return actions[method].initializer.call(instance)();
-                } else {
-                
+                    return actions[method].initializer.call(instance)(param, post);
                 }
-                
             }
         }).then(data => {
             if (data === false) {

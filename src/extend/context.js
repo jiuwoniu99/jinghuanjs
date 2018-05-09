@@ -343,7 +343,8 @@ export default {
         return knex;
     },
     get session() {
-        return session;
+        return async () => {
+        };
     },
     get events() {
         if (!this._events) {

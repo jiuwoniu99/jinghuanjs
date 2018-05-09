@@ -4,7 +4,7 @@ import JsonRpcResponse from 'json-rpc-response';
 import raw from "raw-body"
 import inflate from "inflation"
 import helper from "../core/helper"
-import action from "../../props/action"
+import action from "../../props/rpc"
 
 const log = debug('JH:middleware/rpc');
 const symbol = action.name;
@@ -21,7 +21,9 @@ function invokeRpc(options, app) {
      */
     return async function (ctx, next) {
         let pathname = ctx.path || '';
-        if (pathname === '/rpc') {
+        let rpcpathname = options.path || '/rpc';
+        
+        if (pathname === rpcpathname) {
             let req = ctx.req;
             let opts = {};
             let len = req.headers['content-length'];
@@ -101,10 +103,14 @@ function invokeRpc(options, app) {
                     
                     let method = ctx.action;
                     if (actions[method]) {
+                        
+                        let param = ctx.param();
+                        //let post = ctx.post();
+                        
                         if (actions[method].value) {
-                            return actions[method].value.call(instance);
+                            return actions[method].value.call(instance, param, body.params);
                         } else if (actions[method].initializer) {
-                            return actions[method].initializer.call(instance)();
+                            return actions[method].initializer.call(instance)(param, body.params);
                         }
                     }
                 }).then(data => {
@@ -117,12 +123,18 @@ function invokeRpc(options, app) {
                 }).then(data => {
                     if (ctx.status == 200) {
                         ctx.body = new JsonRpcResponse(body.id || null, null, ctx.body);
+                    } else if (ctx.status == 404) {
+                        ctx.body = new JsonRpcResponse(body.id || null, new JsonRpcError.MethodNotFound());
+                    } else {
+                        ctx.body = new JsonRpcResponse(body.id || null, new JsonRpcError.InternalError(ctx.status));
                     }
                 }).catch(e => {
+                    console.error(e)
                     ctx.body = new JsonRpcResponse(body.id || null, new JsonRpcError.InternalError(e.message));
                 });
                 
             } catch (e) {
+                console.error(e)
                 ctx.body = new JsonRpcResponse(body.id || null, new JsonRpcError.InternalError(e.message));
             }
         } else {
