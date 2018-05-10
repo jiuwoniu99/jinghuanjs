@@ -1,5 +1,4 @@
-import './jinghuan'
-
+import './jinghuan';
 import path from "path";
 import cluster from "cluster";
 import assert from "assert";

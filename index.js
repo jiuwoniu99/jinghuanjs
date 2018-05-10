@@ -3,6 +3,7 @@ const path = _safeRequire('path');
 const findRoot = _safeRequire('find-root')
 
 const rootPath = findRoot(__filename);
+
 /**
  *
  * @param option
@@ -35,7 +36,7 @@ module.exports = function (option) {
                 }
                 return false;
             },
-            cache: true,
+            cache: false,
             "presets": [
                 [
                     _safeRequire('babel-preset-env'),
@@ -53,6 +54,7 @@ module.exports = function (option) {
                 _safeRequire('babel-plugin-transform-decorators-legacy'),
             ],
             "babelrc": false,
+            "sourceMaps": true
         });
         
         let Appliaction = _safeRequire(`${rootPath}/src/application`);
@@ -63,7 +65,7 @@ module.exports = function (option) {
         option.watcher = option.watcher || false;
         option.modules = option.modules || [env];
         
-        let Appliaction = _safeRequire(`${rootPath}/app/application`);
+        let Appliaction = _safeRequire(`${rootPath}/lib/application`);
         let app = new Appliaction(option);
         app.run();
     }

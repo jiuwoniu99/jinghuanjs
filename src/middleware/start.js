@@ -1,5 +1,4 @@
-//import fs from "fs"
-//import helper from "../core/helper"
+import isArray from 'lodash/isArray'
 
 /**
  * 程序在初始化时开始执行
@@ -14,7 +13,7 @@ function invokeStart(options, app) {
     return async (ctx, next) => {
         let st = new Date().getTime();
         try {
-            if (!jinghuan.HOST || jinghuan.HOST === ctx.hostname) {
+            if (isArray(jinghuan.HOST) || jinghuan.HOST.indexOf(ctx.hostname) !== -1) {
                 await next();
             } else {
                 ctx.status = 404;
