@@ -1,7 +1,8 @@
-const path = require('path');
-const sms = require('source-map-support');
-sms.install();
+_safeRequire('source-map-support').install();
+const path = _safeRequire('path');
+const findRoot = _safeRequire('find-root')
 
+const rootPath = findRoot(__filename);
 /**
  *
  * @param option
@@ -9,12 +10,12 @@ sms.install();
 module.exports = function (option) {
     
     const filename = process.mainModule.filename;
-    const ROOT_PATH = path.join(filename, '../..');
+    const ROOT_PATH = findRoot(process.cwd());
     const env = path.basename(filename, '.js');
     
     // 默认是 src 测试目录
     option.source = option.source || 'src';
-    //option.host = option.host || '127.0.0.1';
+    option.host = option.host || [];
     option.ROOT_PATH = option.ROOT_PATH || ROOT_PATH;
     option.env = option.env || env;
     
@@ -22,12 +23,11 @@ module.exports = function (option) {
         option.watcher = option.watcher || true;
         option.modules = option.modules || [env];
         //option.cluster = option.cluster || false;
-        
-        
-        require('babel-register')({
+    
+    
+        _safeRequire('babel-register')({
             ignore: function (filename) {
-                if (filename.startsWith(__dirname + '/src/')) {
-                    //console.log(filename)
+                if (filename.startsWith(`${rootPath}/src`)) {
                     return false
                 }
                 else if (/node_modules/.test(filename)) {
@@ -35,7 +35,7 @@ module.exports = function (option) {
                 }
                 return false;
             },
-            cache: false,
+            cache: true,
             "presets": [
                 [
                     _safeRequire('babel-preset-env'),
@@ -55,7 +55,7 @@ module.exports = function (option) {
             "babelrc": false,
         });
         
-        let Appliaction = require('./src/application');
+        let Appliaction = _safeRequire(`${rootPath}/src/application`);
         let app = new Appliaction(option);
         app.run();
         
@@ -63,7 +63,7 @@ module.exports = function (option) {
         option.watcher = option.watcher || false;
         option.modules = option.modules || [env];
         
-        let Appliaction = require('./lib/application');
+        let Appliaction = _safeRequire(`${rootPath}/app/application`);
         let app = new Appliaction(option);
         app.run();
     }

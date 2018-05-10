@@ -22,7 +22,7 @@
         //        "moduleName": "babel-runtime"
         //    }
         //],
-        "interop-require",
+        "safe-require",
         "transform-decorators-legacy"
         //"transform-export-extensions"
     ],
