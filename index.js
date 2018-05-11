@@ -1,8 +1,35 @@
 _safeRequire('source-map-support').install();
 const path = _safeRequire('path');
-const findRoot = _safeRequire('find-root')
-
+const findRoot = _safeRequire('find-root');
 const rootPath = findRoot(__filename);
+const appRootPath = findRoot(process.cwd());
+const requireOptions = {paths: [appRootPath, rootPath]};
+
+let host = false;
+if (process.env.jh_host) {
+    host = process.env.jh_host.split(',');
+}
+
+let source = false;
+if (process.env.JH_SOURCE) {
+    source = process.env.JH_SOURCE;
+}
+
+let ROOT_PATH = false;
+if (process.env.JH_ROOT_PATH) {
+    ROOT_PATH = process.env.JH_ROOT_PATH;
+}
+
+
+let env = false;
+if (process.env.JH_ENV) {
+    env = process.env.JH_ENV;
+}
+
+let port = false;
+if (process.env.JH_PORT) {
+    port = process.env.JH_PORT;
+}
 
 /**
  *
@@ -11,51 +38,21 @@ const rootPath = findRoot(__filename);
 module.exports = function (option) {
     
     const filename = process.mainModule.filename;
-    const ROOT_PATH = findRoot(process.cwd());
-    const env = path.basename(filename, '.js');
+    
     
     // 默认是 src 测试目录
-    option.source = option.source || 'src';
-    option.host = option.host || [];
-    option.ROOT_PATH = option.ROOT_PATH || ROOT_PATH;
-    option.env = option.env || env;
+    option.source = option.source || source || 'src';
+    option.host = option.host || host || [];
+    option.ROOT_PATH = option.ROOT_PATH || ROOT_PATH || appRootPath;
+    option.env = option.env || env || path.basename(filename, '.js');
+    option.port = option.port || port;
     
     if (option.source === 'src') {
         option.watcher = option.watcher || true;
         option.modules = option.modules || [env];
         //option.cluster = option.cluster || false;
-    
-    
-        _safeRequire('babel-register')({
-            ignore: function (filename) {
-                if (filename.startsWith(`${rootPath}/src`)) {
-                    return false
-                }
-                else if (/node_modules/.test(filename)) {
-                    return true;
-                }
-                return false;
-            },
-            cache: false,
-            "presets": [
-                [
-                    _safeRequire('babel-preset-env'),
-                    {
-                        "targets": {
-                            "node": "9"
-                        }
-                    }
-                ],
-                _safeRequire('babel-preset-react'),
-                _safeRequire('babel-preset-stage-0'),
-            ],
-            "plugins": [
-                _safeRequire('babel-plugin-safe-require'),
-                _safeRequire('babel-plugin-transform-decorators-legacy'),
-            ],
-            "babelrc": false,
-            "sourceMaps": true
-        });
+        
+        _safeRequire('./register.js')(requireOptions, rootPath)
         
         let Appliaction = _safeRequire(`${rootPath}/src/application`);
         let app = new Appliaction(option);

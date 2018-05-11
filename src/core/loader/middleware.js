@@ -156,7 +156,7 @@ class Middleware {
             }
             log(`load file: ${filepath}`);
             
-            middlewares = this.require(filepath);
+            middlewares = require(filepath);
         }
         let ms = [];
         

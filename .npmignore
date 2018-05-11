@@ -63,4 +63,9 @@ typings/
 .next
 .vscode
 src
+test
+.babelrc
+.gitignore
+.npmignore
+package-lock.json
 

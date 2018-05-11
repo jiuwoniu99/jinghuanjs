@@ -7,6 +7,7 @@ import pkg from "../package.json";
 import helper from "./core/helper";
 import c from "./core/cluster";
 import events from "./core/events";
+import pm2 from './core/pm2';
 
 /**
  * use bluebird instead of default Promise
@@ -97,6 +98,13 @@ jinghuan.beforeStartServer = fn => {
     return Promise.race([promise, timeoutPromise]);
 };
 
+let pattern = '';
+
+if (pm2.inPM2) {
+    pattern = '%d{yyyy-MM-dd hh:mm:ss} [%6z] [%5.5p] - %m';
+} else {
+    pattern = '%[%d{yyyy-MM-dd hh:mm:ss} [%6z] [%5.5p] %] - %m'
+}
 /**
  *
  */
@@ -104,7 +112,7 @@ log4js.configure({
     appenders: {
         console: {
             type: 'console',
-            layout: {type: 'pattern', pattern: '%[%d{yyyy-MM-dd hh:mm:ss} [%6z] [%5.5p] %] - %m'}
+            layout: {type: 'pattern', pattern}
         }
     },
     categories: {
