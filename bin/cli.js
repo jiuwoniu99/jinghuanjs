@@ -10,17 +10,17 @@ let options = {};
 program
     .version(pkg.version)
     .option('-P, --port [n]',
-        'set port default 8409          -P 8080')
+        'set port default 8409          -P 8409')
     .option('-H, --host [value]',
-        'set host                       -H 127.0.0.1,www.domain.com')
+        'set host default 127.0.0.1     -H 127.0.0.1, ...')
     .option('-S, --source [value]',
         'set source default app         -S app|src')
     .option('-R, --root-path [value]',
         'set root path default ./       -R /[you work path]')
     .option('-E, --env [value]',
-        'set env default test           -E test')
+        'set env default index          -E index')
     .option('-M, --modules [value]',
-        'set modules default test       -M test,demo')
+        'set modules default index      -M index, ...')
     .option('-W, --watcher [value]',
         'set watcher                    -W')
     .option('-C, --config [value]',

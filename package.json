@@ -1,6 +1,6 @@
 {
     "name": "jinghuanjs",
-    "version": "1.0.14",
+    "version": "1.0.15",
     "main": "index.js",
     "scripts": {
         "dev": "babel src --out-dir dev --copy-files --source-maps --watch",
@@ -8,7 +8,8 @@
         "publish": "babel src --out-dir lib --copy-files"
     },
     "bin": {
-        "jinghuanjs": "./bin/index.js"
+        "jinghuanjs-cli": "./bin/cli.js",
+        "jinghuanjs-create": "./bin/create.js"
     },
     "author": "李强",
     "license": "ISC",
@@ -56,5 +57,8 @@
     "directories": {
         "lib": "lib"
     },
-    "description": ""
+    "description": "",
+    "engines": {
+        "node": ">=9.0.0"
+    }
 }
