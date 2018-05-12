@@ -8,6 +8,7 @@ import helper from "./core/helper";
 import c from "./core/cluster";
 import events from "./core/events";
 import pm2 from './core/pm2';
+import props from './props';
 
 /**
  * use bluebird instead of default Promise
@@ -138,5 +139,14 @@ jinghuan.events = new events();
 Object.defineProperty(jinghuan, 'jwt', {
     get() {
         return jwt;
+    }
+});
+
+/**
+ *
+ */
+Object.defineProperty(jinghuan, 'props', {
+    get() {
+        return props;
     }
 });

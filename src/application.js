@@ -5,15 +5,13 @@ import assert from "assert";
 import helper from "./core/helper";
 import pm2 from "./core/pm2";
 import Watcher from "./core/watcher";
-import Loaders from "./loaders.js";
+import Loaders from "./loaders";
 import Cluster from "./core/cluster";
 import debug from "debug";
-import action from '../props/action'
-import empty from 'locutus/php/var/empty';
 
-//
+
 debug.log = console.log.bind(console);
-//console.log(Cluster);
+
 
 /**
  * 应用程序启动入口文件
@@ -76,7 +74,7 @@ module.exports = class Application {
                 return options.host;
             }
         });
-    
+        
         Object.defineProperty(jinghuan, 'mode', {
             get() {
                 return options.mode;
@@ -88,7 +86,6 @@ module.exports = class Application {
      *
      * @param err
      */
-    @action()
     notifier(err) {
         if (!this.options.notifier) {
             return;
@@ -139,23 +136,6 @@ module.exports = class Application {
         instance.watch();
     }
     
-    /**
-     *
-     * @return {{}}
-     */
-    parseArgv() {
-        const options = {};
-        //const argv2 = process.argv[2];
-        //const portRegExp = /^\d{2,5}$/;
-        //if (argv2) {
-        //    if (!portRegExp.test(argv2)) {
-        //        options.path = argv2;
-        //    } else {
-        //        options.port = argv2;
-        //    }
-        //}
-        return options;
-    }
     
     /**
      *
@@ -234,19 +214,6 @@ module.exports = class Application {
             });
     }
     
-    /**
-     *
-     * @param argv
-     * @return {{req, res}}
-     */
-    // runInCli(argv) {
-    //     jinghuan.app.emit('appReady');
-    //     return mockHttp({
-    //         url: argv.path,
-    //         method: 'CLI',
-    //         exitOnEnd: true
-    //     }, jinghuan.app);
-    // }
     
     /**
      * 运行
@@ -264,28 +231,18 @@ module.exports = class Application {
         
         const loaders = new Loaders(this.options);
         
-        const argv = this.parseArgv();
-        
         try {
-            // 用处不大 先屏蔽了
-            // if (argv.path) {
-            //     // cli 运行
-            //     instance.loadAll('worker', true);
-            //     return this.runInCli(argv);
-            // } else
             if (cluster.isMaster) {
                 // 主进程
                 loaders.loadAll('master');
-                return this.runInMaster(argv);
+                return this.runInMaster();
             } else {
                 // 子进程
                 loaders.loadAll('worker');
-                return this.runInWorker(argv);
+                return this.runInWorker();
             }
         } catch (e) {
-            console.error(e.stack);
+            console.error(e);
         }
     }
 };
-
-//module.exports.jinghuan = global.jinghuan;

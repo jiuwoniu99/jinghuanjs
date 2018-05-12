@@ -1,5 +1,5 @@
 import helper from "../core/helper"
-import action from "../../props/action"
+import action from "../props/action"
 
 const symbol = action.name;
 

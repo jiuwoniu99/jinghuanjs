@@ -4,7 +4,7 @@ import JsonRpcResponse from 'json-rpc-response';
 import raw from "raw-body"
 import inflate from "inflation"
 import helper from "../core/helper"
-import action from "../../props/rpc"
+import action from "../props/rpc"
 
 const log = debug('JH:middleware/rpc');
 const symbol = action.name;

@@ -1,6 +1,4 @@
-import action from 'jinghuanjs/props/action'
-
-let {Controller} = jinghuan;
+let {Controller, props: {action}} = jinghuan;
 
 /**
  *
@@ -12,3 +10,5 @@ class IndexController extends Controller {
         this.body = "Hello Jinghuan";
     }
 }
+
+export default IndexController;

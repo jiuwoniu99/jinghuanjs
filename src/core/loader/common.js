@@ -25,9 +25,9 @@ const CommonLoader = {
             const filepath = path.join(dir, file);
             const fileExport = require(filepath);
             // add __filename to export when is class
-            if (helper.isFunction(fileExport)) {
-                fileExport.prototype.__filename = filepath;
-            }
+            //if (helper.isFunction(fileExport)) {
+            //    fileExport.prototype.__filename = filepath;
+            //}
             log(`load file: ${filepath}`);
             cache[name] = fileExport;
         });
@@ -72,22 +72,7 @@ const CommonLoader = {
                 cache[item][name] = itemCache[name];
             }
         });
-        // merge common modules to every module
-        // if (cache.common) {
-        //     for (const m in cache) {
-        //         if (m === 'common') {
-        //             continue;
-        //         }
-        //         cache[m] = Object.assign({}, cache.common, cache[m]);
-        //         cache[m] = CommonLoader.sort(cache[m]);
-        //     }
-        // }
         return cache;
-        //} else {
-        //  const dir = path.join(appPath, type);
-        //  const obj = CommonLoader.loadFiles(dir);
-        //  return CommonLoader.sort(obj);
-        //}
     }
 };
 
