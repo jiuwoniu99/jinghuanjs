@@ -1,1 +1,1 @@
-// invoked in master
+export default {}

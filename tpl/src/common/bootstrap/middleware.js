@@ -1,6 +1,9 @@
 import path from "path"
 
-module.exports = [
+/**
+ *
+ */
+export default [
     {
         // gzip
         handle: 'compress',
@@ -29,7 +32,7 @@ module.exports = [
         }
     },
     {
-        // 静态资源
+        // static resource
         handle: 'resource',
         options: {
             root: path.join(jinghuan.ROOT_PATH, 'www'),

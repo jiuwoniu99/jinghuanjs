@@ -1,1 +1,1 @@
-// invoked in worker
+export default {};

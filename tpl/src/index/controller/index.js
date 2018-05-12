@@ -1,4 +1,4 @@
-let {Controller, props: {action}} = jinghuan;
+let {Controller, props: {action, api}} = jinghuan;
 
 /**
  *
@@ -6,8 +6,8 @@ let {Controller, props: {action}} = jinghuan;
 class IndexController extends Controller {
     
     @action()
-    index() {
-        this.body = "Hello Jinghuan";
+    async index() {
+        this.body = "Hello JinghuanJs";
     }
 }
 

@@ -8,8 +8,7 @@
         "publish": "babel src --out-dir lib --copy-files"
     },
     "bin": {
-        "jinghuanjs-cli": "./bin/cli.js",
-        "jinghuanjs-create": "./bin/create.js"
+        "jinghuanjs": "./bin/cli.js"
     },
     "author": "李强",
     "license": "ISC",
