@@ -27,7 +27,7 @@ class Loader {
     /**
      * 加载项目的配置文件
      */
-    loadConfig(env) {
+    loadConfig() {
         return (new Config()).load();
     }
     

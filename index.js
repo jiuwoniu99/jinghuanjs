@@ -50,33 +50,39 @@ if (process.env.JH_WATCHER) {
 
 /**
  *
- * @param option
+ * @param options
  */
-module.exports = function (option) {
+module.exports = function (options) {
     
     // 默认是 src 测试目录
-    option.source = option.source || source || 'src';
-    option.host = option.host || host || [];
-    option.ROOT_PATH = option.ROOT_PATH || ROOT_PATH || appRootPath;
-    option.env = option.env || env || path.basename(filename, '.js');
-    option.port = option.port || port;
-    option.watcher = option.watcher || watcher || false;
-    option.modules = option.modules || modules || [option.env];
-    option.babel = option.babel || babel || false;
-    option.requireResolve = requireResolve;
+    options.source = options.source || source || 'src';
+    options.host = options.host || host || [];
+    options.ROOT_PATH = options.ROOT_PATH || ROOT_PATH || appRootPath;
+    options.env = options.env || env || path.basename(filename, '.js');
+    options.port = options.port || port;
+    options.watcher = options.watcher || watcher || false;
+    options.modules = options.modules || modules || [options.env];
+    options.babel = options.babel || babel || false;
+    options.requireResolve = requireResolve;
     
     
-    if (option.babel || option.source == "src") {
-        _safeRequire('./register.js')(option)
+    if (!options.APP_PATH) {
+        options.APP_PATH = path.join(options.ROOT_PATH, options.source);
     }
     
-    if (option.source === 'src' && fs.pathExistsSync(`${rootPath}/src/application.js`)) {
+    if (options.babel || options.source == "src") {
+        _safeRequire('./register.js')(options)
+    }
+    
+    if (options.source === 'src' && fs.pathExistsSync(`${rootPath}/src/application.js`)) {
+        options.JH_PATH = path.join(rootPath, 'src');
         let Appliaction = _safeRequire(`${rootPath}/src/application`);
-        let app = new Appliaction(option);
+        let app = new Appliaction(options);
         app.run();
     } else {
+        options.JH_PATH = path.join(rootPath, 'lib');
         let Appliaction = _safeRequire(`${rootPath}/lib/application`);
-        let app = new Appliaction(option);
+        let app = new Appliaction(options);
         app.run();
     }
 }

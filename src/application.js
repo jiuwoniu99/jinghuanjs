@@ -28,11 +28,6 @@ module.exports = class Application {
         
         this.options = options;
         
-        
-        if (!options.APP_PATH) {
-            options.APP_PATH = path.join(options.ROOT_PATH, options.source);
-        }
-        
         Object.defineProperty(jinghuan, 'ROOT_PATH', {
             get() {
                 return options.ROOT_PATH;
@@ -53,7 +48,7 @@ module.exports = class Application {
         
         Object.defineProperty(jinghuan, 'JH_PATH', {
             get() {
-                return path.join(__dirname);
+                return options.JH_PATH;
             }
         });
         

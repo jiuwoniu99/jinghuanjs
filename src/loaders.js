@@ -126,7 +126,7 @@ class Loaders {
         
         this.loader = new Loader();
         
-        const config = this.loader.loadConfig(jinghuan.env);
+        const config = this.loader.loadConfig();
         
         jinghuan.config = Config(config);
         

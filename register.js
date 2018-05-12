@@ -40,7 +40,7 @@ module.exports = function (option) {
     
     _safeRequire(require.resolve('babel-register', option.requireResolve))({
         ignore: function (filename) {
-            if (filename.startsWith(`${option.ROOT_PATH}/src`)) {
+            if (filename.startsWith(`${option.JH_PATH}/src`)) {
                 return false
             }
             else if (/node_modules/.test(filename)) {

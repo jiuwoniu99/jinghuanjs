@@ -111,13 +111,9 @@ class Config {
     
     /**
      *
-     * @param appPath
-     * @param jinghuanPath
-     * @param env
-     * @param modules
-     * @return {{}}
+     * @return {*}
      */
-    load(/*appPath, jinghuanPath, env, modules*/) {
+    load() {
         
         let {ROOT_PATH, JH_PATH, env} = jinghuan;
         
