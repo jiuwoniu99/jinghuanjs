@@ -39,7 +39,12 @@ jspm_packages
 demo/
 .DS_Store
 
-package-lock.json
+#
 test/
 lib/
+dev/
 .vscode/
+
+#
+package-lock.json
+

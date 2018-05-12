@@ -61,9 +61,13 @@ typings/
 
 # next.js build output
 .next
+
+#
 .vscode
 src
 test
+dev
+#
 .babelrc
 .gitignore
 .npmignore

@@ -1,13 +1,14 @@
-_safeRequire('source-map-support').install();
+const fs = _safeRequire('fs-extra');
 const path = _safeRequire('path');
 const findRoot = _safeRequire('find-root');
 const rootPath = findRoot(__filename);
 const appRootPath = findRoot(process.cwd());
-const requireOptions = {paths: [appRootPath, rootPath]};
+const requireResolve = {paths: [appRootPath, rootPath]};
+const filename = process.mainModule.filename;
 
 let host = false;
-if (process.env.jh_host) {
-    host = process.env.jh_host.split(',');
+if (process.env.JH_HOST) {
+    host = process.env.JH_HOST.split(',');
 }
 
 let source = false;
@@ -31,14 +32,27 @@ if (process.env.JH_PORT) {
     port = process.env.JH_PORT;
 }
 
+let babel = false;
+if (process.env.JH_BABEL) {
+    babel = process.env.JH_BABEL;
+}
+
+let modules = false;
+if (process.env.JH_MODULES) {
+    modules = process.env.JH_MODULES.split(',');
+}
+
+let watcher = false;
+if (process.env.JH_WATCHER) {
+    watcher = process.env.JH_WATCHER === '1';
+}
+
+
 /**
  *
  * @param option
  */
 module.exports = function (option) {
-    
-    const filename = process.mainModule.filename;
-    
     
     // 默认是 src 测试目录
     option.source = option.source || source || 'src';
@@ -46,22 +60,21 @@ module.exports = function (option) {
     option.ROOT_PATH = option.ROOT_PATH || ROOT_PATH || appRootPath;
     option.env = option.env || env || path.basename(filename, '.js');
     option.port = option.port || port;
+    option.watcher = option.watcher || watcher || false;
+    option.modules = option.modules || modules || [option.env];
+    option.babel = option.babel || babel || false;
+    option.requireResolve = requireResolve;
     
-    if (option.source === 'src') {
-        option.watcher = option.watcher || true;
-        option.modules = option.modules || [env];
-        //option.cluster = option.cluster || false;
-        
-        _safeRequire('./register.js')(requireOptions, rootPath)
-        
+    
+    if (option.babel || option.source == "src") {
+        _safeRequire('./register.js')(option)
+    }
+    
+    if (option.source === 'src' && fs.pathExistsSync(`${rootPath}/src/application.js`)) {
         let Appliaction = _safeRequire(`${rootPath}/src/application`);
         let app = new Appliaction(option);
         app.run();
-        
     } else {
-        option.watcher = option.watcher || false;
-        option.modules = option.modules || [env];
-        
         let Appliaction = _safeRequire(`${rootPath}/lib/application`);
         let app = new Appliaction(option);
         app.run();
