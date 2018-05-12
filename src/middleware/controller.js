@@ -3,11 +3,7 @@ import action from "../../props/action"
 
 const symbol = action.name;
 
-const defaultOptions = {
-    emptyModule: '',
-    emptyController: '',
-    preSetStatus: 200
-};
+const defaultOptions = {};
 
 function invokeController(options, app) {
     
@@ -15,17 +11,21 @@ function invokeController(options, app) {
     
     return (ctx, next) => {
         
-        let controllers = app.controllers || {};
-        
         if (!ctx.module || !ctx.controller || !ctx.action) {
             return ctx.throw(404);
         }
         
-        //
+        let {controllers = {}} = app;
         if (controllers) {
             controllers = controllers[ctx.module] || {};
         }
         let Controller = controllers[ctx.controller];
+        
+        let actions = Controller.prototype[symbol];
+        
+        if (!actions[ctx.action]) {
+            return ctx.throw(404);
+        }
         
         //
         if (helper.isEmpty(Controller)) {
@@ -41,7 +41,6 @@ function invokeController(options, app) {
         if (helper.isEmpty(instance.ctx)) {
             instance.ctx = ctx;
         }
-        let actions = instance[symbol] || {};
         
         let promise = Promise.resolve();
         
