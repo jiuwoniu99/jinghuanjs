@@ -7,10 +7,14 @@
         "test": "babel test/src --out-dir test/lib --copy-files --source-maps --watch",
         "publish": "babel src --out-dir lib --copy-files"
     },
+    "bin": {
+        "jinghuanjs": "./bin/index.js"
+    },
     "author": "李强",
     "license": "ISC",
     "dependencies": {
         "bluebird": "^3.5.1",
+        "commander": "^2.15.1",
         "cookies": "^0.7.1",
         "debug": "^3.1.0",
         "destroy": "^1.0.4",

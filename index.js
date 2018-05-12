@@ -32,11 +32,6 @@ if (process.env.JH_PORT) {
     port = process.env.JH_PORT;
 }
 
-let babel = false;
-if (process.env.JH_BABEL) {
-    babel = process.env.JH_BABEL;
-}
-
 let modules = false;
 if (process.env.JH_MODULES) {
     modules = process.env.JH_MODULES.split(',');
@@ -62,16 +57,12 @@ module.exports = function (options) {
     options.port = options.port || port;
     options.watcher = options.watcher || watcher || false;
     options.modules = options.modules || modules || [options.env];
-    options.babel = options.babel || babel || false;
+    //options.babel = options.babel || babel || false;
     options.requireResolve = requireResolve;
     
     
     if (!options.APP_PATH) {
         options.APP_PATH = path.join(options.ROOT_PATH, options.source);
-    }
-    
-    if (options.babel || options.source == "src") {
-        _safeRequire('./register.js')(options)
     }
     
     let runFile = '';
@@ -80,12 +71,14 @@ module.exports = function (options) {
         options.watcher = true;
         options.JH_PATH = path.join(rootPath, 'dev');
         runFile = `${rootPath}/dev/application`;
+        _safeRequire('./register.js')(options)
     }
     else if (options.source === 'src' && fs.pathExistsSync(`${rootPath}/src/application.js`)) {
         options.mode = 'src';
         options.watcher = true;
         options.JH_PATH = path.join(rootPath, 'src');
         runFile = `${rootPath}/src/application`;
+        _safeRequire('./register.js')(options)
     } else {
         options.mode = 'lib';
         options.JH_PATH = path.join(rootPath, 'lib');
