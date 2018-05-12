@@ -1,4 +1,5 @@
 import isArray from 'lodash/isArray'
+import prettyBytes from 'pretty-bytes';
 
 /**
  * 程序在初始化时开始执行

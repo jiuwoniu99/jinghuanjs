@@ -74,17 +74,27 @@ module.exports = function (options) {
         _safeRequire('./register.js')(options)
     }
     
-    if (options.source === 'src' && fs.pathExistsSync(`${rootPath}/src/application.js`)) {
-        options.JH_PATH = path.join(rootPath, 'src');
-        let Appliaction = _safeRequire(`${rootPath}/src/application`);
-        let app = new Appliaction(options);
-        app.run();
-    } else {
-        options.JH_PATH = path.join(rootPath, 'lib');
-        let Appliaction = _safeRequire(`${rootPath}/lib/application`);
-        let app = new Appliaction(options);
-        app.run();
+    let runFile = '';
+    if (options.source === 'src' && fs.pathExistsSync(`${rootPath}/dev/application.js`)) {
+        options.mode = 'dev';
+        options.watcher = true;
+        options.JH_PATH = path.join(rootPath, 'dev');
+        runFile = `${rootPath}/dev/application`;
     }
+    else if (options.source === 'src' && fs.pathExistsSync(`${rootPath}/src/application.js`)) {
+        options.mode = 'src';
+        options.watcher = true;
+        options.JH_PATH = path.join(rootPath, 'src');
+        runFile = `${rootPath}/src/application`;
+    } else {
+        options.mode = 'lib';
+        options.JH_PATH = path.join(rootPath, 'lib');
+        runFile = `${rootPath}/lib/application`;
+    }
+    
+    let Appliaction = _safeRequire(runFile);
+    let app = new Appliaction(options);
+    app.run();
 }
 
 function _safeRequire(a, b = !0) {

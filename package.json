@@ -3,7 +3,7 @@
     "version": "1.0.14",
     "main": "index.js",
     "scripts": {
-        "babel": "babel src --out-dir dev --copy-files --source-maps --watch",
+        "dev": "babel src --out-dir dev --copy-files --source-maps --watch",
         "test": "babel test/src --out-dir test/lib --copy-files --source-maps --watch",
         "publish": "babel src --out-dir lib --copy-files"
     },
@@ -33,6 +33,7 @@
         "node-schedule": "^1.3.0",
         "on-finished": "^2.3.0",
         "path-to-regexp": "^2.2.0",
+        "pretty-bytes": "^5.0.0",
         "querystring": "^0.2.0",
         "stack-trace": "0.0.10",
         "xml2js": "^0.4.19"

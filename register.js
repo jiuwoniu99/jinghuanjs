@@ -1,3 +1,6 @@
+const debug = require('debug');
+const log = debug('register');
+
 /**
  *
  * @param name
@@ -37,18 +40,21 @@ module.exports = function (option) {
         sourceMapSupport.install();
     }
     
-    
     _safeRequire(require.resolve('babel-register', option.requireResolve))({
         ignore: function (filename) {
-            if (filename.startsWith(`${option.JH_PATH}/src`)) {
+            if (option.mode == 'src' && filename.startsWith(`${option.JH_PATH}`)) {
+                log(filename);
                 return false
+            } else if (option.mode == 'dev' && filename.startsWith(`${option.JH_PATH}`)) {
+                return true
             }
             else if (/node_modules/.test(filename)) {
                 return true;
             }
+            log(filename);
             return false;
         },
-        cache: false,
+        cache: option.isDev,
         "presets": [
             [
                 _safeRequire(require.resolve('babel-preset-env', option.requireResolve)),
