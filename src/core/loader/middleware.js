@@ -65,50 +65,46 @@ class Middleware {
             return !('enable' in item) || item.enable;
         }).map(item => {
 
-            if (helper.isString(item.handle)) {
-                let p = '';
-                if (p = this.checkMid('src/middleware/' + item.handle)) {
-                    item.handle = require(p);
-                } else if (p = this.checkMid('src/common/middleware/' + item.handle)) {
-                    item.handle = require(p);
-                } else if (p = this.checkMid('jinghuan-middleware-' + item.handle)) {
-                    item.handle = require(p);
-                }
-            }
-
-            assert(helper.isFunction(item.handle), 'handle must be a function');
-
-            const options = item.options || {};
-            let handle = item.handle;
-            // 如果选项是一个方法，也许想选择异步
-            // 当应用程序就绪时，获取参数执行方法
-            if (helper.isFunction(options)) {
-                let params = {};
-                // 服务启动异步处理
-                app.jinghuan.beforeStartServer(() => {
-                    return Promise.resolve(options()).then(data => {
-                        params = data;
-                    });
-                });
-                // 准备就绪
-                app.on('appReady', () => {
-                    handle = handle(params, app);
-                });
-                // 重构handle
-                item.handle = (ctx, next) => {
-                    return handle(ctx, next);
-                };
-            } else {
-                item.handle = handle(options, app);
-                // handle also be a function
-                assert(helper.isFunction(item.handle), 'handle must return a function');
-            }
+            // if (helper.isString(item.handle)) {
+            //     let p = '';
+            //     if (p = this.checkMid('src/middleware/' + item.handle)) {
+            //         item.handle = require(p);
+            //     } else if (p = this.checkMid('src/common/middleware/' + item.handle)) {
+            //         item.handle = require(p);
+            //     } else if (p = this.checkMid('jinghuan-middleware-' + item.handle)) {
+            //         item.handle = require(p);
+            //     }
+            // }
+            //
+            // assert(helper.isFunction(item.handle), 'handle must be a function');
+            //
+            // const options = item.options || {};
+            // let handle = item.handle;
+            // // 如果选项是一个方法，也许想选择异步
+            // // 当应用程序就绪时，获取参数执行方法
+            // if (helper.isFunction(options)) {
+            //     let params = {};
+            //     // 服务启动异步处理
+            //     app.jinghuan.beforeStartServer(() => {
+            //         return Promise.resolve(options()).then(data => {
+            //             params = data;
+            //         });
+            //     });
+            //     // 准备就绪
+            //     app.on('appReady', () => {
+            //         handle = handle(params, app);
+            //     });
+            //     // 重构handle
+            //     item.handle = (ctx, next) => {
+            //         return handle(ctx, next);
+            //     };
+            // } else {
+            //     item.handle = handle(options, app);
+            //     // handle also be a function
+            //     assert(helper.isFunction(item.handle), 'handle must return a function');
+            // }
             return item;
         }).map(item => {
-
-            if (!item.match && !item.ignore) {
-                return item.handle;
-            }
 
             // 高级设置 设置忽略的请求
             const match = this.createRegexp(item.match);
@@ -116,10 +112,30 @@ class Middleware {
 
             // has match or ignore
             return (ctx, next) => {
+
+                // if (!item.middleware && helper.isFunction(item.handle)) {
+                //     item.middleware = handle(item.options, app);
+                // } else if (!item.middleware && helper.isString(item.handle)) {
+                let middleware;
+                if (middleware = this.checkMid('src/middleware/' + item.handle)) {
+                } else if (middleware = this.checkMid('src/common/middleware/' + item.handle)) {
+                } else if (middleware = this.checkMid('jinghuan-middleware-' + item.handle)) {
+                }
+
+                let cahce = require.cache[middleware];
+                let handle = null;
+                if (!cahce) {
+                    handle = require(middleware);
+                    if (handle) {
+                        item.middleware = handle(item.options, app);
+                    }
+                }
+                // }
+
                 if ((match && !this.checkMatch(match, ctx)) || (ignore && this.checkMatch(ignore, ctx))) {
                     return next();
                 }
-                return item.handle(ctx, next);
+                return item.middleware(ctx, next);
             };
         });
     }
