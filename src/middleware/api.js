@@ -1,19 +1,18 @@
 import debug from 'debug';
-import raw from "raw-body"
-import inflate from "inflation"
-import helper from "../core/helper"
-import action from "../props/api"
-import extend from 'lodash/extend'
+import raw from 'raw-body';
+import inflate from 'inflation';
+import helper from '../core/helper';
+import extend from 'lodash/extend';
 import querystring from 'querystring';
 import md5 from 'locutus/php/strings/md5';
-import strtoupper from 'locutus/php/strings/strtoupper'
+import strtoupper from 'locutus/php/strings/strtoupper';
 import ksort from 'locutus/php/array/ksort';
 import crypto from 'crypto';
-import JsonRpcError from "json-rpc-error";
-import JsonRpcResponse from "json-rpc-response";
+import JsonRpcError from 'json-rpc-error';
+import JsonRpcResponse from 'json-rpc-response';
 
 const log = debug('JH:middleware/api');
-const symbol = action.name;
+const symbol = jinghuan.props.api.name;
 
 const error_code = {
     'API_ERROR_500': {code: 500, msg: '服务器异常'},
@@ -41,7 +40,7 @@ const error_code = {
     'API_CODE_PARAMETER_ERROR': {code: 11000, msg: '"{0}"缺少参数'},
     'API_CODE_THE_DATA_HAS_ALREADY_EXISTED': {code: 11001, msg: '该sid数据已存在'},
     'API_CODE_DATA_DOES_NOT_EXIST': {code: 11002, msg: '该sid数据不存在'},
-}
+};
 
 /**
  *
@@ -49,18 +48,18 @@ const error_code = {
  * @param key
  * @return {string}
  */
-const query_string = function (message) {
+const query_string = function(message) {
     let data = extend({}, message);
     ksort(data);
     let p = '', string = '';
     for (let i in data) {
         if (data[i]) {
             string += `${p}${i}=${data[i]}`;
-            p = "&";
+            p = '&';
         }
     }
     return string;
-}
+};
 
 /**
  *
@@ -71,12 +70,12 @@ function error(ctx, err, field = null) {
     if (field == null) {
         ctx.body = {
             data: {}, extend: {}, msg: err.msg, status: err.code
-        }
+        };
     }
     else {
         ctx.body = {
             data: {}, extend: {}, msg: err.msg.replace('{0}', field), status: err.code
-        }
+        };
     }
 }
 
@@ -86,36 +85,38 @@ function error(ctx, err, field = null) {
  * @param app
  * @return {Function}
  */
-function invokeRpc(options, app) {
+function invokeApi(options, app) {
     /**
      *
      */
-    return async function (ctx, next) {
+    return async function(ctx, next) {
         let pathname = ctx.path || '';
         let apipathname = options.path || '/api';
-        
+
         if (pathname === apipathname) {
-            let timeout = options.timeout || false
+            let timeout = options.timeout || false;
             let table = options.table || 'jh_auth_user';
             let fields = options.fields || ['key', 'id', 'appid', 'secret'];
             let biz_json = {};
-            
+
             //
             let req = ctx.req;
             let opts = {};
             let len = req.headers['content-length'];
             let encoding = req.headers['content-encoding'] || 'identity';
             let body = {};
-            
-            if (len && encoding === 'identity') opts.length = ~~len;
+
+            if (len && encoding === 'identity') {
+                opts.length = ~~len;
+            }
             opts.encoding = opts.encoding || 'utf8';
             opts.limit = opts.limit || '1mb';
-            
+
             // post参数是api参数
             let post = querystring.parse(await raw(inflate(req), opts));
             // get参数是通用参数
             let param = extend({}, ctx.param());
-            
+
             if (!param.method) {
                 // 缺少"method"参数
                 error(ctx, error_code.API_CODE_LACK_OF_METHOD_PARAMETERS);
@@ -163,15 +164,15 @@ function invokeRpc(options, app) {
             else {
                 let {appid = null, sign = null, time = null, secret_type = null, method = null} = param;
                 let {biz_content = null} = post;
-                
+
                 // 查询用户信息
                 let user = await ctx.db('jh_auth_user')
-                    .select(fields)
-                    .where({appid})
-                    .first();
-                
+                .select(fields)
+                .where({appid})
+                .first();
+
                 if (user) {
-                    
+
                     let sign_data = {appid, time, secret_type, biz_content, key: user.key, method};
                     let sign_string = query_string(sign_data);
                     let check = strtoupper(md5(sign_string));
@@ -180,19 +181,19 @@ function invokeRpc(options, app) {
                         ctx.slog.info('check >> ' + check);
                         ctx.slog.info('biz_content >> ' + biz_content);
                     }
-                    
+
                     if (check !== sign) {
                         // 签名失败
                         error(ctx, error_code.API_CODE_SIGN_ERROR);
                         return;
                     }
-                    
+
                     try {
                         // api参数是否加密
                         if (secret_type) {
                             switch (secret_type) {
                                 // AES-128-CBC 加密 iv key 必须是16位 biz_content 必须是base64
-                                case "AES-128-CBC": {
+                                case 'AES-128-CBC': {
                                     let iv = user.secret;
                                     let key = new Buffer(md5(iv), 'hex');
                                     let decipher = crypto.createDecipheriv('aes-128-cbc', key, iv);
@@ -201,7 +202,7 @@ function invokeRpc(options, app) {
                                     this.biz_content = JSON.parse(decoded);
                                     break;
                                 }
-                                case "AES-256-CBC": {
+                                case 'AES-256-CBC': {
                                     // AES-256-CBC 加密 iv 必须是16位 key 必须是32位 biz_content 必须是base64
                                     let iv = user.secret;
                                     let key = new Buffer(md5(iv));
@@ -224,69 +225,68 @@ function invokeRpc(options, app) {
                         error(ctx, error_code.API_CODE_BIZ_CONTENT_ERROR);
                         return;
                     }
-                    
+
                 } else {
                     // 缺少"appid"参数
                     error(ctx, error_code.API_CODE_WRONG_APPID);
                     return;
                 }
-                
+
                 let pathname = method || '';
                 pathname = pathname.split('.');
-                
+
                 let [module, controller, action] = pathname;
-                
+
                 ctx.module = module;
                 ctx.controller = controller;
                 ctx.action = action;
-                
+
                 if (!ctx.module || !ctx.controller || !ctx.action) {
                     ctx.body = new JsonRpcResponse(body.id || null, new JsonRpcError.MethodNotFound());
                     return;
                 }
-                
+
                 let controllers = app.controllers || {};
                 if (controllers) {
                     controllers = controllers[ctx.module] || {};
                 }
                 let Controller = controllers[ctx.controller];
-                
-                
+
                 if (helper.isEmpty(Controller)) {
                     error(ctx, error_code.API_CODE_METHOD_PARAMETER_ERROR);
                     return;
                 }
-                
+
                 ctx.request.body = {};
                 ctx.request.body.post = biz_json;
-                
+
                 const instance = new Controller(ctx);
                 if (helper.isEmpty(instance.ctx)) {
                     instance.ctx = ctx;
                 }
                 instance.error_code = error_code;
                 instance.user = user;
-                
+
                 let actions = instance[symbol] || {};
-                
+
                 let promise = Promise.resolve();
-                
+
                 if (instance.__before) {
                     promise = Promise.resolve(instance.__before());
                 }
-                
+
                 //
                 return promise.then(data => {
                     if (data === false) {
                         return false;
                     }
-                    
+
                     let method = ctx.action;
                     if (actions[method]) {
-                        
+
                         let param = ctx.param();
                         //let post = ctx.post();
-                        
+
                         if (actions[method].value) {
                             return actions[method].value.call(instance, param, biz_json);
                         } else if (actions[method].initializer) {
@@ -308,7 +308,7 @@ function invokeRpc(options, app) {
                         error(ctx, error_code.API_ERROR_500);
                     }
                 }).catch(e => {
-                    console.error(e)
+                    console.error(e);
                     error(ctx, error_code.API_ERROR_500);
                 });
             }
@@ -318,4 +318,4 @@ function invokeRpc(options, app) {
     };
 };
 
-export default invokeRpc;
+export default invokeApi;

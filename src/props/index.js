@@ -5,7 +5,15 @@ import rpc from './rpc';
 
 /**
  *
+ * @type {{action: action, api, rest, rpc}}
  */
-export default {
-    action, api, rest, rpc
-}
+const props = {action, api, rest, rpc};
+
+/**
+ *
+ */
+Object.defineProperty(jinghuan, 'props', {
+	get() {
+		return props;
+	}
+});

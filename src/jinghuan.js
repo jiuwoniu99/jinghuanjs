@@ -1,83 +1,76 @@
-import Koa from "koa";
-import bluebird from "bluebird";
-import assert from "assert";
-import log4js from "log4js";
-import jwt from "jsonwebtoken";
-import pkg from "../package.json";
-import helper from "./core/helper";
-import c from "./core/cluster";
-import events from "./core/events";
+import Koa from 'koa';
+import bluebird from 'bluebird';
+import assert from 'assert';
+import log4js from 'log4js';
+import jwt from 'jsonwebtoken';
+import pkg from '../package.json';
+import helper from './core/helper';
+import c from './core/cluster';
+import events from './core/events';
 import pm2 from './core/pm2';
-import props from './props';
+
 
 /**
- * use bluebird instead of default Promise
+ *
+ * @type {helper}
+ */
+let jinghuan = Object.create(helper);
+
+/**
+ *
+ * @type {Application|module.Application|*}
+ */
+let app = new Koa();
+
+/**
+ *
+ * @type {bluebird}
  */
 global.Promise = bluebird;
 
 /**
- * global jinghuan object
- * @type {Object}
+ *
+ * @type {helper}
  */
-global.jinghuan = Object.create(helper);
+global.jinghuan = jinghuan;
+
+Object.defineProperty(jinghuan, 'app', {
+    get() {
+        return app;
+    }
+});
+
+Object.defineProperty(app, 'jinghuan', {
+    get() {
+        return jinghuan;
+    }
+});
+
+Object.defineProperty(jinghuan, 'version', {
+    get() {
+        return pkg.version;
+    }
+});
+
+Object.defineProperty(jinghuan, 'messenger', {
+    get() {
+        return c.messenger;
+    }
+});
+
+class Controller {
+};
+
+Object.defineProperty(jinghuan, 'Controller', {
+    get() {
+        return Controller;
+    }
+});
 
 /**
- * Koa application instance
- * @type {Koa}
+ * before start server
+ * @type {Array}
  */
-jinghuan.app = new Koa();
-
-/**
- * add jinghuan to jinghuan.app
- */
-// jinghuan.app.jinghuan = jinghuan;
-
-/**
- * version
- */
-jinghuan.version = pkg.version;
-
-/**
- * messenger
- * @type {Object}
- */
-jinghuan.messenger = c.messenger;
-
-/**
- * base controller class
- */
-jinghuan.Controller = class Controller {
-}
-
-/**
- * base logic class
- */
-//jinghuan.Logic = class Logic extends jinghuan.Controller {
-//};
-
-/**
- * service base class
- */
-//jinghuan.Service = class Service {
-//};
-
-/**
- * get service
- */
-//jinghuan.service = (name, m, ...args) => {
-//	let mcls = jinghuan.app.services;
-//	if (jinghuan.app.modules.length) {
-//		mcls = jinghuan.app.services[m || 'common'] || {};
-//	} else {
-//		args.unshift(m);
-//	}
-//	const Cls = mcls[name];
-//	assert(Cls, `can not find service: ${name}`);
-//	if (helper.isFunction(Cls)) return new Cls(...args);
-//	return Cls;
-//};
-
-// before start server
 const promises = [];
 
 /**
@@ -104,7 +97,7 @@ let pattern = '';
 if (pm2.inPM2) {
     pattern = '%d{yyyy-MM-dd hh:mm:ss} [%6z] [%5.5p] - %m';
 } else {
-    pattern = '%[%d{yyyy-MM-dd hh:mm:ss} [%6z] [%5.5p] %] - %m'
+    pattern = '%[%d{yyyy-MM-dd hh:mm:ss} [%6z] [%5.5p] %] - %m';
 }
 /**
  *
@@ -121,17 +114,28 @@ log4js.configure({
     }
 });
 
-/**
- *
- * @type {Logger}
- */
-jinghuan.logger = log4js.getLogger();
+let logger = log4js.getLogger();
+
+Object.defineProperty(jinghuan, 'logger', {
+    get() {
+        return logger;
+    }
+});
 
 /**
  *
  * @type {Events}
  */
-jinghuan.events = new events();
+let es = new events();
+
+/**
+ *
+ */
+Object.defineProperty(jinghuan, 'events', {
+    get() {
+        return es;
+    }
+});
 
 /**
  *
@@ -139,14 +143,5 @@ jinghuan.events = new events();
 Object.defineProperty(jinghuan, 'jwt', {
     get() {
         return jwt;
-    }
-});
-
-/**
- *
- */
-Object.defineProperty(jinghuan, 'props', {
-    get() {
-        return props;
     }
 });
