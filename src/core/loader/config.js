@@ -1,8 +1,8 @@
-import path from "path"
-import each from "lodash/each"
-import assert from "assert"
-import loadFiles from "../helper/loadFiles"
-import helper from "../helper"
+import path from 'path';
+import each from 'lodash/each';
+import assert from 'assert';
+import loadFiles from '../helper/loadFiles';
+import helper from '../helper';
 import debug from 'debug';
 
 const log = debug(`JH:core/loader/config[${process.pid}]`);
@@ -11,7 +11,7 @@ const log = debug(`JH:core/loader/config[${process.pid}]`);
  * load config
  */
 class Config {
-    
+
     /**
      * load config and merge
      * @param {Object} config
@@ -27,7 +27,7 @@ class Config {
             }
         });
     }
-    
+
     /**
      *
      * @param configPaths
@@ -41,7 +41,7 @@ class Config {
         //this.loadConfigByName(config, configPaths, `${name}.${env}.js`);
         return config;
     }
-    
+
     /**
      *
      * @param adapterPath
@@ -67,7 +67,7 @@ class Config {
         });
         return ret;
     }
-    
+
     /**
      *
      * @param config
@@ -108,34 +108,34 @@ class Config {
         }
         return config;
     }
-    
+
     /**
      *
      * @return {*}
      */
-    load() {
-        
+    load(extendConfig = {}) {
+
         let {ROOT_PATH, JH_PATH, env} = jinghuan;
-        
+
         // 核心配置文件
         const jinghuanConfig = this.loadConfigFile(path.join(JH_PATH, 'config'));
-        
+
         // 应用程序默认配置
         const commonConfig = this.loadConfigFile(path.join(ROOT_PATH, jinghuan.source, '/common/config'));
-        
+
         // 应用配置
         const envConfig = this.loadConfigFile(path.join(ROOT_PATH, 'config', env));
-        
+
         const paths = [
             path.join(JH_PATH, 'bootstrap'),
             path.join(ROOT_PATH, jinghuan.source, 'common/bootstrap')
         ];
-        
-        const config = this.loadConfig(paths, env);
-        
-        return helper.extend({}, config, jinghuanConfig, commonConfig, envConfig, true);
+
+        const bootstrapConfig = this.loadConfig(paths, env);
+
+        return helper.extend({}, bootstrapConfig, jinghuanConfig, commonConfig, envConfig, extendConfig, true);
     }
-    
+
     /**
      *
      * @param configPath
@@ -149,7 +149,7 @@ class Config {
         });
         return config;
     }
-    
+
 }
 
 export default Config;

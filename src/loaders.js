@@ -1,6 +1,7 @@
 import path from 'path';
 import Config from './core/config';
 import Loader from './core/loader';
+import define from './core/helper/define';
 
 /**
  *
@@ -29,7 +30,6 @@ class Loaders {
     loadData() {
         // add data to koa application
         let events = this.loader.loadEvents();
-
 
         // jinghuan.app.models = jinghuan.loader.loadModel();
         // jinghuan.app.services = jinghuan.loader.loadService();
@@ -125,11 +125,7 @@ class Loaders {
 
         this.loader = new Loader();
 
-        const config = this.loader.loadConfig();
-
-        jinghuan.config = Config(config);
-
-        this.loader.loadBootstrap(type);
+        define('config', Config);
 
         if (type !== 'master') {
             // 加载 扩展
