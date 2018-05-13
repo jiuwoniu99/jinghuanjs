@@ -8,8 +8,7 @@ import md5 from 'locutus/php/strings/md5';
 import strtoupper from 'locutus/php/strings/strtoupper';
 import ksort from 'locutus/php/array/ksort';
 import crypto from 'crypto';
-import JsonRpcError from 'json-rpc-error';
-import JsonRpcResponse from 'json-rpc-response';
+import getController from '../core/helper/getController';
 
 const log = debug('JH:middleware/api');
 const symbol = jinghuan.props.api.name;
@@ -232,85 +231,83 @@ function invokeApi(options, app) {
                     return;
                 }
 
-                let pathname = method || '';
-                pathname = pathname.split('.');
+                let [module, controller, action] = (method || '').split('.');
 
-                let [module, controller, action] = pathname;
+                if (!module || !controller || !action) {
+                    error(ctx, error_code.API_CODE_METHOD_PARAMETER_ERROR);
+                    return;
+                }
 
                 ctx.module = module;
                 ctx.controller = controller;
                 ctx.action = action;
 
-                if (!ctx.module || !ctx.controller || !ctx.action) {
-                    ctx.body = new JsonRpcResponse(body.id || null, new JsonRpcError.MethodNotFound());
-                    return;
-                }
+                try {
+                    let instance = getController(ctx, symbol);
 
-                let controllers = app.controllers || {};
-                if (controllers) {
-                    controllers = controllers[ctx.module] || {};
-                }
-                let Controller = controllers[ctx.controller];
-
-                if (helper.isEmpty(Controller)) {
-                    error(ctx, error_code.API_CODE_METHOD_PARAMETER_ERROR);
-                    return;
-                }
-
-                ctx.request.body = {};
-                ctx.request.body.post = biz_json;
-
-                const instance = new Controller(ctx);
-                if (helper.isEmpty(instance.ctx)) {
-                    instance.ctx = ctx;
-                }
-                instance.error_code = error_code;
-                instance.user = user;
-
-                let actions = instance[symbol] || {};
-
-                let promise = Promise.resolve();
-
-                if (instance.__before) {
-                    promise = Promise.resolve(instance.__before());
-                }
-
-                //
-                return promise.then(data => {
-                    if (data === false) {
-                        return false;
-                    }
-
-                    let method = ctx.action;
-                    if (actions[method]) {
-
-                        let param = ctx.param();
-                        //let post = ctx.post();
-
-                        if (actions[method].value) {
-                            return actions[method].value.call(instance, param, biz_json);
-                        } else if (actions[method].initializer) {
-                            return actions[method].initializer.call(instance)(param, biz_json);
-                        }
-                    }
-                }).then(data => {
-                    if (data === false) {
-                        return false;
-                    }
-                    if (instance.__after) {
-                        return instance.__after();
-                    }
-                }).then(data => {
-                    if (ctx.status == 200) {
-                    } else if (ctx.status == 404) {
+                    if (!instance) {
                         error(ctx, error_code.API_CODE_METHOD_PARAMETER_ERROR);
-                    } else {
-                        error(ctx, error_code.API_ERROR_500);
+                        return;
                     }
-                }).catch(e => {
+
+                    ctx.request.body = {};
+                    ctx.request.body.post = biz_json;
+
+                    instance.error_code = error_code;
+                    instance.user = user;
+
+                    let actions = instance[symbol] || {};
+
+                    let promise = Promise.resolve();
+
+                    if (instance.__before) {
+                        promise = Promise.resolve(instance.__before());
+                    }
+
+                    //
+                    return promise.then(data => {
+                        if (data === false) {
+                            return false;
+                        }
+
+                        let method = ctx.action;
+                        if (actions[method]) {
+
+                            let param = ctx.param();
+                            //let post = ctx.post();
+
+                            if (actions[method].value) {
+                                return actions[method].value.call(instance, param, biz_json);
+                            } else if (actions[method].initializer) {
+                                return actions[method].initializer.call(instance)(param, biz_json);
+                            }
+                        }
+                    }).then(data => {
+                        if (data === false) {
+                            return false;
+                        }
+                        if (instance.__after) {
+                            return instance.__after();
+                        }
+                    }).then(data => {
+                        if (ctx.status == 200) {
+                        } else if (ctx.status == 404) {
+                            error(ctx, error_code.API_CODE_METHOD_PARAMETER_ERROR);
+                        } else {
+                            error(ctx, error_code.API_ERROR_500);
+                        }
+                    }).catch(e => {
+                        console.error(e);
+                        error(ctx, error_code.API_ERROR_500);
+                    });
+
+                } catch (e) {
                     console.error(e);
-                    error(ctx, error_code.API_ERROR_500);
-                });
+                    if (helper.isEmpty(Controller)) {
+                        error(ctx, error_code.API_CODE_METHOD_PARAMETER_ERROR);
+                        return;
+                    }
+                }
             }
         } else {
             await next();

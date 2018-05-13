@@ -9,6 +9,7 @@ import Watcher from './core/watcher';
 import Loaders from './loaders';
 import Cluster from './core/cluster';
 import debug from 'debug';
+import define from './core/helper/define';
 
 debug.log = console.log.bind(console);
 
@@ -26,65 +27,17 @@ module.exports = class Application {
 
         this.options = options;
 
-        Object.defineProperty(jinghuan, 'ROOT_PATH', {
-            get() {
-                return options.ROOT_PATH;
-            }
-        });
+        define('ROOT_PATH', options.ROOT_PATH);
+        define('APP_PATH', options.APP_PATH);
+        define('JH_PATH', options.JH_PATH);
 
-        Object.defineProperty(jinghuan, 'source', {
-            get() {
-                return options.source;
-            }
-        });
-
-        Object.defineProperty(jinghuan, 'APP_PATH', {
-            get() {
-                return options.APP_PATH;
-            }
-        });
-
-        Object.defineProperty(jinghuan, 'JH_PATH', {
-            get() {
-                return options.JH_PATH;
-            }
-        });
-
-        Object.defineProperty(jinghuan.app, 'modules', {
-            get() {
-                return options.modules.slice();
-            }
-        });
-
-        Object.defineProperty(jinghuan, 'env', {
-            get() {
-                return options.env;
-            }
-        });
-
-        Object.defineProperty(jinghuan, 'PORT', {
-            get() {
-                return options.port || '8360';
-            }
-        });
-
-        Object.defineProperty(jinghuan, 'HOST', {
-            get() {
-                return options.host;
-            }
-        });
-
-        Object.defineProperty(jinghuan, 'mode', {
-            get() {
-                return options.mode;
-            }
-        });
-
-        Object.defineProperty(jinghuan, 'requireResolve', {
-            get() {
-                return options.requireResolve;
-            }
-        });
+        define('source', options.source);
+        define('modules', options.modules.slice());
+        define('env', options.env);
+        define('PORT', options.port || '8360');
+        define('HOST', options.host);
+        define('mode', options.mode);
+        define('requireResolve', options.requireResolve);
     }
 
     /**

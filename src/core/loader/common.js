@@ -1,5 +1,5 @@
-import path from "path";
-import helper from "../helper";
+import path from 'path';
+import helper from '../helper';
 import debug from 'debug';
 
 const log = debug(`JH:core/loader/common[${process.pid}]`);
@@ -23,7 +23,8 @@ const CommonLoader = {
             // replace \\ to / in windows
             const name = file.replace(/\\/g, '/').replace(/\.js$/, '');
             const filepath = path.join(dir, file);
-            const fileExport = require(filepath);
+            const fileExport = filepath;//require(filepath);
+            // const fileExport = require(filepath);
             // add __filename to export when is class
             //if (helper.isFunction(fileExport)) {
             //    fileExport.prototype.__filename = filepath;

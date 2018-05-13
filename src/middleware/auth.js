@@ -9,8 +9,8 @@ function invokeAuth(options, app) {
      *
      */
     return async (ctx, next) => {
-        if (jinghuan.app.modules) {
-            if (jinghuan.app.modules.indexOf(ctx.module) !== -1) {
+        if (jinghuan.modules) {
+            if (jinghuan.modules.indexOf(ctx.module) !== -1) {
                 await next();
                 return;
             }

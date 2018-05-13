@@ -1,6 +1,4 @@
-import helper from "../helper"
-
-//import each from "lodash/each"
+import helper from '../helper';
 
 /**
  * config manage
@@ -13,7 +11,7 @@ class Config {
     constructor(config = {}) {
         this.config = config;
     }
-    
+
     /**
      *
      * @param name
@@ -39,7 +37,7 @@ class Config {
         });
         return config;
     }
-    
+
     /**
      * set config
      * set('name', 'value'), set('foo.bar', 'value')

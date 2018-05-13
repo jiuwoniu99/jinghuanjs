@@ -8,7 +8,7 @@ import helper from './core/helper';
 import c from './core/cluster';
 import events from './core/events';
 import pm2 from './core/pm2';
-
+import define from './core/helper/define';
 
 /**
  *
@@ -34,38 +34,20 @@ global.Promise = bluebird;
  */
 global.jinghuan = jinghuan;
 
-Object.defineProperty(jinghuan, 'app', {
-    get() {
-        return app;
-    }
-});
+define('app', app);
 
 Object.defineProperty(app, 'jinghuan', {
     get() {
         return jinghuan;
     }
 });
-
-Object.defineProperty(jinghuan, 'version', {
-    get() {
-        return pkg.version;
-    }
-});
-
-Object.defineProperty(jinghuan, 'messenger', {
-    get() {
-        return c.messenger;
-    }
-});
+define('version', pkg.version);
+define('messenger', c.messenger);
 
 class Controller {
 };
 
-Object.defineProperty(jinghuan, 'Controller', {
-    get() {
-        return Controller;
-    }
-});
+define('Controller', Controller);
 
 /**
  * before start server
@@ -114,34 +96,6 @@ log4js.configure({
     }
 });
 
-let logger = log4js.getLogger();
-
-Object.defineProperty(jinghuan, 'logger', {
-    get() {
-        return logger;
-    }
-});
-
-/**
- *
- * @type {Events}
- */
-let es = new events();
-
-/**
- *
- */
-Object.defineProperty(jinghuan, 'events', {
-    get() {
-        return es;
-    }
-});
-
-/**
- *
- */
-Object.defineProperty(jinghuan, 'jwt', {
-    get() {
-        return jwt;
-    }
-});
+define('logger', log4js.getLogger());
+define('events', new events());
+define('jwt', jwt);

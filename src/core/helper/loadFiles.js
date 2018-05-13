@@ -1,16 +1,31 @@
-import helper from "./index"
-import path from "path"
+import helper from './index';
+import path from 'path';
 
-export default function(dir, ext) {
-    const ragexp = new RegExp('\\.' + ext + '$');
-    const files = helper.getdirFiles(dir).filter(file => {
-        return ragexp.test(file);
-    });
+/**
+ *
+ * @param dir 目录
+ * @param ext 文件扩展名
+ * @param load 是否使用require加载
+ */
+export default function(dir, ext = [], load = false) {
+    if (helper.isString(ext)) {
+        ext = [ext];
+    }
+    const ragexp = new RegExp('\\.(' + ext.join('|') + ')$');
     const cache = {};
-    files.forEach(file => {
+
+    helper.getdirFiles(dir)
+    .filter(file => {
+        return ragexp.test(file);
+    })
+    .forEach(file => {
         const name = file.replace(/\\/g, '/').replace(ragexp, '');
-        const filepath = path.join(dir, file);
-        cache[name] = filepath;
+        if (load) {
+            cache[name] = require(path.join(dir, file));
+        } else {
+            cache[name] = path.join(dir, file);
+        }
+
     });
     return cache;
 };

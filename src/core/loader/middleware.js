@@ -3,6 +3,7 @@ import assert from 'assert';
 import pathToRegexp from 'path-to-regexp';
 import helper from '../helper';
 import debug from 'debug';
+import define from '../helper/define';
 
 const log = debug(`JH:core/loader/middleware[${process.pid}]`);
 
@@ -199,16 +200,10 @@ class Middleware {
             middlewares = require(filepath);
         }
         let ms = [];
-
         middlewares.map((v, k) => {
             ms.push(v.handle);
         });
-
-        Object.defineProperty(jinghuan, 'middlewares', {
-            get() {
-                return ms;
-            }
-        });
+        define('middlewares', ms);
         return this.parse(middlewares, app);
 
         // return this.parse(middlewares, this.loadFiles(), app);
