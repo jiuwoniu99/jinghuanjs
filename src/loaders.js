@@ -124,7 +124,7 @@ class Loaders {
     loadAll(type) {
 
         this.loader = new Loader();
-
+    
         define('config', Config);
 
         if (type !== 'master') {

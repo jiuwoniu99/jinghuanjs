@@ -6,9 +6,9 @@ let waitReloadWorkerTimes = 0;
  * 默认参数
  */
 const defaultOptions = {
-    port: 0, // server listen port
-    host: '', // server listen host
-    workers: 0, // fork worker nums
+    port: 0,
+    host: '',
+    workers: 0,
 };
 
 /**
@@ -22,24 +22,13 @@ class Master {
      * @param options
      */
     constructor(options) {
+        let port = jinghuan.PORT;
+        let host = jinghuan.HOST;
+        let workers = jinghuan.workers;
         
-        const port = jinghuan.PORT;
-        const host = jinghuan.HOST;
-        const workers = jinghuan.config('workers');
-        
-        options = util.parseOptions({port, host, workers});
-        
-        this.options = Object.assign({}, defaultOptions, options);
+        this.options = {port, host, workers};
     }
     
-    /**
-     * get fork env
-     */
-    getForkEnv() {
-        return {
-            JH_WORKERS: this.options.workers // workers num
-        };
-    }
     
     /**
      * fork workers
@@ -49,8 +38,7 @@ class Master {
         let index = 0;
         const promises = [];
         while (index++ < workers) {
-            const env = Object.assign({}, this.getForkEnv());
-            const promise = util.forkWorker(env);
+            const promise = util.forkWorker();
             promises.push(promise);
         }
         return Promise.all(promises);
@@ -87,20 +75,26 @@ class Master {
         
         const firstWorker = aliveWorkers.shift();
         
-        const promise = util.forkWorker(this.getForkEnv())
-            .then(data => {
-                //this.sendInspectPort(data.worker);
-                // http://man7.org/linux/man-pages/man7/signal.7.html
-                this.killWorker(firstWorker, true);
-                
-                return aliveWorkers.map(worker => {
-                    this.killWorker(worker, true);
-                    return util.forkWorker(this.getForkEnv());
-                });
+        const promise = util.forkWorker();
+        
+        promise.then(data => {
+            // worker 开始监听后进入
+            
+            this.sendInspectPort(data.worker);
+            
+            // http://man7.org/linux/man-pages/man7/signal.7.html
+            this.killWorker(firstWorker, true);
+            
+            return aliveWorkers.map(worker => {
+                this.killWorker(worker, true);
+                return util.forkWorker();
             });
+        });
+        
         
         return promise
             .then(() => {
+                // 杀掉所有的子进程后
                 if (waitReloadWorkerTimes > 1) {
                     waitReloadWorkerTimes = 0;
                     this.forceReloadWorkers();
@@ -115,6 +109,7 @@ class Master {
      * @param {Worker} worker
      */
     sendInspectPort(worker) {
+        //worker给发master发送消息要用process.send(message)
         if (!process.send) return;
         const inspect = process.execArgv.some(item => item.indexOf('--inspect') >= 0);
         if (!inspect) return;

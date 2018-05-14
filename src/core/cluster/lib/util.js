@@ -10,11 +10,15 @@ const util = {};
 
 let jhProcessId = 1;
 
-
+// 重新启动信号
 util.JH_RELOAD_SIGNAL = 'jinghuan-reload-signal';
+
 util.JH_GRACEFUL_FORK = 'jinghuan-graceful-fork';
+
 util.JH_GRACEFUL_DISCONNECT = 'jinghuan-graceful-disconnect';
+
 util.JH_STICKY_CLUSTER = 'jinghuan-sticky-cluster';
+
 util.WORKER_REALOD = WORKER_REALOD;
 util.NEED_KILLED = NEED_KILLED;
 
@@ -53,22 +57,29 @@ util.getAliveWorkers = () => {
 };
 
 /**
- * fork worker
+ * 启动子进程
+ * @param env
+ * @return {*}
  */
 util.forkWorker = function (env = {}) {
     const deferred = helper.defer();
     
     env.JH_PROCESS_ID = jhProcessId++;
+    
     const worker = cluster.fork(env);
     
     // 接收到主进程消息
     worker.on('message', message => {
+        // 当前进程处于reload状态时不处理任何消息
         if (worker[WORKER_REALOD]) return;
+        
+        //
         if (message === util.JH_GRACEFUL_DISCONNECT) {
-            log(`refork worker, receive message 'jinghuan-graceful-disconnect'`);
+            
+            log(`refork worker, receive message '${util.JH_GRACEFUL_DISCONNECT}'`);
             worker[WORKER_REALOD] = true;
+            
             util.forkWorker(env).then(() => {
-                //
                 worker.send(util.JH_GRACEFUL_FORK);
             });
         }
@@ -101,7 +112,7 @@ util.forkWorker = function (env = {}) {
         env.JH_PREV_PID = worker.process.pid;
         deferred.resolve({worker, address});
     });
-    //
+    
     return deferred.promise;
 };
 

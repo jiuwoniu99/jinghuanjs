@@ -35,6 +35,9 @@ program
         'set watcher default false      -W')
     .option('-C, --config [value]',
         'set config file path           -C config.js')
+    .option('-c, --cluster [n] default 1',
+        'set cluster number             -c 1',
+        1)
     .parse(process.argv);
 
 
@@ -104,6 +107,12 @@ else if (program.config) {
         options.watcher = true;
     } else {
         options.watcher = false;
+    }
+    
+    if (program.cluster == 0) {
+        options.cluster = 0;
+    } else {
+        options.cluster = 1;
     }
     main(options);
 }

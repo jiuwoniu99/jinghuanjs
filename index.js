@@ -39,7 +39,18 @@ if (process.env.JH_MODULES) {
 
 let watcher = false;
 if (process.env.JH_WATCHER) {
-    watcher = process.env.JH_WATCHER === '1';
+    watcher = !!process.env.JH_WATCHER;
+}
+
+let workers = false;
+if (process.env.JH_WORKERS) {
+    workers = process.env.JH_WORKERS;
+}
+
+
+let mode = false;
+if (process.env.JH_MODE) {
+    mode = process.env.JH_MODE;
 }
 
 
@@ -57,24 +68,21 @@ module.exports = function (options) {
     options.port = options.port || port;
     options.watcher = options.watcher || watcher || false;
     options.modules = options.modules || modules || [options.env];
-    //options.babel = options.babel || babel || false;
     options.requireResolve = requireResolve;
-    
+    options.workers = options.workers || workers || 0;
+    options.mode = options.mode || mode || 'lib';
     
     if (!options.APP_PATH) {
         options.APP_PATH = path.join(options.ROOT_PATH, options.source);
     }
     
     let runFile = '';
-    if (options.source === 'src' && fs.pathExistsSync(`${rootPath}/dev/application.js`)) {
-        options.mode = 'dev';
+    if (options.mode === 'dev' && fs.pathExistsSync(`${rootPath}/dev/application.js`)) {
         options.watcher = true;
         options.JH_PATH = path.join(rootPath, 'dev');
         runFile = `${rootPath}/dev/application`;
         _safeRequire('./register.js')(options)
-    }
-    else if (options.source === 'src' && fs.pathExistsSync(`${rootPath}/src/application.js`)) {
-        options.mode = 'src';
+    } else if (options.mode === 'src' && fs.pathExistsSync(`${rootPath}/src/application.js`)) {
         options.watcher = true;
         options.JH_PATH = path.join(rootPath, 'src');
         runFile = `${rootPath}/src/application`;
@@ -84,7 +92,6 @@ module.exports = function (options) {
         options.JH_PATH = path.join(rootPath, 'lib');
         runFile = `${rootPath}/lib/application`;
     }
-    
     let Appliaction = _safeRequire(runFile);
     let app = new Appliaction(options);
     app.run();

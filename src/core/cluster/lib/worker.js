@@ -34,7 +34,6 @@ class Worker {
         const port = jinghuan.PORT;
         const host = jinghuan.HOST;
         
-        //logger: jinghuan.logger.error.bind(jinghuan.logger),
         // 自定义的进程启动超时
         const processKillTimeout = jinghuan.config('processKillTimeout');
         // 进程未捕获的异常
@@ -43,11 +42,12 @@ class Worker {
         const onUnhandledRejection = jinghuan.config('onUnhandledRejection');
         
         options = util.parseOptions({port, host, processKillTimeout, onUncaughtException, onUnhandledRejection});
+        
         this.options = Object.assign({}, defaultOptions, options);
     }
     
-    /**disable keep alive
-     *
+    /**
+     * disable keep alive
      */
     disableKeepAlive() {
         if (this[KEEP_ALIVE]) {
@@ -101,7 +101,9 @@ class Worker {
             return;
         }
         worker[WORKER_RELOAD] = true;
+        
         jinghuan.logger.info(`[Worker] Reload`);
+        
         if (sendSignal) {
             
             // 通知主进程 该子进程要从集群中要开始断开
