@@ -95,6 +95,7 @@ function invokeApi(options, app) {
         if (pathname === apipathname) {
             let timeout = options.timeout || false;
             let table = options.table || 'jh_auth_user';
+            let db = options.db || 'default';
             let fields = options.fields || ['key', 'id', 'appid', 'secret'];
             let biz_json = {};
 
@@ -165,7 +166,7 @@ function invokeApi(options, app) {
                 let {biz_content = null} = post;
 
                 // 查询用户信息
-                let user = await ctx.db('jh_auth_user')
+                let user = await ctx.db(table)
                 .select(fields)
                 .where({appid})
                 .first();
@@ -175,6 +176,7 @@ function invokeApi(options, app) {
                     let sign_data = {appid, time, secret_type, biz_content, key: user.key, method};
                     let sign_string = query_string(sign_data);
                     let check = strtoupper(md5(sign_string));
+                    
                     if (options.debug) {
                         ctx.slog.info('sign_string >> ' + sign_string);
                         ctx.slog.info('check >> ' + check);
