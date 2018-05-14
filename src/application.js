@@ -34,7 +34,7 @@ module.exports = class Application {
         define('source', options.source);
         define('modules', options.modules.slice());
         define('env', options.env);
-        define('PORT', options.port || '8360');
+        define('PORT', options.port || 8409);
         define('HOST', options.host);
         define('mode', options.mode);
         define('requireResolve', options.requireResolve);

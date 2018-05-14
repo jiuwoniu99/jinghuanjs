@@ -268,41 +268,41 @@ export default {
      * @param {String} value
      * @param {Object} options
      */
-    cookie(name, value, options = {}) {
-        assert(name && helper.isString(name), 'cookie.name must be a string');
-        options = Object.assign({}, this.config('cookie'), options);
-        const instance = new Cookies(this.req, this.res, {
-            keys: options.keys,
-            secure: this.request.secure
-        });
-        
-        if (!this[COOKIE_STORE]) {
-            this[COOKIE_STORE] = {};
-        }
-        
-        // get cookie
-        if (value === undefined) {
-            if (this[COOKIE_STORE][name] !== undefined) {
-                return this[COOKIE_STORE][name];
-            }
-            return instance.get(name, options);
-        }
-        // remove cookie
-        if (value === null) {
-            delete this[COOKIE_STORE][name];
-            // If the value is omitted, an outbound header with an expired date is used to delete the cookie.
-            // https://github.com/pillarjs/cookies#cookiesset-name--value---options--
-            return instance.set(name, undefined, options);
-        }
-        assert(helper.isString(value), 'cookie value must be a string');
-        // http://browsercookielimits.squawky.net/
-        if (value.length >= 4094) {
-            this.app.emit('cookieLimit', {name, value, ctx: this});
-        }
-        this[COOKIE_STORE][name] = value;
-        // set cookie
-        return instance.set(name, value, options);
-    },
+    //cookie(name, value, options = {}) {
+    //    assert(name && helper.isString(name), 'cookie.name must be a string');
+    //    options = Object.assign({}, this.config('cookie'), options);
+    //    const instance = new Cookies(this.req, this.res, {
+    //        keys: options.keys,
+    //        secure: this.request.secure
+    //    });
+    //
+    //    if (!this[COOKIE_STORE]) {
+    //        this[COOKIE_STORE] = {};
+    //    }
+    //
+    //    // get cookie
+    //    if (value === undefined) {
+    //        if (this[COOKIE_STORE][name] !== undefined) {
+    //            return this[COOKIE_STORE][name];
+    //        }
+    //        return instance.get(name, options);
+    //    }
+    //    // remove cookie
+    //    if (value === null) {
+    //        delete this[COOKIE_STORE][name];
+    //        // If the value is omitted, an outbound header with an expired date is used to delete the cookie.
+    //        // https://github.com/pillarjs/cookies#cookiesset-name--value---options--
+    //        return instance.set(name, undefined, options);
+    //    }
+    //    assert(helper.isString(value), 'cookie value must be a string');
+    //    // http://browsercookielimits.squawky.net/
+    //    if (value.length >= 4094) {
+    //        this.app.emit('cookieLimit', {name, value, ctx: this});
+    //    }
+    //    this[COOKIE_STORE][name] = value;
+    //    // set cookie
+    //    return instance.set(name, value, options);
+    //},
     /**
      * get service
      * @param {String} name
@@ -333,19 +333,35 @@ export default {
         });
         return false;
     },
+    /**
+     *
+     * @return {Slog}
+     */
     get slog() {
         if (!this._slog) {
             this._slog = new Slog(this);
         }
         return this._slog;
     },
+    /**
+     *
+     * @return {Function}
+     */
     get db() {
         return knex;
     },
+    /**
+     *
+     * @return {Function}
+     */
     get session() {
         return async () => {
         };
     },
+    /**
+     *
+     * @return {events|Events}
+     */
     get events() {
         if (!this._events) {
             this._events = new events();

@@ -1,5 +1,8 @@
-import assert from "assert"
-import time from "locutus/php/datetime/time"
+import assert from "assert";
+import time from "locutus/php/datetime/time";
+import helper from '../helper';
+import uuid from 'uuid';
+import ksort from 'locutus/php/array/ksort';
 
 const initSessionData = Symbol('jinghuan-session-db-init');
 
@@ -7,31 +10,20 @@ const initSessionData = Symbol('jinghuan-session-db-init');
  *
  */
 class DbSession {
+    data;
+    key;
+    
     /**
      *
-     * @param options
      * @param ctx
+     * @param options
      */
-    constructor(options, ctx) {
+    constructor(ctx, options) {
         assert(options.table, '.table required');
         //
+        this.ctx = ctx;
         this.options = options;
         
-        //
-        this.key = 'id';
-        this.content = 'data';
-        this.expires = 'expires';
-        
-        //
-        if (this.options.fields) {
-            let {key, content, expires} = this.options.fields;
-            this.key = key || this.key;
-            this.content = content || this.content;
-            this.expires = expires || this.expires;
-        }
-        
-        //
-        this.ctx = ctx;
         this.ctx.events.on('finish', async () => {
             await this.flush();
         });
@@ -42,37 +34,44 @@ class DbSession {
      * @return {Promise<void>}
      */
     async [initSessionData]() {
-        if (this.data) {
-        }
-        else {
-            // 查询数据
-            let data = await this.ctx.db(this.options.table)
-                .where(this.key, this.options.cookie)
-                .first();
+        if (this.data == null) {
             
-            if (data == null) {
-                let val = {};
-                val[this.key] = this.options.cookie;
-                val[this.content] = JSON.stringify({});
-                val[this.expires] = time() + this.options.maxAge;
-                
-                // 创建数据
-                await this.ctx.db(this.options.table).insert(val);
-                this.data = {};
-            } else {
-                // 解析数据
+            let {id, table, fields, db_type} = this.options;
+            
+            let sessid = this.ctx.cookies.get(id);
+            
+            if (helper.isEmpty(sessid)) {
                 try {
-                    this.data = JSON.parse(data.data);
-                } catch (ex) {
+                    this.id = uuid.v4();
+                    await this.ctx.db(table, db_type).insert({id: this.id, data: '{}', expires: time()})
+                } catch (e) {
+                    console.error(e);
+                } finally {
                     this.data = {};
                 }
-                
-                // session 过时
-                if (data[this.expires] < time()) {
-                    this.delete();
+            } else {
+                try {
+                    this.data = {};
+                    // 查询数据
+                    let data = await this.ctx.db(table, db_type)
+                        .where({id: sessid})
+                        .first();
+                    
+                    this.data = JSON.parse(data.data);
+                    
+                    // session 过时
+                    if (data[this.expires] < time()) {
+                        this.data = {}
+                    }
+                } catch (e) {
+                    this.data = {}
+                    console.error(e);
                 }
             }
         }
+        
+        ksort(this.data);
+        this.key = helper.md5(JSON.stringify(this.data));
     }
     
     /**
@@ -98,7 +97,6 @@ class DbSession {
         } else {
             this.data[name] = value;
         }
-        
     }
     
     /**
@@ -106,7 +104,6 @@ class DbSession {
      * @return {Promise<void>}
      */
     async delete() {
-        // this.status = -1;
         this.data = {};
     }
     
@@ -115,20 +112,22 @@ class DbSession {
      * @return {Promise<void>}
      */
     async flush() {
-        let val = {};
-        val[this.content] = JSON.stringify(this.data);
-        val[this.expires] = time() + this.options.maxAge;
+        let {table, db_type} = this.options;
         
-        await this.ctx.db(this.options.table)
-            .where(this.key, this.options.cookie)
-            .update(val);
+        ksort(this.data);
+        let key = helper.md5(JSON.stringify(this.data));
+        if (this.key !== key) {
+            let val = {
+                data: JSON.stringify(this.data),
+                expires: time() + this.options.expires
+            };
+            await this.ctx.db(table, db_type)
+                .where({id: this.id})
+                .update(val);
+            this.ctx.cookies.set(this.options.id, this.id, {maxAge: this.options.expires})
+        }
     }
     
-    /**
-     * gc
-     */
-    gc() {
-    }
 }
 
 export default DbSession;

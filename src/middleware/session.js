@@ -7,14 +7,17 @@ import session from "../core/session";
  * @return {function(*=, *)}
  */
 function invokeSession(options, app) {
+    
+    
     /**
      *
      */
     return async (ctx, next) => {
+        let Session = new session(ctx);
         try {
             Object.defineProperty(ctx, 'session', {
                 get() {
-                    return session;
+                    return Session.run;
                 }
             });
             await next();
