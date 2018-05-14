@@ -31,12 +31,12 @@ program
     .option('-M, --modules [value]',
         'set modules default index      -M index, ...',
         'index')
-    .option('-W, --watcher [value]',
-        'set watcher default false      -W')
+    //.option('-W, --watcher [value]',
+    //    'set watcher default false      -W')
     .option('-C, --config [value]',
         'set config file path           -C config.js')
-    .option('-c, --cluster [n] default 1',
-        'set cluster number             -c 1',
+    .option('-W, --workers [n] default 1',
+        'set workers number             -W 1',
         1)
     .parse(process.argv);
 
@@ -51,7 +51,8 @@ else if (program.demo) {
         port: 8409,
         env: 'index',
         modules: ['index'],
-        watcher: true
+        workers: 1,
+        mode: 'dev'
     });
 }
 else if (program.config) {
@@ -103,14 +104,8 @@ else if (program.config) {
         options.modules = ['index']
     }
     
-    if (program.watcher) {
-        options.watcher = true;
-    } else {
-        options.watcher = false;
-    }
-    
-    if (program.cluster == 0) {
-        options.cluster = 0;
+    if (program.cluster) {
+        options.cluster = program.cluster;
     } else {
         options.cluster = 1;
     }
