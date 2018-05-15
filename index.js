@@ -56,6 +56,10 @@ if (process.env.JH_MODE) {
     mode = process.env.JH_MODE;
 }
 
+let process_id = false;
+if (process.env.JH_PROCESS_ID) {
+    process_id = process.env.JH_PROCESS_ID;
+}
 
 /**
  *
@@ -77,6 +81,7 @@ module.exports = function (options) {
     options.requireResolve = requireResolve;
     options.workers = options.workers || workers || 0;
     options.mode = options.mode || mode || 'lib';
+    options.process_id = process_id;
     
     if (!options.APP_PATH) {
         options.APP_PATH = path.join(options.ROOT_PATH, options.source);

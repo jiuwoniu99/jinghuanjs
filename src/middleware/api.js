@@ -15,18 +15,18 @@ const symbol = jinghuan.props.api.name;
 
 const error_code = {
     'API_ERROR_500': {code: 500, msg: '服务器异常'},
-    //
+    // 通用参数验证
     'API_CODE_THERE_MUST_BE_A_APPID': {code: 10000, msg: '必须有AppID'},
     'API_CODE_WRONG_APPID': {code: 10001, msg: '错误的AppID'},
     'API_CODE_SIGN_ERROR': {code: 10002, msg: '错误的签名'},
-    'API_CODE_LACK_OF_TIME_PARAMETERS': {code: 10003, msg: '缺少"time"参数'},
-    'API_CODE_LACK_OF_SIGN_PARAMETERS': {code: 10004, msg: '缺少"sign"参数'},
-    'API_CODE_LACK_OF_APPID_PARAMETERS': {code: 10005, msg: '缺少"appid"参数'},
-    'API_CODE_LACK_OF_METHOD_PARAMETERS': {code: 10006, msg: '缺少"method"参数'},
-    //
-    'API_CODE_TIME_PARAMETER_ERROR': {code: 10021, msg: '"time"参数错误'},
-    'API_CODE_SIGN_PARAMETER_ERROR': {code: 10022, msg: '"sign"参数错误'},
-    'API_CODE_APPID_PARAMETER_ERROR': {code: 10023, msg: '"appid"参数错误'},
+    'API_CODE_LACK_OF_TIME_PARAMETERS': {code: 10003, msg: '缺少 "time" 参数'},
+    'API_CODE_LACK_OF_SIGN_PARAMETERS': {code: 10004, msg: '缺少 "sign" 参数'},
+    'API_CODE_LACK_OF_APPID_PARAMETERS': {code: 10005, msg: '缺少 "appid" 参数'},
+    'API_CODE_LACK_OF_METHOD_PARAMETERS': {code: 10006, msg: '缺少 "method" 参数'},
+    // 参数错误
+    'API_CODE_TIME_PARAMETER_ERROR': {code: 10021, msg: '参数 "time" 错误'},
+    'API_CODE_SIGN_PARAMETER_ERROR': {code: 10022, msg: '参数 "sign" 错误'},
+    'API_CODE_APPID_PARAMETER_ERROR': {code: 10023, msg: '参数 "appid" 错误'},
     'API_CODE_TIME_OUT_ERROR': {code: 10024, msg: '签名已过期'},
     'API_CODE_TOKEN_ERROR': {code: 100025, msg: 'token错误'},
     'API_CODE_TOKEN_TIMEOUT_ERROR': {code: 10026, msg: 'token过期'},
@@ -34,11 +34,13 @@ const error_code = {
     'API_CODE_POST_ERROR': {code: 10028, msg: '请使用POST请求'},
     'API_CODE_BIZ_CONTENT_ERROR': {code: 10029, msg: '参数错误'},
     'API_CODE_SECRET_TYPE_ERROR': {code: 10030, msg: '"biz_content"加密方式错误'},
-    'API_CODE_METHOD_PARAMETER_ERROR': {code: 10031, msg: '"method"参数错误'},
-    //
-    'API_CODE_PARAMETER_ERROR': {code: 11000, msg: '"{0}"缺少参数'},
+    'API_CODE_METHOD_PARAMETER_ERROR': {code: 10031, msg: '参数 "method" 错误'},
+    // 参数相关
+    'API_CODE_PARAMETER_ERROR': {code: 11000, msg: '缺少 "{0}" 参数'},
     'API_CODE_THE_DATA_HAS_ALREADY_EXISTED': {code: 11001, msg: '该sid数据已存在'},
     'API_CODE_DATA_DOES_NOT_EXIST': {code: 11002, msg: '该sid数据不存在'},
+    // 授权相关
+    'API_CODE_UNAUTHORIZED': {code: 12000, msg: '该功能未授权'},
 };
 
 /**
@@ -118,19 +120,19 @@ function invokeApi(options, app) {
             let param = extend({}, ctx.param());
             
             if (!param.method) {
-                // 缺少"method"参数
+                // 缺少 "method" 参数
                 error(ctx, error_code.API_CODE_LACK_OF_METHOD_PARAMETERS);
                 return;
             } else if (!param.time) {
-                // 缺少"time"参数
+                // 缺少 "time" 参数
                 error(ctx, error_code.API_CODE_LACK_OF_TIME_PARAMETERS);
                 return;
             } else if (!param.sign) {
-                // 缺少"sign"参数
+                // 缺少 "sign" 参数
                 error(ctx, error_code.API_CODE_LACK_OF_SIGN_PARAMETERS);
                 return;
             } else if (!param.appid) {
-                // 缺少"appid"参数
+                // 缺少 "appid" 参数
                 error(ctx, error_code.API_CODE_LACK_OF_APPID_PARAMETERS);
                 return;
             } else if (param.time.length != 10) {
@@ -157,7 +159,7 @@ function invokeApi(options, app) {
                 return;
             }
             else if (!post.biz_content) {
-                // 缺少"biz_content"
+                // 缺少 "biz_content"
                 error(ctx, error_code.API_CODE_POST_ERROR);
                 return;
             }
@@ -189,7 +191,7 @@ function invokeApi(options, app) {
                         ctx.slog.info('biz_content >> ' + biz_content);
                     }
                     
-                    if (check !== sign) {
+                    if (strtoupper(check) !== strtoupper(sign)) {
                         // 签名失败
                         error(ctx, error_code.API_CODE_SIGN_ERROR);
                         return;
@@ -234,7 +236,7 @@ function invokeApi(options, app) {
                     }
                     
                 } else {
-                    // 缺少"appid"参数
+                    // 缺少 "appid" 参数
                     error(ctx, error_code.API_CODE_WRONG_APPID);
                     return;
                 }

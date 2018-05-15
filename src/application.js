@@ -38,6 +38,7 @@ module.exports = class Application {
         define('HOST', options.host);
         define('mode', options.mode);
         define('requireResolve', options.requireResolve);
+        define('process_id', options.process_id);
     }
     
     /**
@@ -207,6 +208,7 @@ module.exports = class Application {
                 lines.push(`[Worker] Mode                 ${jinghuan.mode}`);
                 lines.push(`[Worker] Modules              [${jinghuan.modules}]`);
                 lines.push(`[Worker] Workers              ${jinghuan.workers}`);
+                lines.push(`[Worker] ID                   ${jinghuan.process_id}`);
                 this.consoleLines(lines, '=')
                 this.init = true
             })
