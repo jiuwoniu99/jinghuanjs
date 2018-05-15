@@ -1,4 +1,5 @@
-import helper from '../helper'
+//import helper from '../helper'
+import merge from 'lodash/merge';
 
 /**
  *
@@ -9,7 +10,7 @@ import helper from '../helper'
 export default function (config = {}, options = {}) {
     options.type = options.type || config.type;
     let adapter = config[config.type];
-    return helper.extend({}, adapter, options);
+    return merge({}, adapter, options);
     
     // {type: 'xxx', handle: ''}
     //if (config.handle) {

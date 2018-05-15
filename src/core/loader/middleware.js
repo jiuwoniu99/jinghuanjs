@@ -1,5 +1,5 @@
 import path from 'path';
-import assert from 'assert';
+//import assert from 'assert';
 import pathToRegexp from 'path-to-regexp';
 import helper from '../helper';
 import debug from 'debug';
@@ -11,7 +11,7 @@ const log = debug(`JH:core/loader/middleware[${process.pid}]`);
  * 中间件加载器
  */
 class Middleware {
-
+    
     /**
      * check url matched
      */
@@ -23,7 +23,7 @@ class Middleware {
             return pathToRegexp(match);
         }
     }
-
+    
     /**
      * check rule match
      */
@@ -33,7 +33,7 @@ class Middleware {
         }
         return rule.test(ctx.path);
     }
-
+    
     /**
      *
      * @param name
@@ -45,7 +45,26 @@ class Middleware {
             return false;
         }
     }
-
+    
+    /**
+     *
+     * @param item
+     */
+    requireMid(item) {
+        let middleware = this.checkMid(jinghuan.mode + '/middleware/' + item.handle) ||
+            this.checkMid(jinghuan.source + '/common/middleware/' + item.handle) ||
+            this.checkMid('jinghuan-middleware-' + item.handle);
+        
+        let cache = require.cache[middleware];
+        let handle = null;
+        if (!cache) {
+            handle = require(middleware);
+            if (handle) {
+                item.middleware = handle(item.options, jinghuan.app);
+            }
+        }
+    }
+    
     /**
      *
      * @param middlewares
@@ -53,7 +72,7 @@ class Middleware {
      * @return {any[]}
      */
     parse(middlewares = [], app) {
-
+        
         return middlewares.map(item => {
             if (helper.isString(item)) {
                 return {handle: item};
@@ -65,25 +84,26 @@ class Middleware {
         }).filter(item => {
             return !('enable' in item) || item.enable;
         }).map(item => {
-
+            
             // 高级设置 设置忽略的请求
             const match = this.createRegexp(item.match);
             const ignore = this.createRegexp(item.ignore);
-
+            
+            if (jinghuan.mode === 'lib') {
+                this.requireMid(item);
+            }
+            
             return (ctx, next) => {
-                let middleware = this.checkMid(jinghuan.mode + '/middleware/' + item.handle) ||
-                    this.checkMid(jinghuan.source + '/common/middleware/' + item.handle) ||
-                    this.checkMid('jinghuan-middleware-' + item.handle);
-
-                let cache = require.cache[middleware];
-                let handle = null;
-                if (!cache) {
-                    handle = require(middleware);
-                    if (handle) {
-                        item.middleware = handle(item.options, app);
+                
+                // src dev 模式下中间件是没有加载的
+                if (helper.isString(item.handle)) {
+                    this.requireMid(item);
+                } else {
+                    if (!helper.isEmpty(item.middleware)) {
+                        item.middleware = item.handle(item.options, app)
                     }
                 }
-
+                
                 if ((match && !this.checkMatch(match, ctx)) || (ignore && this.checkMatch(ignore, ctx))) {
                     return next();
                 }
@@ -91,27 +111,27 @@ class Middleware {
             };
         });
     }
-
+    
     /**
      * 加载解析中间件
      * @param app
      * @return {*}
      */
     load(app) {
-
+        
         // 获取引用的中间件配置
         let middlewares = jinghuan.config('middleware');
-
+        
         if (!middlewares) {
-
+            
             // 通用配置
             let filepath = path.join(jinghuan.ROOT_PATH, jinghuan.source, '/common/bootstrap/middleware.js');
-
+            
             if (!helper.isFile(filepath)) {
                 return [];
             }
             log(`load file: ${filepath}`);
-
+            
             middlewares = require(filepath);
         }
         let ms = [];

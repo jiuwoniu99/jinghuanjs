@@ -83,9 +83,6 @@ module.exports = function (options) {
     options.mode = options.mode || mode || 'lib';
     options.process_id = process_id;
     
-    if (!options.APP_PATH) {
-        options.APP_PATH = path.join(options.ROOT_PATH, options.source);
-    }
     
     let runFile = '';
     if (options.mode === 'dev' && fs.pathExistsSync(`${rootPath}/dev/application.js`)) {
@@ -100,9 +97,14 @@ module.exports = function (options) {
         _safeRequire('./register.js')(options)
     } else {
         options.mode = 'lib';
+        options.source = 'app';
         options.JH_PATH = path.join(rootPath, 'lib');
         runFile = `${rootPath}/lib/application`;
     }
+    
+    options.APP_PATH = path.join(options.ROOT_PATH, options.source);
+    
+    
     let Appliaction = _safeRequire(runFile);
     let app = new Appliaction(options);
     app.run();

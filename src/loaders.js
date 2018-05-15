@@ -125,7 +125,7 @@ class Loaders {
 
         this.loader = new Loader();
     
-        define('config', Config);
+        define('config', Config());
 
         if (type !== 'master') {
             // 加载 扩展
