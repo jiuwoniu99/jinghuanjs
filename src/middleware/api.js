@@ -166,13 +166,13 @@ function invokeApi(options, app) {
                 let {biz_content = null} = post;
                 let user;
                 
-                try{
+                try {
                     // 查询用户信息
                     user = await ctx.db(table)
                         .select(fields)
                         .where({appid})
                         .first();
-                }catch (e) {
+                } catch (e) {
                     ctx.slog.info(e.message);
                 }
                 
@@ -277,17 +277,18 @@ function invokeApi(options, app) {
                         if (data === false) {
                             return false;
                         }
-                        
-                        let method = ctx.action;
-                        if (actions[method]) {
+                        let act = actions[ctx.action]
+                        if (act) {
                             
                             let param = ctx.param();
                             //let post = ctx.post();
                             
-                            if (actions[method].value) {
-                                return actions[method].value.call(instance, param, biz_json);
-                            } else if (actions[method].initializer) {
-                                return actions[method].initializer.call(instance)(param, biz_json);
+                            if (act.value) {
+                                return act.value.call(instance, param, biz_json);
+                            } else if (act.initializer) {
+                                return act.initializer.call(instance)(param, biz_json);
+                            } else if (act.get) {
+                                return act.get().call(instance, param, biz_json);
                             }
                         }
                     }).then(data => {

@@ -64,9 +64,22 @@ module.exports = class Application {
      * @return {boolean}
      * @private
      */
-    _watcherCallBack(fileInfo) {
+    _watcherCallBack = (fileInfo) => {
         if (this.masterInstance) {
             this.masterInstance.forceReloadWorkers();
+        } else {
+            if (this.init) {
+                let file = path.join(fileInfo.path, fileInfo.file)
+                // 非集群环境
+                var module = require.cache[file];
+                if (module) {
+                    // remove reference in module.parent
+                    if (module.parent) {
+                        module.parent.children.splice(module.parent.children.indexOf(module), 1);    //释放老模块的资源
+                    }
+                    require.cache[file] = null;    //缓存
+                }
+            }
         }
     }
     
@@ -123,7 +136,7 @@ module.exports = class Application {
         //        jinghuan.logger.info(`[Master] Running at http://${jinghuan.HOST || '127.0.0.1'}:${jinghuan.PORT}`);
         //        jinghuan.logger.info(`[Master] JinghuanJs version: ${jinghuan.version}`);
         //        jinghuan.logger.info(`[Master] Enviroment: ${jinghuan.env}`);
-        //        jinghuan.logger.info(`[Master] App Source: ${jinghuan.source}`);
+        //        jinghuan.logger.info(`[Master] Source: ${jinghuan.source}`);
         //        jinghuan.logger.info(`[Master] Mode: ${jinghuan.mode}`);
         //        jinghuan.logger.info(`[Master] Workers: ${jinghuan.config('workers')}`);
         //        jinghuan.logger.info(`----------------------------------------------------------------------------------`);
@@ -133,14 +146,18 @@ module.exports = class Application {
         let instance = this._getMasterInstance();
         Promise.resolve(instance.startServer())
             .then(() => {
-                jinghuan.logger.info(`----------------------------------------------------------------------------------`);
-                jinghuan.logger.info(`[Master] Running at http://${jinghuan.HOST || '127.0.0.1'}:${jinghuan.PORT}`);
-                jinghuan.logger.info(`[Master] JinghuanJs version: ${jinghuan.version}`);
-                jinghuan.logger.info(`[Master] Enviroment: ${jinghuan.env}`);
-                jinghuan.logger.info(`[Master] App Source: ${jinghuan.source}`);
-                jinghuan.logger.info(`[Master] Mode: ${jinghuan.mode}`);
-                jinghuan.logger.info(`[Master] Workers: ${jinghuan.workers}`);
-                jinghuan.logger.info(`----------------------------------------------------------------------------------`);
+                let lines = [];
+                lines.push(`[Master] HOST                 [${jinghuan.HOST}]`);
+                lines.push(`[Master] PORT                 ${jinghuan.PORT}`);
+                lines.push(`[Master] ROOT_PATH            ${jinghuan.ROOT_PATH}`);
+                lines.push(`[Master] APP_PATH             ${jinghuan.APP_PATH}`);
+                lines.push(`[Master] JH_PATH              ${jinghuan.JH_PATH}`);
+                lines.push(`[Master] Enviroment           ${jinghuan.env}`);
+                lines.push(`[Master] Source               ${jinghuan.source}`);
+                lines.push(`[Master] Mode                 ${jinghuan.mode}`);
+                lines.push(`[Master] Modules              [${jinghuan.modules}]`);
+                lines.push(`[Master] Workers              ${jinghuan.workers}`);
+                this.consoleLines(lines, '-')
             })
     }
     
@@ -168,7 +185,7 @@ module.exports = class Application {
         //        jinghuan.logger.info(`[Worker] Running at http://${jinghuan.HOST || '127.0.0.1'}:${jinghuan.PORT}`);
         //        jinghuan.logger.info(`[Worker] JinghuanJs version: ${jinghuan.version}`);
         //        jinghuan.logger.info(`[Worker] Enviroment: ${jinghuan.env}`);
-        //        jinghuan.logger.info(`[Worker] App Source: ${jinghuan.source}`);
+        //        jinghuan.logger.info(`[Worker] Source: ${jinghuan.source}`);
         //        jinghuan.logger.info(`[Master] Mode: ${jinghuan.mode}`);
         //        jinghuan.logger.info(`[Worker] Middleware: [${jinghuan.middlewares.join(',')}]`);
         //        jinghuan.logger.info(`==================================================================================`);
@@ -178,16 +195,44 @@ module.exports = class Application {
         let instance = this._getWorkerInstance();
         Promise.resolve(instance.startServer())
             .then(() => {
-                jinghuan.logger.info(`==================================================================================`);
-                jinghuan.logger.info(`[Worker] Running at http://${jinghuan.HOST || '127.0.0.1'}:${jinghuan.PORT}`);
-                jinghuan.logger.info(`[Worker] JinghuanJs version: ${jinghuan.version}`);
-                jinghuan.logger.info(`[Worker] Enviroment: ${jinghuan.env}`);
-                jinghuan.logger.info(`[Worker] App Source: ${jinghuan.source}`);
-                jinghuan.logger.info(`[Worker] Mode: ${jinghuan.mode}`);
-                jinghuan.logger.info(`[Worker] Middleware: [${jinghuan.middlewares.join(',')}]`);
-                jinghuan.logger.info(`==================================================================================`);
+                let lines = [];
+                lines.push(`[Worker] JinghuanJs version   ${jinghuan.version}`);
+                lines.push(`[Worker] HOST                 [${jinghuan.HOST}]`);
+                lines.push(`[Worker] PORT                 ${jinghuan.PORT}`);
+                lines.push(`[Worker] ROOT_PATH            ${jinghuan.ROOT_PATH}`);
+                lines.push(`[Worker] APP_PATH             ${jinghuan.APP_PATH}`);
+                lines.push(`[Worker] JH_PATH              ${jinghuan.JH_PATH}`);
+                lines.push(`[Worker] Enviroment           ${jinghuan.env}`);
+                lines.push(`[Worker] Source               ${jinghuan.source}`);
+                lines.push(`[Worker] Mode                 ${jinghuan.mode}`);
+                lines.push(`[Worker] Modules              [${jinghuan.modules}]`);
+                lines.push(`[Worker] Workers              ${jinghuan.workers}`);
+                this.consoleLines(lines, '=')
+                this.init = true
             })
+    }
+    
+    /**
+     *
+     * @param lines
+     * @param flag
+     */
+    consoleLines(lines, flag = "*") {
+        let length = 0;
+        let index = 0;
+        let flags = [];
+        lines.forEach((str) => {
+            length = str.length > length ? str.length : length;
+        });
         
+        while (index++ < length) {
+            flags.push(flag);
+        }
+        jinghuan.logger.info(flags.join(''));
+        lines.forEach((str) => {
+            jinghuan.logger.info(str);
+        });
+        jinghuan.logger.info(flags.join(''));
     }
     
     /**

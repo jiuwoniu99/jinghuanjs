@@ -1,10 +1,13 @@
 const fs = _safeRequire('fs-extra');
 const path = _safeRequire('path');
 const findRoot = _safeRequire('find-root');
+const isString = require('lodash/isString');
+//
 const rootPath = findRoot(__filename);
 const appRootPath = findRoot(process.cwd());
 const requireResolve = {paths: [appRootPath, rootPath]};
 const filename = process.mainModule.filename;
+
 
 let host = false;
 if (process.env.JH_HOST) {
@@ -63,6 +66,9 @@ module.exports = function (options) {
     // 默认是 src 测试目录
     options.source = options.source || source || 'src';
     options.host = options.host || host || '127.0.0.1';
+    if (isString(options.host))
+        options.host = [options.host];
+    
     options.ROOT_PATH = options.ROOT_PATH || ROOT_PATH || appRootPath;
     options.env = options.env || env || path.basename(filename, '.js');
     options.port = options.port || port;

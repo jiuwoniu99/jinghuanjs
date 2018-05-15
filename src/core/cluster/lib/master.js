@@ -38,10 +38,14 @@ class Master {
         let index = 0;
         const promises = [];
         while (index++ < workers) {
-            const promise = util.forkWorker();
+            const promise = util.forkWorker(this.getEnv());
             promises.push(promise);
         }
         return Promise.all(promises);
+    }
+    
+    getEnv() {
+        return {}
     }
     
     /**
