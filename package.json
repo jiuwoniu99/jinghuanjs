@@ -8,7 +8,8 @@
         "lib": "babel src --out-dir lib --copy-files --watch",
         "test": "babel test/src --out-dir test/lib --copy-files --source-maps --watch --presets=minify",
         "publish": "babel src --out-dir lib --copy-files",
-        "demo": "jinghuanjs demo"
+        "demo": "jinghuanjs demo",
+        "start": "jinghuanjs demo"
     },
     "bin": {
         "jinghuanjs": "./bin/cli.js"
