@@ -20,7 +20,7 @@ let Config;
  */
 function configGet(name) {
     let config = merge({}, Config, localCache);
-    return get(config, name, {})
+    return get(config, name)
 }
 
 /**
