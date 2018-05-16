@@ -11,7 +11,7 @@ class IndexController extends Controller {
      */
     @action()
     async index() {
-        this.body = 'Hello JinghuanJs 1';
+        this.body = 'Hello JinghuanJs';
     }
 }
 

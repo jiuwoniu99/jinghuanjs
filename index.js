@@ -91,13 +91,16 @@ module.exports = function (options) {
         runFile = `${rootPath}/dev/application`;
         _safeRequire('./register.js')(options)
     } else if (options.mode === 'src' && fs.pathExistsSync(`${rootPath}/src/application.js`)) {
-        options.watcher = true;
+       
         options.JH_PATH = path.join(rootPath, 'src');
         runFile = `${rootPath}/src/application`;
         _safeRequire('./register.js')(options)
     } else {
         options.mode = 'lib';
-        options.source = 'app';
+        if (options.source !== 'app') {
+            options.watcher = true;
+            _safeRequire('./register.js')(options)
+        }
         options.JH_PATH = path.join(rootPath, 'lib');
         runFile = `${rootPath}/lib/application`;
     }

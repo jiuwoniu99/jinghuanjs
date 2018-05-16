@@ -39,6 +39,8 @@ module.exports = class Application {
         define('mode', options.mode);
         define('requireResolve', options.requireResolve);
         define('process_id', options.process_id);
+        define('watcher', options.watcher)
+        
     }
     
     /**
@@ -158,6 +160,7 @@ module.exports = class Application {
                 lines.push(`[Master] Mode                 ${jinghuan.mode}`);
                 lines.push(`[Master] Modules              [${jinghuan.modules}]`);
                 lines.push(`[Master] Workers              ${jinghuan.workers}`);
+                lines.push(`[Master] Watcher              ${jinghuan.watcher ? 'true' : 'false'}`);
                 this.consoleLines(lines, '-')
             })
     }

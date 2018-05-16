@@ -10,34 +10,34 @@ let options = {};
 
 program
     .version(pkg.version)
-    .option('new [value]',
-        'create new project             new [project name]')
-    .option('demo [value]',
-        'run demo                       demo')
+    //.option('new [value]',
+    //    'create new project             new [project name]')
     .option('-P, --port [n]',
-        'set port default 8409          -P 8409',
+        'set port                       -P 8409             ',
         '8409')
     .option('-H, --host [value]',
-        'set host default 127.0.0.1     -H 127.0.0.1, ...',)
+        'set host                       -H 127.0.0.1,...    ',
+        '127.0.0.1')
     .option('-S, --source [value]',
-        'set source default app         -S app|src',
+        'set source                     -S app|src          ',
         'app')
     .option('-R, --root-path [value]',
-        'set root path default ./       -R /[you work path]',
-        process.cwd())
+        'set root path                  -R /[you work path] ',
+        './')
     .option('-E, --env [value]',
-        'set env default index          -E index',
+        'set env                        -E index            ',
         'index')
     .option('-M, --modules [value]',
-        'set modules default index      -M index, ...',
+        'set modules                    -M index,...        ',
         'index')
-    //.option('-W, --watcher [value]',
-    //    'set watcher default false      -W')
     .option('-C, --config [value]',
-        'set config file path           -C config.js')
-    .option('-W, --workers [n] default 1',
-        'set workers number             -W 1',
+        'set config file path           -C config.js        ',
+        null)
+    .option('-W, --workers [n]',
+        'set workers number             -W 1                ',
         1)
+    .option('demo',
+        'run demo                                           ')
     .parse(process.argv);
 
 
@@ -45,6 +45,7 @@ if (program.new) {
 
 }
 else if (program.demo) {
+    //console.log(`jinghuanjs -R ${process.pwd()}`)
     main({
         ROOT_PATH: path.join(__dirname, '../tpl'),
         source: 'src',
@@ -52,7 +53,7 @@ else if (program.demo) {
         env: 'index',
         modules: ['index'],
         workers: 1,
-        mode: 'dev'
+        mode: 'lib'
     });
 }
 else if (program.config) {
@@ -63,27 +64,13 @@ else if (program.config) {
         process.exit(0)
     }
 } else {
-    if (program.port) {
-        options.port = program.port * 1;
-    } else {
-        options.port = 8409
-    }
+    options.port = program.port;
     
-    if (program.host) {
-        options.host = program.host.split(',');
-    }
+    options.host = program.host.split(',');
     
-    if (program.source) {
-        options.source = program.source;
-    } else {
-        options.source = 'app';
-    }
+    options.source = program.source;
     
-    if (program['root-path']) {
-        options.ROOT_PATH = program['root-path'];
-    } else {
-        options.ROOT_PATH = process.cwd();
-    }
+    options.ROOT_PATH = program['root-path'];
     
     let sourcePath = `${options.ROOT_PATH}/${options.source}`;
     if (!fs.pathExistsSync(sourcePath)) {
@@ -91,23 +78,11 @@ else if (program.config) {
         process.exit(0)
     }
     
+    options.env = program.env;
     
-    if (program.env) {
-        options.env = program.env;
-    } else {
-        options.env = 'index';
-    }
+    options.modules = program.modules.split(',');
     
-    if (program.modules) {
-        options.modules = program.modules.split(',');
-    } else {
-        options.modules = ['index']
-    }
+    options.workers = program.workers;
     
-    if (program.cluster) {
-        options.cluster = program.cluster;
-    } else {
-        options.cluster = 1;
-    }
     main(options);
 }
