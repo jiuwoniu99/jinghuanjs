@@ -68,10 +68,17 @@ else if (program.config) {
         options.port = options.port || program.port;
         options.host = options.host || program.host.split(',');
         options.source = options.source || program.source;
-        options.ROOT_PATH = options.ROOT_PATH || program['root-path'] || null;
+        options.ROOT_PATH = options.ROOT_PATH || program['root-path'] || appRootPath;
         options.env = options.env || program.env;
         options.modules = options.modules || program.modules.split(',');
         options.workers = options.workers || program.workers;
+        
+        let sourcePath = `${options.ROOT_PATH}/${options.source}`;
+        if (!fs.pathExistsSync(sourcePath)) {
+            console.log(`The "${sourcePath}" has not been found`);
+            process.exit(0)
+        }
+        
     } catch (e) {
         console.log(`file "${program.config}" not find`);
         process.exit(0)
@@ -85,7 +92,7 @@ else if (program.config) {
     
     options.source = program.source;
     
-    options.ROOT_PATH = program['root-path'];
+    options.ROOT_PATH = program['root-path'] || appRootPath;
     
     let sourcePath = `${options.ROOT_PATH}/${options.source}`;
     if (!fs.pathExistsSync(sourcePath)) {
