@@ -54,7 +54,7 @@ module.exports = function (option) {
             log(filename);
             return false;
         },
-        cache: option.isDev,
+        cache: true,
         "presets": [
             [
                 _safeRequire(require.resolve('babel-preset-env', option.requireResolve)),
