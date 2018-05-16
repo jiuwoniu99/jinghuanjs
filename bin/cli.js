@@ -1,58 +1,39 @@
 #!/usr/bin/env node
+'use strict';
 
-let program = require('commander');
-let main = require('../index.js');
-let fs = require('fs-extra');
-let path = require('path');
-let findRoot = require('find-root');
+var _package = require('../package.json');
 
-//
-const rootPath = findRoot(__filename);
-const appRootPath = findRoot(process.cwd());
-const requireResolve = {paths: [appRootPath, rootPath]};
-const pkg = _safeRequire('../package.json');
-let options = {};
+var _package2 = _interopRequireDefault(_package);
 
-program
-    .version(pkg.version)
-    //.option('new [value]',
-    //    'create new project             new [project name]')
-    .option('-P, --port [n]',
-        'set port                       -P 8409             ',
-        '8409')
-    .option('-H, --host [value]',
-        'set host                       -H 127.0.0.1,...    ',
-        '127.0.0.1')
-    .option('-S, --source [value]',
-        'set source                     -S app|src          ',
-        'app')
-    .option('-R, --root-path [value]',
-        'set root path                  -R /[you work path] ',
-        './')
-    .option('-E, --env [value]',
-        'set env                        -E index            ',
-        'index')
-    .option('-M, --modules [value]',
-        'set modules                    -M index,...        ',
-        'index')
-    .option('-C, --config [value]',
-        'set config file path           -C config.js        ',
-        null)
-    .option('-W, --workers [n]',
-        'set workers number             -W 1                ',
-        1)
-    .option('demo',
-        'run demo                                           ')
-    .parse(process.argv);
+var _fsExtra = require('fs-extra');
 
+var _fsExtra2 = _interopRequireDefault(_fsExtra);
 
-if (program.new) {
+var _path = require('path');
 
-}
-else if (program.demo) {
-    //console.log(`jinghuanjs -R ${process.pwd()}`)
-    main({
-        ROOT_PATH: path.join(__dirname, '../tpl'),
+var _path2 = _interopRequireDefault(_path);
+
+var _findRoot = require('find-root');
+
+var _findRoot2 = _interopRequireDefault(_findRoot);
+
+var _commander = require('commander');
+
+var _commander2 = _interopRequireDefault(_commander);
+
+var _isString = require('lodash/isString');
+
+var _isString2 = _interopRequireDefault(_isString);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+_commander2.default.version(_package2.default.version).option('-P, --port [n]', 'set port                       -P 8409             ', '8409').option('-H, --host [value]', 'set host                       -H 127.0.0.1,...    ', '127.0.0.1').option('-S, --source [value]', 'set source                     -S app|src          ', 'app').option('-R, --root-path [value]', 'set root path                  -R /[you work path] ', './').option('-E, --env [value]', 'set env                        -E index            ', 'index').option('-M, --modules [value]', 'set modules                    -M index,...        ', 'index').option('-C, --config [value]', 'set config file path           -C config.js        ', null).option('-W, --workers [n]', 'set workers number             -W 1                ', 1).option('demo', 'run demo                                           ').option('babel [value]', '                                                   ').parse(process.argv);
+
+if ((0, _isString2.default)(_commander2.default.babel)) {
+    _safeRequire('../babel')(_commander2.default.babel, function (option) {});
+} else if (_commander2.default.demo) {
+    _safeRequire('../index.js')({
+        ROOT_PATH: _path2.default.join(__dirname, '../tpl'),
         source: 'src',
         port: 8409,
         env: 'index',
@@ -60,60 +41,78 @@ else if (program.demo) {
         workers: 1,
         mode: 'lib'
     });
-}
-else if (program.config) {
-    try {
-        let file = require.resolve(program.config, requireResolve);
-        options = _safeRequire(file);
-        options.port = options.port || program.port;
-        options.host = options.host || program.host.split(',');
-        options.source = options.source || program.source;
-        options.ROOT_PATH = options.ROOT_PATH || program['root-path'] || appRootPath;
-        options.env = options.env || program.env;
-        options.modules = options.modules || program.modules.split(',');
-        options.workers = options.workers || program.workers;
-        
-        let sourcePath = `${options.ROOT_PATH}/${options.source}`;
-        if (!fs.pathExistsSync(sourcePath)) {
-            console.log(`The "${sourcePath}" has not been found`);
-            process.exit(0)
-        }
-        
-    } catch (e) {
-        console.log(`file "${program.config}" not find`);
-        process.exit(0)
-    }
-    main(options);
 } else {
-    
-    options.port = program.port;
-    
-    options.host = program.host.split(',');
-    
-    options.source = program.source;
-    
-    options.ROOT_PATH = program['root-path'] || appRootPath;
-    
-    let sourcePath = `${options.ROOT_PATH}/${options.source}`;
-    if (!fs.pathExistsSync(sourcePath)) {
-        console.log(`The "${sourcePath}" has not been found`);
-        process.exit(0)
+    const rootPath = (0, _findRoot2.default)(__filename);
+
+    try {
+        (0, _findRoot2.default)(process.cwd());
+    } catch (e) {
+        console.log(`"${process.cwd()}" Not the nodejs project directory`);
+        process.exit(0);
     }
-    
-    options.env = program.env;
-    
-    options.modules = program.modules.split(',');
-    
-    options.workers = program.workers;
-    
-    main(options);
+    const appRootPath = (0, _findRoot2.default)(process.cwd());
+    const requireResolve = { paths: [appRootPath, rootPath] };
+
+    let options = {};
+
+    if (_commander2.default.config) {
+        try {
+            let file = require.resolve(_commander2.default.config, requireResolve);
+            options = _safeRequire(file);
+            options.port = options.port || _commander2.default.port;
+            options.host = options.host || _commander2.default.host.split(',');
+            options.source = options.source || _commander2.default.source;
+            options.ROOT_PATH = options.ROOT_PATH || _commander2.default['root-path'] || appRootPath;
+            options.env = options.env || _commander2.default.env;
+            options.modules = options.modules || _commander2.default.modules.split(',');
+            options.workers = options.workers || _commander2.default.workers;
+
+            let sourcePath = `${options.ROOT_PATH}/${options.source}`;
+            if (!_fsExtra2.default.pathExistsSync(sourcePath)) {
+                console.log(`The "${sourcePath}" has not been found`);
+                process.exit(0);
+            }
+        } catch (e) {
+            console.log(`file "${_commander2.default.config}" has not been found`);
+            process.exit(0);
+        }
+        _safeRequire('../index.js')(options);
+    } else {
+
+        options.port = _commander2.default.port;
+
+        options.host = _commander2.default.host.split(',');
+
+        options.source = _commander2.default.source;
+
+        options.ROOT_PATH = _commander2.default['root-path'] || appRootPath;
+
+        let sourcePath = `${options.ROOT_PATH}/${options.source}`;
+        if (!_fsExtra2.default.pathExistsSync(sourcePath)) {
+            console.log(`The "${sourcePath}" has not been found`);
+            process.exit(0);
+        }
+
+        options.env = _commander2.default.env;
+
+        options.modules = _commander2.default.modules.split(',');
+
+        options.workers = _commander2.default.workers;
+
+        _safeRequire('../index.js')(options);
+    }
 }
 
-function _safeRequire(a, b = !0) {
-    if ("string" == typeof a) if (b) try {
-        a = require(a)
-    } catch (b) {
-        console.error(b), a = null
-    } else a = require(a);
-    return a && a.__esModule ? a.default : a
+function _safeRequire(obj) {
+    if (typeof obj === 'string') {
+        try {
+            obj = require(obj);
+        } catch (e) {
+            console.error(e);
+            obj = null;
+        }
+    }
+
+    return obj && obj.__esModule ? obj.default : obj;
 }
+//# sourceMappingURL=cli.js.map

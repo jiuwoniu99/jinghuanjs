@@ -43,6 +43,7 @@ demo/
 test/
 lib/
 dev/
+*.map
 .vscode/
 
 #
