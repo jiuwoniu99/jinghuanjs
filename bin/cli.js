@@ -4,8 +4,13 @@ let program = require('commander');
 let main = require('../index.js');
 let fs = require('fs-extra');
 let path = require('path');
+let findRoot = require('find-root');
 
-const pkg = require('../package.json');
+//
+const rootPath = findRoot(__filename);
+const appRootPath = findRoot(process.cwd());
+const requireResolve = {paths: [appRootPath, rootPath]};
+const pkg = _safeRequire('../package.json');
 let options = {};
 
 program
@@ -57,13 +62,23 @@ else if (program.demo) {
     });
 }
 else if (program.config) {
-    if (fs.pathExistsSync(program.config)) {
-        options = require(program.config);
-    } else {
+    try {
+        let file = require.resolve(program.config, requireResolve);
+        options = _safeRequire(file);
+        options.port = options.port || program.port;
+        options.host = options.host || program.host.split(',');
+        options.source = options.source || program.source;
+        options.ROOT_PATH = options.ROOT_PATH || program['root-path'] || null;
+        options.env = options.env || program.env;
+        options.modules = options.modules || program.modules.split(',');
+        options.workers = options.workers || program.workers;
+    } catch (e) {
         console.log(`file "${program.config}" not find`);
         process.exit(0)
     }
+    main(options);
 } else {
+    
     options.port = program.port;
     
     options.host = program.host.split(',');
@@ -85,4 +100,13 @@ else if (program.config) {
     options.workers = program.workers;
     
     main(options);
+}
+
+function _safeRequire(a, b = !0) {
+    if ("string" == typeof a) if (b) try {
+        a = require(a)
+    } catch (b) {
+        console.error(b), a = null
+    } else a = require(a);
+    return a && a.__esModule ? a.default : a
 }

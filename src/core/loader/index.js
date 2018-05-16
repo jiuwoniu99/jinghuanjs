@@ -67,11 +67,10 @@ class Loader {
 
     /**
      * 加载中间件
-     * @param app
      * @return {*}
      */
-    loadMiddleware(app) {
-        return (new Middleware()).load(app);
+    loadMiddleware() {
+        return (new Middleware()).load();
     }
 
     /**

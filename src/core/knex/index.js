@@ -1,3 +1,4 @@
+import './ext';
 import knex from "knex"
 import builder from "knex/lib/query/builder"
 import strtolower from 'locutus/php/strings/strtolower';

@@ -68,10 +68,9 @@ class Middleware {
     /**
      *
      * @param middlewares
-     * @param app
      * @return {any[]}
      */
-    parse(middlewares = [], app) {
+    parse(middlewares = []) {
         
         return middlewares.map(item => {
             if (helper.isString(item)) {
@@ -100,7 +99,7 @@ class Middleware {
                     this.requireMid(item);
                 } else {
                     if (!helper.isEmpty(item.middleware)) {
-                        item.middleware = item.handle(item.options, app)
+                        item.middleware = item.handle(item.options, jinghuan.app)
                     }
                 }
                 
@@ -114,10 +113,9 @@ class Middleware {
     
     /**
      * 加载解析中间件
-     * @param app
      * @return {*}
      */
-    load(app) {
+    load() {
         
         // 获取引用的中间件配置
         let middlewares = jinghuan.config('middleware');
@@ -139,7 +137,7 @@ class Middleware {
             ms.push(v.handle);
         });
         define('middlewares', ms);
-        return this.parse(middlewares, app);
+        return this.parse(middlewares);
     }
 }
 
