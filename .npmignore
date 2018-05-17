@@ -64,9 +64,9 @@ typings/
 
 #
 .vscode
-src
-test
-dev
+src/
+test/
+dev/
 #
 .babelrc
 .gitignore
