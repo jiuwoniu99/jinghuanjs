@@ -37,7 +37,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 _commander2.default.version(_package2.default.version).option('-P, --port [n]', 'set port                       -P 8409             ', '8409').option('-H, --host [value]', 'set host                       -H 127.0.0.1,...    ', '127.0.0.1').option('-S, --source [value]', 'set source                     -S app|src          ', 'app').option('-R, --root-path [value]', 'set root path                  -R /[you work path] ', './').option('-E, --env [value]', 'set env                        -E index            ', 'index').option('-M, --modules [value]', 'set modules                    -M index,...        ', 'index').option('-C, --config [value]', 'set config file path           -C config.js        ', null).option('-W, --workers [n]', 'set workers number             -W 1                ', 1).option('demo', 'run demo                                           ').option('babel [value]', '                                                   ').parse(process.argv);
 
-function demo() {
+function demo(tplPath) {
     _safeRequire('../index.js')({
         ROOT_PATH: tplPath,
         source: 'src',
@@ -69,11 +69,11 @@ if ((0, _isString2.default)(_commander2.default.babel)) {
             if (error) {
                 process.exit(0);
             } else {
-                demo();
+                demo(tplPath);
             }
         });
     } else {
-        demo();
+        demo(tplPath);
     }
 } else {
     const rootPath = (0, _findRoot2.default)(__filename);

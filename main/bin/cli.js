@@ -43,7 +43,7 @@ program
         '                                                   ')
     .parse(process.argv);
 
-function demo() {
+function demo(tplPath) {
     require('../index.js')({
         ROOT_PATH: tplPath,
         source: 'src',
@@ -77,11 +77,11 @@ else if (program.demo) {
             if (error) {
                 process.exit(0);
             } else {
-                demo()
+                demo(tplPath)
             }
         })
     } else {
-        demo()
+        demo(tplPath)
     }
     
 } else {
