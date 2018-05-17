@@ -79,7 +79,7 @@ module.exports = function (options) {
     }
 
     let rootPath = (0, _findRoot2.default)(__filename);
-    let requireResolve = { paths: [appRootPath, rootPath] };
+    let requireResolve = { paths: [rootPath, appRootPath] };
     let filename = process.mainModule.filename;
 
     options.source = options.source || source || 'src';

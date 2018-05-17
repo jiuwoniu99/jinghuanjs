@@ -72,7 +72,7 @@ module.exports = function (options) {
     }
     
     let rootPath = findRoot(__filename);
-    let requireResolve = {paths: [appRootPath, rootPath]};
+    let requireResolve = {paths: [rootPath, appRootPath]};
     let filename = process.mainModule.filename;
     
     // 默认是 src 测试目录
