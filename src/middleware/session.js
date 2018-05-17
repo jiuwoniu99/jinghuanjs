@@ -1,4 +1,5 @@
 import session from "../core/session";
+import onFinished from "on-finished";
 
 /**
  * 程序在初始化时开始执行
@@ -23,7 +24,7 @@ function invokeSession(options, app) {
             await next();
         } catch (ex) {
         } finally {
-            await ctx.events.emit('finish');
+            await Session.finish();//ctx.events.emit('finish');
         }
     };
 };

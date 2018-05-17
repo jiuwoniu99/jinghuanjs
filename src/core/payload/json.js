@@ -1,7 +1,14 @@
-const raw = require('raw-body');
-const inflate = require('inflation');
+import JSON from 'json5';
+import raw from 'raw-body';
+import inflate from 'inflation';
 
-module.exports = function (ctx, opts = {}) {
+/**
+ *
+ * @param ctx
+ * @param opts
+ * @return {Promise<{post: T}>}
+ */
+export default function (ctx, opts = {}) {
     const req = ctx.req;
     
     // defaults

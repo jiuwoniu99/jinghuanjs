@@ -1,6 +1,7 @@
 import helper from '../helper'
 import parseAdapter from '../helper/parseAdapter';
 import assert from "assert"
+import isFunction from 'lodash/isFunction';
 
 /**
  *
@@ -23,7 +24,7 @@ class Session {
         let config = jinghuan.config('session');
         this.options = parseAdapter(config, options);
         
-        assert(helper.isFunction(this.options.handle), 'session.handle must be a function');
+        assert(isFunction(this.options.handle), 'session.handle must be a function');
         
         let Adapter = this.options.handle;
         let key = helper.md5(JSON.stringify(this.options));
@@ -39,6 +40,12 @@ class Session {
         }
         
     };
+    
+    async finish() {
+        for (let i in this.cache) {
+            await this.cache[i].flush()
+        }
+    }
 }
 
 /**

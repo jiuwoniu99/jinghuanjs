@@ -1,5 +1,7 @@
 import assert from "assert"
 import helper from "../../helper"
+import isString from 'lodash/isString';
+import isFunction from 'lodash/isFunction';
 
 const SESSION = Symbol('jinghuan-context-session');
 
@@ -42,7 +44,7 @@ class Session {
         this.ctx = ctx;
         const sessionConfig = helper.parseAdapterConfig(ctx.config('session'), options);
         this.options = helper.extend({}, defaultOptions, sessionConfig);
-        assert(helper.isFunction(this.options.handle), 'session.handle must be a function');
+        assert(isFunction(this.options.handle), 'session.handle must be a function');
         this.cookieOptions = Object.assign({}, defaultCookieOptions, ctx.config('cookie'), this.options.cookie);
     }
     
@@ -97,7 +99,7 @@ class Session {
         if (value === undefined) {
             return Promise.resolve(instance.get(name));
         }
-        assert(helper.isString(name), 'session.name must be a string');
+        assert(isString(name), 'session.name must be a string');
         //set session
         return Promise.resolve(instance.set(name, value));
     }

@@ -1,5 +1,7 @@
 import helper from "../helper"
 import debug from 'debug';
+import isFunction from 'lodash/isFunction';
+import isArray from 'lodash/isArray';
 
 const log = debug(`JH:core/events[${process.pid}]`);
 const EVENTS = Symbol('events');
@@ -20,7 +22,7 @@ class Events {
      */
     on(name, listener) {
         log(`on ${name}`);
-        if (!helper.isFunction(listener)) {
+        if (!isFunction(listener)) {
             throw TypeError('listener must be a function');
         }
         this[EVENTS][name] = this[EVENTS]['name'] || [];
@@ -36,9 +38,9 @@ class Events {
     async emit(name, ...args) {
         log(`emit ${name}`);
         let listeners = this[EVENTS][name];
-        if (helper.isArray(listeners)) {
+        if (isArray(listeners)) {
             for (let listener of listeners) {
-                if (helper.isFunction(listener)) {
+                if (isFunction(listener)) {
                     await listener(...args);
                 }
             }
@@ -54,7 +56,7 @@ class Events {
     un(name, listener) {
         log(`un ${name}`);
         let listeners = this[EVENTS][name];
-        if (helper.isArray(listeners)) {
+        if (isArray(listeners)) {
             for (let i in listeners) {
                 if (listeners[i] == listener) {
                     delete listeners[i];

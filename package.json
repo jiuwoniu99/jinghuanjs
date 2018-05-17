@@ -39,6 +39,7 @@
         "inflation": "^2.0.0",
         "json-rpc-error": "^2.0.0",
         "json-rpc-response": "^1.0.3",
+        "json5": "^1.0.1",
         "jsonwebtoken": "^8.2.1",
         "knex": "^0.14.6",
         "koa": "^2.5.1",

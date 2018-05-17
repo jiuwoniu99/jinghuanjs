@@ -1,18 +1,19 @@
 import debug from 'debug';
+import isString from 'lodash/isString';
 
 const log = debug('JH:extend/controller');
 /**
  * extend controller
  */
 export default {
-
+    
     /**
      *
      */
     get body() {
         return this.ctx.body;
     },
-
+    
     /**
      *
      * @param value
@@ -20,14 +21,14 @@ export default {
     set body(value) {
         this.ctx.body = value;
     },
-
+    
     /**
      *
      */
     get ip() {
         return this.ctx.ip;
     },
-
+    
     /**
      *
      * @return {*|Array|string|string[]}
@@ -35,14 +36,14 @@ export default {
     get ips() {
         return this.ctx.ips;
     },
-
+    
     /**
      *
      */
     get status() {
         return this.ctx.status;
     },
-
+    
     /**
      *
      * @param status
@@ -50,14 +51,14 @@ export default {
     set status(status) {
         this.ctx.status = status;
     },
-
+    
     /**
      *
      */
     get type() {
         return this.ctx.type;
     },
-
+    
     /**
      *
      * @param contentType
@@ -65,21 +66,21 @@ export default {
     set type(contentType) {
         this.ctx.type = contentType;
     },
-
+    
     /**
      *
      */
     get userAgent() {
         return this.ctx.userAgent;
     },
-
+    
     /**
      *
      */
     get method() {
         return this.ctx.method;
     },
-
+    
     /**
      *
      * @return {*|boolean}
@@ -87,7 +88,7 @@ export default {
     get isGet() {
         return this.ctx.isGet;
     },
-
+    
     /**
      *
      * @return {*|boolean}
@@ -95,26 +96,17 @@ export default {
     get isPost() {
         return this.ctx.isPost;
     },
-
-    /**
-     *
-     * @return {*|boolean}
-     */
-    get isCli() {
-        return this.ctx.isCli;
-    },
-
+    
     /**
      *
      * @param name
      * @param value
-     * @param m
      * @return {*}
      */
-    config(name, value, m = this.ctx.module) {
-        return jinghuan.config(name, value, m);
+    config(name, value) {
+        return jinghuan.config(name, value);
     },
-
+    
     /**
      *
      * @param method
@@ -123,7 +115,7 @@ export default {
     isMethod(method) {
         return this.ctx.isMethod(method);
     },
-
+    
     /**
      *
      * @param method
@@ -132,33 +124,8 @@ export default {
     isAjax(method) {
         return this.ctx.isAjax(method);
     },
-
-    /**
-     *
-     * @param callbackField
-     * @return {*|boolean}
-     */
-    isJsonp(callbackField) {
-        return this.ctx.isJsonp(callbackField);
-    },
-
-    /**
-     *
-     * @param data
-     * @param callbackField
-     */
-    jsonp(data, callbackField) {
-        return this.ctx.jsonp(data, callbackField);
-    },
-
-    /**
-     *
-     * @param data
-     */
-    json(data) {
-        return this.ctx.json(data);
-    },
-
+    
+    
     /**
      *
      * @param data
@@ -167,7 +134,7 @@ export default {
     success(data, message) {
         return this.ctx.success(data, message);
     },
-
+    
     /**
      *
      * @param errno
@@ -177,7 +144,7 @@ export default {
     fail(errno, errmsg, data) {
         return this.ctx.fail(errno, errmsg, data);
     },
-
+    
     /**
      *
      * @param time
@@ -185,7 +152,7 @@ export default {
     expires(time) {
         return this.ctx.expires(time);
     },
-
+    
     /**
      *
      * @param name
@@ -194,7 +161,7 @@ export default {
     get(name, value) {
         return this.ctx.param(name, value);
     },
-
+    
     /**
      *
      * @param name
@@ -203,7 +170,7 @@ export default {
     query(name, value) {
         return this.ctx.param(name, value);
     },
-
+    
     /**
      *
      * @param name
@@ -212,7 +179,7 @@ export default {
     post(name, value) {
         return this.ctx.post(name, value);
     },
-
+    
     /**
      *
      * @param name
@@ -221,7 +188,7 @@ export default {
     file(name, value) {
         return this.ctx.file(name, value);
     },
-
+    
     /**
      *
      * @param name
@@ -231,14 +198,14 @@ export default {
     cookie(name, value, options) {
         return this.ctx.cookie(name, value, options);
     },
-
+    
     /**
      *
      * @param name
      * @param value
      */
     header(name, value) {
-        if (value === undefined && helper.isString(name)) {
+        if (value === undefined && isString(name)) {
             return this.ctx.header[name];
         }
         if (this.ctx.res.headersSent) {
@@ -252,7 +219,7 @@ export default {
             return this.ctx.set(name);
         }
     },
-
+    
     /**
      *
      * @param onlyHost
@@ -260,7 +227,7 @@ export default {
     referrer(onlyHost) {
         return this.ctx.referer(onlyHost);
     },
-
+    
     /**
      *
      * @param onlyHost
@@ -268,7 +235,7 @@ export default {
     referer(onlyHost) {
         return this.ctx.referer(onlyHost);
     },
-
+    
     /**
      *
      * @param url
@@ -279,45 +246,45 @@ export default {
         this.ctx.redirect(url, alt);
         return false;
     },
-
+    
     /**
      *
      * @param controller
      * @param actionName
      * @param m
      */
-    action(controller, actionName, m) {
-        let instance = controller;
-        // if controller is an controller instance, ignore invoke controller method
-        if (helper.isString(controller)) {
-            instance = this.controller(controller, m);
-        }
-        let promise = Promise.resolve();
-        if (instance.__before) {
-            promise = Promise.resolve(instance.__before());
-        }
-        return promise.then(data => {
-            if (data === false) {
-                return false;
-            }
-            let method = `${actionName}Action`;
-            if (!instance[method]) {
-                method = '__call';
-            }
-            if (instance[method]) {
-                return instance[method]();
-            }
-        }).then(data => {
-            if (data === false) {
-                return false;
-            }
-            if (instance.__after) {
-                return instance.__after();
-            }
-            return data;
-        });
-    },
-
+    //action(controller, actionName, m) {
+    //    let instance = controller;
+    //    // if controller is an controller instance, ignore invoke controller method
+    //    if (isString(controller)) {
+    //        instance = this.controller(controller, m);
+    //    }
+    //    let promise = Promise.resolve();
+    //    if (instance.__before) {
+    //        promise = Promise.resolve(instance.__before());
+    //    }
+    //    return promise.then(data => {
+    //        if (data === false) {
+    //            return false;
+    //        }
+    //        let method = `${actionName}Action`;
+    //        if (!instance[method]) {
+    //            method = '__call';
+    //        }
+    //        if (instance[method]) {
+    //            return instance[method]();
+    //        }
+    //    }).then(data => {
+    //        if (data === false) {
+    //            return false;
+    //        }
+    //        if (instance.__after) {
+    //            return instance.__after();
+    //        }
+    //        return data;
+    //    });
+    //},
+    
     /**
      *
      * @param filepath
@@ -326,7 +293,7 @@ export default {
     download(filepath, filename) {
         return this.ctx.download(filepath, filename);
     },
-
+    
     /**
      *
      * @param name
@@ -336,7 +303,7 @@ export default {
     session(name, value, options) {
         return this.ctx.session(name, value, options);
     },
-
+    
     /**
      *
      * @param a
@@ -345,7 +312,7 @@ export default {
     db(a, b) {
         return this.ctx.db(a, b);
     },
-
+    
     /**
      *
      * @param msg

@@ -3,6 +3,7 @@ import events from "events"
 import assert from "assert"
 import util from "./util.js"
 import helper from "../../helper"
+import isFunction from 'lodash/isFunction';
 
 const BIND_EVENT = Symbol('bind-event');
 const MESSENGER = 'jinghuan-messenger';
@@ -77,7 +78,7 @@ class Messenger extends events {
                 if (!message || message.act !== MESSENGER) return;
                 if (message.map && (typeof message.data === 'undefined')) {
                     const listener = this.listeners(message.action)[0];
-                    assert(helper.isFunction(listener), `${message.action} listener must be a function`);
+                    assert(isFunction(listener), `${message.action} listener must be a function`);
                     Promise.resolve(listener(message.mapData)).then(data => {
                         delete message.mapData;
                         message.data = data;
@@ -141,7 +142,7 @@ class Messenger extends events {
      * @param data
      */
     consume(action, data) {
-        if (helper.isFunction(action)) {
+        if (isFunction(action)) {
             const callback = action;
             count = count % Number.MAX_SAFE_INTEGER + 1;
             const taskId = count + '' + process.pid;

@@ -4,6 +4,8 @@ import pathToRegexp from 'path-to-regexp';
 import helper from '../helper';
 import debug from 'debug';
 import define from '../helper/define';
+import isFunction from 'lodash/isFunction';
+import isString from 'lodash/isString';
 
 const log = debug(`JH:core/loader/middleware[${process.pid}]`);
 
@@ -20,7 +22,7 @@ class Middleware {
      * check url matched
      */
     createRegexp(match) {
-        if (helper.isFunction(match)) {
+        if (isFunction(match)) {
             return match;
         }
         if (match) {
@@ -32,7 +34,7 @@ class Middleware {
      * check rule match
      */
     checkMatch(rule, ctx) {
-        if (helper.isFunction(rule)) {
+        if (isFunction(rule)) {
             return rule(ctx);
         }
         return rule.test(ctx.path);
@@ -64,7 +66,7 @@ class Middleware {
         } else if (fs.pathExistsSync(appMid)) {
             middleware = appMid;
         } else if (this.checkMid(nodeMid)) {
-            middleware = nodeMid;
+            middleware = this.checkMid(nodeMid);
         }
         let cache = require.cache[middleware];
         let handle = null;
@@ -84,10 +86,10 @@ class Middleware {
     parse(middlewares = []) {
         
         return middlewares.map(item => {
-            if (helper.isString(item)) {
+            if (isString(item)) {
                 return {handle: item};
             }
-            if (helper.isFunction(item)) {
+            if (isFunction(item)) {
                 return {handle: () => item};
             }
             return item;
@@ -106,7 +108,7 @@ class Middleware {
             return (ctx, next) => {
                 
                 // src dev 模式下中间件是没有加载的
-                if (helper.isString(item.handle)) {
+                if (isString(item.handle)) {
                     this.requireMid(item);
                 } else {
                     if (!helper.isEmpty(item.middleware)) {

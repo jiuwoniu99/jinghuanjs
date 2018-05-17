@@ -1,4 +1,6 @@
 import parse from "../core/payload/index.js"
+import querystring from 'query-string';
+import parse_str from 'locutus/php/strings/parse_str';
 
 function invokePayload(opts = {}) {
     const extendTypes = Object.assign({
@@ -36,11 +38,16 @@ function invokePayload(opts = {}) {
     // default xml types
     const xmlTypes = [
         'text/xml',
+        'application/xml',
         ...extendTypes.xml
     ];
     
     return function (ctx, next) {
         if (ctx.request.body !== undefined) return next();
+        
+        let param = {};
+        parse_str(ctx.querystring, param);
+        ctx.request._query = param;
         
         return parseBody(ctx, {
             opts: {

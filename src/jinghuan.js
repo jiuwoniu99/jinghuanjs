@@ -1,6 +1,6 @@
 import Koa from 'koa';
 import bluebird from 'bluebird';
-import assert from 'assert';
+//import assert from 'assert';
 import log4js from 'log4js';
 import jwt from 'jsonwebtoken';
 import pkg from '../package.json';
@@ -9,6 +9,7 @@ import c from './core/cluster';
 import events from './core/events';
 import pm2 from './core/pm2';
 import define from './core/helper/define';
+//import isFunction from 'lodash/isFunction'
 
 /**
  *
@@ -60,19 +61,19 @@ const promises = [];
  * @param fn
  * @return {*}
  */
-jinghuan.beforeStartServer = fn => {
-    if (fn) {
-        assert(helper.isFunction(fn), 'fn in jinghuan.beforeStartServer must be a function');
-        return promises.push(fn());
-    }
-    const promise = Promise.all(promises);
-    const timeout = helper.ms(jinghuan.config('startServerTimeout'));
-    const timeoutPromise = helper.timeout(timeout).then(() => {
-        const err = new Error(`waiting for start server timeout, time: ${timeout}ms`);
-        return Promise.reject(err);
-    });
-    return Promise.race([promise, timeoutPromise]);
-};
+//jinghuan.beforeStartServer = fn => {
+//    if (fn) {
+//        assert(helper.isFunction(fn), 'fn in jinghuan.beforeStartServer must be a function');
+//        return promises.push(fn());
+//    }
+//    const promise = Promise.all(promises);
+//    const timeout = helper.ms(jinghuan.config('startServerTimeout'));
+//    const timeoutPromise = helper.timeout(timeout).then(() => {
+//        const err = new Error(`waiting for start server timeout, time: ${timeout}ms`);
+//        return Promise.reject(err);
+//    });
+//    return Promise.race([promise, timeoutPromise]);
+//};
 
 let pattern = '';
 

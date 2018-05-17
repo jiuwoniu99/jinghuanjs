@@ -3,7 +3,9 @@ import path from "path"
 import helper from "../helper"
 import assert from "assert"
 import debug from 'debug';
-
+import isArray from 'lodash/isArray';
+import isString from 'lodash/isString';
+import isFunction from 'lodash/isFunction';
 //
 const log = debug(`JH:core/watcher[${process.pid}]`);
 
@@ -40,7 +42,7 @@ class Watcher {
      * @param cb
      */
     constructor(options, cb) {
-        assert(helper.isFunction(cb), 'callback must be a function');
+        assert(isFunction(cb), 'callback must be a function');
         options = this.buildOptions(options);
     
         log(`srcPath: ${options.srcPath}`);
@@ -57,16 +59,16 @@ class Watcher {
      * @return {{}}
      */
     buildOptions(options = {}) {
-        if (helper.isString(options)) {
+        if (isString(options)) {
             options = {srcPath: options};
         }
         let srcPath = options.srcPath;
         assert(srcPath, 'srcPath can not be blank');
-        if (!helper.isArray(srcPath)) {
+        if (!isArray(srcPath)) {
             srcPath = [srcPath];
         }
         let diffPath = options.diffPath || [];
-        if (!helper.isArray(diffPath)) {
+        if (!isArray(diffPath)) {
             diffPath = [diffPath];
         }
         options.srcPath = srcPath;

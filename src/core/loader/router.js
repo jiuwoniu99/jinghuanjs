@@ -2,6 +2,7 @@ import path from "path"
 import assert from "assert"
 import helper from "../helper";
 import debug from 'debug';
+import isArray from 'lodash/isArray'
 
 const log = debug(`JH:/core/loader/router[${process.pid}]`);
 
@@ -23,7 +24,7 @@ const RouterLoader = {
             }
             log(`load file: ${commonRouterFile}`);
             const commonRouter = require(commonRouterFile);
-            if (helper.isArray(commonRouter)) {
+            if (isArray(commonRouter)) {
                 return commonRouter;
             }
             
@@ -43,7 +44,7 @@ const RouterLoader = {
                 }
                 log(`load file: ${moduleRouterFile}`);
                 const moduleRouter = require(moduleRouterFile);
-                assert(helper.isArray(moduleRouter), `${name}/config/router.js must be an array`);
+                assert(isArray(moduleRouter), `${name}/config/router.js must be an array`);
                 commonRouter[name].rules = moduleRouter;
             }
             return commonRouter;
@@ -54,7 +55,7 @@ const RouterLoader = {
             }
             log(`load file: ${routerFile}`);
             const router = require(routerFile);
-            assert(helper.isArray(router), 'config/router must be an array');
+            assert(isArray(router), 'config/router must be an array');
             return router;
         }
     }

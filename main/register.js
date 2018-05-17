@@ -46,15 +46,20 @@ module.exports = function (option) {
             filename = path.normalize(filename);
             // 项目编译
             if (option.source === 'src') {
-                if (filename.startsWith(path.join(option.ROOT_PATH, 'src'))) {
+                if (filename.startsWith(path.join(option.APP_PATH))) {
+                    log(filename);
+                    return false;
+                }
+                
+                if (filename.startsWith(path.join(option.ROOT_PATH, 'config'))) {
                     log(filename);
                     return false;
                 }
             }
             
             // 核心编译
-            if (option.mode !== 'src') {
-                if (filename.startsWith(path.join(option.JH_PATH, 'src'))) {
+            if (option.mode === 'src') {
+                if (filename.startsWith(path.join(option.JH_PATH))) {
                     log(filename);
                     return false;
                 }

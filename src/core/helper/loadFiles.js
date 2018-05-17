@@ -1,5 +1,6 @@
 import helper from './index';
 import path from 'path';
+import isString from 'lodash/isString'
 
 /**
  *
@@ -8,7 +9,7 @@ import path from 'path';
  * @param load 是否使用require加载
  */
 export default function(dir, ext = [], load = false) {
-    if (helper.isString(ext)) {
+    if (isString(ext)) {
         ext = [ext];
     }
     const ragexp = new RegExp('\\.(' + ext.join('|') + ')$');

@@ -10,6 +10,10 @@ import Slog from "../core/slog";
 import knex from "../core/knex";
 import session from "../core/session";
 import events from '../core/events';
+import isArray from 'lodash/isArray'
+import isString from 'lodash/isString';
+import get from 'lodash/get'
+import set from 'lodash/set'
 //
 const PARAM = Symbol('context-param');
 const POST = Symbol('context-post');
@@ -37,12 +41,6 @@ export default {
      */
     get isPost() {
         return this.method === 'POST';
-    },
-    /**
-     * is command line invoke
-     */
-    get isCli() {
-        return this.method === 'CLI';
     },
     /**
      * get referer header
@@ -76,77 +74,6 @@ export default {
         return this.header['x-requested-with'] === 'XMLHttpRequest';
     },
     /**
-     * is jsonp request
-     */
-    isJsonp(callbackField = this.config('jsonpCallbackField')) {
-        return !!this.param(callbackField);
-    },
-    /**
-     * send jsonp data
-     */
-    jsonp(data, callbackField = this.config('jsonpCallbackField')) {
-        let field = this.param(callbackField);
-        // remove unsafe chars
-        field = (field || '').replace(/[^\w.]/g, '');
-        if (field) {
-            data = `${field}(${JSON.stringify(data)})`;
-        }
-        this.type = this.config('jsonpContentType');
-        this.body = data;
-        return false;
-    },
-    /**
-     * send json data
-     */
-    json(data) {
-        this.type = this.config('jsonContentType');
-        this.body = data;
-        return false;
-    },
-    /**
-     * send success data
-     */
-    //success(data = '', message = '') {
-    //    const obj = {
-    //        [this.config('errnoField')]: 0,
-    //        [this.config('errmsgField')]: message,
-    //        data
-    //    };
-    //    this.type = this.config('jsonContentType');
-    //    this.body = obj;
-    //    return false;
-    //},
-    /**
-     * send fail data
-     */
-    //fail(errno, errmsg = '', data = '') {
-    //    let obj;
-    //    if (helper.isObject(errno)) {
-    //        obj = errno;
-    //    } else {
-    //        if (/^[A-Z_]+$/.test(errno)) {
-    //            const messages = jinghuan.app.validators.messages || {};
-    //            const msg = messages[errno];
-    //            if (jinghuan.isArray(msg)) {
-    //                [errno, errmsg] = msg;
-    //            }
-    //        }
-    //        if (!jinghuan.isNumber(errno)) {
-    //            [data, errmsg, errno] = [errmsg, errno, this.config('defaultErrno')];
-    //        }
-    //        obj = {
-    //            [this.config('errnoField')]: errno,
-    //            [this.config('errmsgField')]: errmsg
-    //        };
-    //        if (data) {
-    //            obj.data = data;
-    //        }
-    //    }
-    //    this.type = this.config('jsonContentType');
-    //    this.body = obj;
-    //    return false;
-    //},
-    /**
      * set expires header
      */
     expires(time) {
@@ -159,11 +86,11 @@ export default {
      * get or set configs
      * @param {String} name
      * @param {Mixed} value
-     * @param {String} m
      */
-    config(name, value, m = this.module) {
-        return jinghuan.config(name, value, m);
+    config(name, value) {
+        return jinghuan.config(name, value);
     },
+    
     /**
      * get or set query data
      * `query` or `get` is already used in koa
@@ -173,72 +100,25 @@ export default {
     param(name, value) {
         if (!this[PARAM]) {
             this[PARAM] = Object.assign({}, this.request._query || this.request.query);
-            this.app.emit('filterParam', this[PARAM]);
         }
         if (!name) {
             return this[PARAM];
         }
-        if (helper.isObject(name)) {
-            this[PARAM] = Object.assign(this[PARAM], name);
-            return this;
-        }
-        if (value === undefined) {
-            // this.param('a,b')
-            if (helper.isString(name) && name.indexOf(',') > -1) {
-                name = name.split(',');
-            }
-            if (helper.isArray(name)) {
-                const value = {};
-                name.forEach(item => {
-                    const val = this[PARAM][item];
-                    if (val !== undefined) {
-                        value[item] = val;
-                    }
-                });
-                return value;
-            }
-            return this[PARAM][name];
-        }
-        this[PARAM][name] = value;
-        return this;
+        return get(this[PARAM], name);
     },
     /**
      * get or set post data
      * @param {String} name
      * @param {Mixed} value
      */
-    post(name, value) {
+    post(name) {
         if (!this[POST]) {
-            const json = this.request.body && this.request.body.post;
-            this[POST] = jinghuan.isArray(json) ? Array.from(json) : Object.assign({}, json);
-            this.app.emit('filterParam', this[POST]);
+            this[POST] = this.request.body && this.request.body.post;
         }
         if (!name) {
             return this[POST];
         }
-        if (helper.isObject(name)) {
-            this[POST] = Object.assign(this[POST], name);
-            return this;
-        }
-        if (value === undefined) {
-            // this.param('a,b')
-            if (helper.isString(name) && name.indexOf(',') > -1) {
-                name = name.split(',');
-            }
-            if (helper.isArray(name)) {
-                const value = {};
-                name.forEach(item => {
-                    const val = this[POST][item];
-                    if (val !== undefined) {
-                        value[item] = val;
-                    }
-                });
-                return value;
-            }
-            return this[POST][name];
-        }
-        this[POST][name] = value;
-        return this;
+        return get(this[POST], name);
     },
     /**
      * get or set file data
@@ -268,49 +148,16 @@ export default {
      * @param {String} value
      * @param {Object} options
      */
-    //cookie(name, value, options = {}) {
-    //    assert(name && helper.isString(name), 'cookie.name must be a string');
-    //    options = Object.assign({}, this.config('cookie'), options);
-    //    const instance = new Cookies(this.req, this.res, {
-    //        keys: options.keys,
-    //        secure: this.request.secure
-    //    });
-    //
-    //    if (!this[COOKIE_STORE]) {
-    //        this[COOKIE_STORE] = {};
-    //    }
-    //
-    //    // get cookie
-    //    if (value === undefined) {
-    //        if (this[COOKIE_STORE][name] !== undefined) {
-    //            return this[COOKIE_STORE][name];
-    //        }
-    //        return instance.get(name, options);
-    //    }
-    //    // remove cookie
-    //    if (value === null) {
-    //        delete this[COOKIE_STORE][name];
-    //        // If the value is omitted, an outbound header with an expired date is used to delete the cookie.
-    //        // https://github.com/pillarjs/cookies#cookiesset-name--value---options--
-    //        return instance.set(name, undefined, options);
-    //    }
-    //    assert(helper.isString(value), 'cookie value must be a string');
-    //    // http://browsercookielimits.squawky.net/
-    //    if (value.length >= 4094) {
-    //        this.app.emit('cookieLimit', {name, value, ctx: this});
-    //    }
-    //    this[COOKIE_STORE][name] = value;
-    //    // set cookie
-    //    return instance.set(name, value, options);
-    //},
-    /**
-     * get service
-     * @param {String} name
-     * @param {String} m
-     */
-    //service(...args) {
-    //    return jinghuan.service(...args);
-    //},
+    cookie(name, value, options = {}) {
+        if (name == null && value == null) {
+            return this.cookies.get();
+        }
+        if (value == null) {
+            return this.cookies.get(name);
+        }
+        this.cookies.set(name, value, options)
+    },
+    
     /**
      * download
      * @param {String} filepath
@@ -351,11 +198,11 @@ export default {
         return knex;
     },
     /**
-     *
+     * 预留功能由中间件完成
      * @return {Function}
      */
     get session() {
-        return async () => {
+        return async (name, value, option) => {
         };
     },
     /**
@@ -367,5 +214,14 @@ export default {
             this._events = new events();
         }
         return this._events;
+    },
+    
+    /**
+     *
+     * @return {Function}
+     */
+    get cache() {
+        return async (name, value, option) => {
+        };
     }
 };

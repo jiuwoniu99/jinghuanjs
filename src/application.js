@@ -10,6 +10,7 @@ import Loaders from './loaders';
 import Cluster from './core/cluster';
 import debug from 'debug';
 import define from './core/helper/define';
+import isArray from 'lodash/isArray'
 
 debug.log = console.log.bind(console);
 
@@ -52,7 +53,7 @@ class Application {
             return;
         }
         let notifier = this.options.notifier;
-        if (!helper.isArray(notifier)) {
+        if (!isArray(notifier)) {
             notifier = [notifier];
         }
         notifier[0](Object.assign({

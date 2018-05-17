@@ -3,6 +3,7 @@ import path from 'path';
 import assert from "assert"
 import helper from "../core/helper"
 import send from "koa-send"
+import isString from 'lodash/isString';
 
 
 const log = debug(`JH:middleware/resource[${process.pid}]`);
@@ -29,7 +30,7 @@ const defaultOptions = {
  * @returns {*}
  */
 const prefixPath = (path) => {
-    if (helper.isString(path) && !path.startsWith('/')) {
+    if (isString(path) && !path.startsWith('/')) {
         path = '/' + path;
     }
     return path;
@@ -45,7 +46,7 @@ const matchRoute = (path, route) => {
     if (helper.isRegExp(route)) {
         return path.match(route);
     }
-    if (helper.isString(route)) {
+    if (isString(route)) {
         route = route.split('/');
         path = path.split(/\/+/);
         return route.every((item, index) => {
@@ -70,7 +71,7 @@ function invokeResource(options) {
     options.root = path.resolve(root);
     
     let publicPath = options.publicPath;
-    assert(helper.isRegExp(publicPath) || helper.isString(publicPath), 'publicPath must be regexp or string');
+    assert(helper.isRegExp(publicPath) || isString(publicPath), 'publicPath must be regexp or string');
     options.publicPath = prefixPath(publicPath);
     
     const notFoundNext = options.notFoundNext;

@@ -38,14 +38,19 @@ module.exports = function (option) {
             filename = _path2.default.normalize(filename);
 
             if (option.source === 'src') {
-                if (filename.startsWith(_path2.default.join(option.ROOT_PATH, 'src'))) {
+                if (filename.startsWith(_path2.default.join(option.APP_PATH))) {
+                    log(filename);
+                    return false;
+                }
+
+                if (filename.startsWith(_path2.default.join(option.ROOT_PATH, 'config'))) {
                     log(filename);
                     return false;
                 }
             }
 
-            if (option.mode !== 'src') {
-                if (filename.startsWith(_path2.default.join(option.JH_PATH, 'src'))) {
+            if (option.mode === 'src') {
+                if (filename.startsWith(_path2.default.join(option.JH_PATH))) {
                     log(filename);
                     return false;
                 }
