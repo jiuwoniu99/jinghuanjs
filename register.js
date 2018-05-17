@@ -35,6 +35,8 @@ module.exports = function (option) {
 
     _safeRequire(require.resolve('babel-register', option.requireResolve))({
         ignore: function (filename) {
+            filename = _path2.default.normalize(filename);
+
             if (option.source === 'src') {
                 if (filename.startsWith(_path2.default.join(option.ROOT_PATH, 'src'))) {
                     log(filename);

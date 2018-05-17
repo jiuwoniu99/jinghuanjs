@@ -2,6 +2,7 @@ import debug from 'debug'
 import path from 'path'
 
 const log = debug('register');
+
 //const log = console.log;
 
 /**
@@ -46,6 +47,7 @@ module.exports = function (option) {
     
     require(require.resolve('babel-register', option.requireResolve))({
         ignore: function (filename) {
+            filename = path.normalize(filename);
             // 项目编译
             if (option.source === 'src') {
                 if (filename.startsWith(path.join(option.ROOT_PATH, 'src'))) {
