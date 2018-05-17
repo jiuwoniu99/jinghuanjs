@@ -25,6 +25,14 @@ var _isString = require('lodash/isString');
 
 var _isString2 = _interopRequireDefault(_isString);
 
+var _child_process = require('child_process');
+
+var _child_process2 = _interopRequireDefault(_child_process);
+
+var _cluster = require('cluster');
+
+var _cluster2 = _interopRequireDefault(_cluster);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 _commander2.default.version(_package2.default.version).option('-P, --port [n]', 'set port                       -P 8409             ', '8409').option('-H, --host [value]', 'set host                       -H 127.0.0.1,...    ', '127.0.0.1').option('-S, --source [value]', 'set source                     -S app|src          ', 'app').option('-R, --root-path [value]', 'set root path                  -R /[you work path] ', './').option('-E, --env [value]', 'set env                        -E index            ', 'index').option('-M, --modules [value]', 'set modules                    -M index,...        ', 'index').option('-C, --config [value]', 'set config file path           -C config.js        ', null).option('-W, --workers [n]', 'set workers number             -W 1                ', 1).option('demo', 'run demo                                           ').option('babel [value]', '                                                   ').parse(process.argv);
@@ -32,15 +40,41 @@ _commander2.default.version(_package2.default.version).option('-P, --port [n]', 
 if ((0, _isString2.default)(_commander2.default.babel)) {
     _safeRequire('../babel')(_commander2.default.babel, function (option) {});
 } else if (_commander2.default.demo) {
-    _safeRequire('../index.js')({
-        ROOT_PATH: _path2.default.join(__dirname, '../tpl'),
-        source: 'src',
-        port: 8409,
-        env: 'index',
-        modules: ['index'],
-        workers: 1,
-        mode: 'lib'
-    });
+    let tplPath = _path2.default.join(__dirname, '../tpl');
+
+    function demo() {
+        _safeRequire('../index.js')({
+            ROOT_PATH: tplPath,
+            source: 'src',
+            port: 8409,
+            env: 'index',
+            modules: ['index'],
+            workers: 1,
+            mode: 'lib'
+        });
+    }
+
+    if (_cluster2.default.isMaster && !_fsExtra2.default.pathExistsSync(_path2.default.join(tplPath, 'node_modules'))) {
+        console.log(`Running $ cd "${tplPath}" &&  npm install`);
+        let error = false;
+        let exec = _child_process2.default.exec;
+        exec(`cd "${tplPath}" &&  npm install`, function (err, stdout, stderr) {
+            if (err) {
+                error = true;
+                console.log(stderr);
+            } else {
+                console.log(stdout);
+            }
+        }).on('exit', function (code) {
+            if (error) {
+                process.exit(0);
+            } else {
+                demo();
+            }
+        });
+    } else {
+        demo();
+    }
 } else {
     const rootPath = (0, _findRoot2.default)(__filename);
 

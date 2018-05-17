@@ -6,6 +6,8 @@ import path from 'path';
 import findRoot from 'find-root';
 import program from 'commander';
 import isString from 'lodash/isString';
+import child_process from 'child_process';
+import cluster from 'cluster';
 
 program
     .version(pkg.version)
@@ -48,15 +50,42 @@ if (isString(program.babel)) {
     })
 }
 else if (program.demo) {
-    require('../index.js')({
-        ROOT_PATH: path.join(__dirname, '../tpl'),
-        source: 'src',
-        port: 8409,
-        env: 'index',
-        modules: ['index'],
-        workers: 1,
-        mode: 'lib'
-    });
+    let tplPath = path.join(__dirname, '../tpl');
+    
+    function demo() {
+        require('../index.js')({
+            ROOT_PATH: tplPath,
+            source: 'src',
+            port: 8409,
+            env: 'index',
+            modules: ['index'],
+            workers: 1,
+            mode: 'lib'
+        });
+    }
+    
+    if (cluster.isMaster && !fs.pathExistsSync(path.join(tplPath, 'node_modules'))) {
+        console.log(`Running $ cd "${tplPath}" &&  npm install`);
+        let error = false;
+        let exec = child_process.exec;
+        exec(`cd "${tplPath}" &&  npm install`, function (err, stdout, stderr) {
+            if (err) {
+                error = true;
+                console.log(stderr);
+            } else {
+                console.log(stdout);
+            }
+        }).on('exit', function (code) {
+            if (error) {
+                process.exit(0);
+            } else {
+                demo()
+            }
+        })
+    } else {
+        demo()
+    }
+    
 } else {
     const rootPath = findRoot(__filename);
     

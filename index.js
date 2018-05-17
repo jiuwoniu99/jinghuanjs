@@ -101,20 +101,19 @@ module.exports = function (options) {
         options.watcher = true;
         options.JH_PATH = _path2.default.join(rootPath, 'dev');
         runFile = `${rootPath}/dev/application`;
-        _safeRequire('./register.js')(options);
     } else if (options.mode === 'src' && _fsExtra2.default.pathExistsSync(`${rootPath}/src/application.js`)) {
 
         options.JH_PATH = _path2.default.join(rootPath, 'src');
         runFile = `${rootPath}/src/application`;
-        _safeRequire('./register.js')(options);
     } else {
         options.mode = 'lib';
-        if (options.source !== 'app') {
-            options.watcher = true;
-            _safeRequire('./register.js')(options);
-        }
         options.JH_PATH = _path2.default.join(rootPath, 'lib');
         runFile = `${rootPath}/lib/application`;
+    }
+
+    if (options.source !== 'app') {
+        options.watcher = true;
+        _safeRequire('./register.js')(options);
     }
 
     options.APP_PATH = _path2.default.join(options.ROOT_PATH, options.source);

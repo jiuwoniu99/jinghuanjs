@@ -5,8 +5,7 @@
     "scripts": {
         "start": "node bootstarp/index.js"
     },
-    "dependencies": {
-    },
+    "dependencies": {},
     "devDependencies": {
         "babel-plugin-safe-require": "^1.0.4",
         "babel-plugin-transform-decorators-legacy": "^1.3.4",
