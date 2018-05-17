@@ -1,6 +1,8 @@
 import debug from 'debug'
+import path from 'path'
 
-const log = debug('register');
+//const log = debug('register');
+const log = console.log;
 
 /**
  *
@@ -44,17 +46,22 @@ module.exports = function (option) {
     
     require(require.resolve('babel-register', option.requireResolve))({
         ignore: function (filename) {
-            if (option.mode == 'src' && filename.startsWith(`${option.JH_PATH}`)) {
-                log(filename);
-                return false
-            } else if (option.mode == 'dev' && filename.startsWith(`${option.JH_PATH}`)) {
-                return true
+            // 项目编译
+            if (option.source === 'src') {
+                if (filename.startsWith(path.join(option.ROOT_PATH, 'src'))) {
+                    log(filename);
+                    return false;
+                }
             }
-            else if (/node_modules/.test(filename)) {
-                return true;
+            
+            // 核心编译
+            if (option.mode !== 'src') {
+                if (filename.startsWith(path.join(option.JH_PATH, 'src'))) {
+                    log(filename);
+                    return false;
+                }
             }
-            log(filename);
-            return false;
+            return true;
         },
         cache: true,
         "presets": [

@@ -4,9 +4,13 @@ var _debug = require('debug');
 
 var _debug2 = _interopRequireDefault(_debug);
 
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const log = (0, _debug2.default)('register');
+const log = console.log;
 
 function checkModule(name, option) {
     try {
@@ -32,16 +36,20 @@ module.exports = function (option) {
 
     _safeRequire(require.resolve('babel-register', option.requireResolve))({
         ignore: function (filename) {
-            if (option.mode == 'src' && filename.startsWith(`${option.JH_PATH}`)) {
-                log(filename);
-                return false;
-            } else if (option.mode == 'dev' && filename.startsWith(`${option.JH_PATH}`)) {
-                return true;
-            } else if (/node_modules/.test(filename)) {
-                return true;
+            if (option.source === 'src') {
+                if (filename.startsWith(_path2.default.join(option.ROOT_PATH, 'src'))) {
+                    log(filename);
+                    return false;
+                }
             }
-            log(filename);
-            return false;
+
+            if (option.mode !== 'src') {
+                if (filename.startsWith(_path2.default.join(option.JH_PATH, 'src'))) {
+                    log(filename);
+                    return false;
+                }
+            }
+            return true;
         },
         cache: true,
         "presets": [[_safeRequire(require.resolve('babel-preset-env', option.requireResolve)), {
