@@ -4,10 +4,10 @@
     "main": "index.js",
     "type": "index.d.ts",
     "scripts": {
-        "main": "babel main --out-dir ./ --copy-files --source-maps --watch",
+        "main": "babel main --out-dir ./ --copy-files --watch",
         "dev": "babel src --out-dir dev --copy-files --source-maps --watch",
         "lib": "babel src --out-dir lib --copy-files --watch",
-        "test": "babel test/src --out-dir test/lib --copy-files --source-maps --watch --presets=minify",
+        "test": "babel test/src --out-dir test/lib --copy-files --source-maps --watch",
         "publish": "babel src --out-dir lib --copy-files",
         "demo": "jinghuanjs demo",
         "start": "jinghuanjs demo"
