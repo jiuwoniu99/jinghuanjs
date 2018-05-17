@@ -9,7 +9,8 @@ const log = debug('register');
  */
 function checkModule(name, option) {
     try {
-        require.resolve(name, option.requireResolve);
+        let path = require.resolve(name, option.requireResolve);
+        console.log(path)
     } catch (e) {
         console.log(`npm install ${name} --save-dev`);
         process.exit(0);
