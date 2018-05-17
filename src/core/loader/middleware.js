@@ -1,5 +1,5 @@
 import path from 'path';
-//import assert from 'assert';
+import fs from 'fs-extra';
 import pathToRegexp from 'path-to-regexp';
 import helper from '../helper';
 import debug from 'debug';
@@ -11,6 +11,10 @@ const log = debug(`JH:core/loader/middleware[${process.pid}]`);
  * 中间件加载器
  */
 class Middleware {
+    constructor() {
+        //module.paths.push(jinghuan.paths[0]);
+        //module.paths.push(jinghuan.paths[1]);
+    }
     
     /**
      * check url matched
@@ -40,7 +44,7 @@ class Middleware {
      */
     checkMid(name) {
         try {
-            return require.resolve(name, jinghuan.requireResolve);
+            return require.resolve(name, {paths: jinghuan.paths});
         } catch (e) {
             return false;
         }
@@ -51,10 +55,17 @@ class Middleware {
      * @param item
      */
     requireMid(item) {
-        let middleware = this.checkMid(jinghuan.mode + '/middleware/' + item.handle) ||
-            this.checkMid(jinghuan.source + '/common/middleware/' + item.handle) ||
-            this.checkMid('jinghuan-middleware-' + item.handle);
-        
+        let middleware = "";
+        let jhMid = path.join(jinghuan.JH_PATH, 'middleware', item.handle + '.js');
+        let appMid = path.join(jinghuan.APP_PATH, 'common', 'middleware', item.handle + '.js');
+        let nodeMid = 'jinghuan-middleware-' + item.handle;
+        if (fs.pathExistsSync(jhMid)) {
+            middleware = jhMid;
+        } else if (fs.pathExistsSync(appMid)) {
+            middleware = appMid;
+        } else if (this.checkMid(nodeMid)) {
+            middleware = nodeMid;
+        }
         let cache = require.cache[middleware];
         let handle = null;
         if (!cache) {

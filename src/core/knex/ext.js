@@ -3,6 +3,10 @@ const mysql = require('knex/lib/dialects/mysql');
 const mssql = require('knex/lib/dialects/mssql');
 const oracle = require('knex/lib/dialects/oracle');
 const postgres = require('knex/lib/dialects/postgres');
+
+//module.paths.push(jinghuan.paths[0]);
+//module.paths.push(jinghuan.paths[1]);
+
 /**
  *
  * @return {*}
@@ -10,7 +14,7 @@ const postgres = require('knex/lib/dialects/postgres');
  */
 mysql2.prototype._driver = function _driver() {
     try {
-        return require(require.resolve('mysql2', jinghuan.requireResolve));
+        return require(require.resolve('mysql2', {paths:jinghuan.paths}));
     } catch (e) {
         jinghuan.logger.error('npm install mysql2')
         return null;
@@ -24,7 +28,7 @@ mysql2.prototype._driver = function _driver() {
  */
 mysql.prototype._driver = function _driver() {
     try {
-        return require(require.resolve('mysql', jinghuan.requireResolve));
+        return require(require.resolve('mysql', {paths:jinghuan.paths}));
     } catch (e) {
         jinghuan.logger.error('npm install mysql')
         return null;
@@ -38,7 +42,7 @@ mysql.prototype._driver = function _driver() {
  */
 mssql.prototype._driver = function _driver() {
     try {
-        return require(require.resolve('mssql', jinghuan.requireResolve));
+        return require(require.resolve('mssql', {paths:jinghuan.paths}));
     } catch (e) {
         jinghuan.logger.error('npm install mssql')
         return null;
@@ -52,7 +56,7 @@ mssql.prototype._driver = function _driver() {
  */
 oracle.prototype._driver = function _driver() {
     try {
-        return require(require.resolve('oracle', jinghuan.requireResolve));
+        return require(require.resolve('oracle', {paths:jinghuan.paths}));
     } catch (e) {
         jinghuan.logger.error('npm install mssql')
         return null;
@@ -66,7 +70,7 @@ oracle.prototype._driver = function _driver() {
  */
 postgres.prototype._driver = function _driver() {
     try {
-        return require(require.resolve('oracle', jinghuan.requireResolve));
+        return require(require.resolve('oracle', {paths:jinghuan.paths}));
     } catch (e) {
         jinghuan.logger.error('npm install pg')
         return null;

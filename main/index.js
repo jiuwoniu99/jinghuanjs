@@ -72,7 +72,15 @@ module.exports = function (options) {
     }
     
     let rootPath = findRoot(__filename);
-    let requireResolve = {paths: [rootPath, appRootPath]};
+    
+    let paths = [
+        appRootPath,
+        rootPath,
+        path.join(appRootPath, 'node_modules'),
+        path.join(rootPath, 'node_modules'),
+    ];
+    
+    
     let filename = process.mainModule.filename;
     
     // 默认是 src 测试目录
@@ -86,7 +94,7 @@ module.exports = function (options) {
     options.port = options.port || port;
     options.watcher = options.watcher || watcher || false;
     options.modules = options.modules || modules || [options.env];
-    options.requireResolve = requireResolve;
+    options.paths = paths;
     options.workers = options.workers || workers || 0;
     options.mode = options.mode || mode || 'lib';
     options.process_id = process_id;

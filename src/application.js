@@ -37,7 +37,7 @@ class Application {
         define('PORT', options.port || 8409);
         define('HOST', options.host);
         define('mode', options.mode);
-        define('requireResolve', options.requireResolve);
+        define('paths', options.paths);
         define('process_id', options.process_id);
         define('watcher', options.watcher)
         
