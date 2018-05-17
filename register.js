@@ -20,9 +20,8 @@ function checkModule(name, option) {
 const modules = ['source-map-support', 'babel-register', 'babel-preset-env', 'babel-preset-react', 'babel-preset-stage-0', 'babel-plugin-safe-require', 'babel-plugin-transform-decorators-legacy'];
 
 module.exports = function (option) {
-
     for (let i in modules) {
-        checkModule(modules[i], option.requireResolve);
+        checkModule(modules[i], option);
     }
 
     const sourceMapSupport = _safeRequire(require.resolve('source-map-support', option.requireResolve));

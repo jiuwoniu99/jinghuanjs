@@ -31,9 +31,9 @@ const modules = [
  * @param option
  */
 module.exports = function (option) {
-    
+    //console.log(option);
     for (let i in modules) {
-        checkModule(modules[i], option.requireResolve);
+        checkModule(modules[i], option);
     }
     
     const sourceMapSupport = require(require.resolve('source-map-support', option.requireResolve));
