@@ -41,7 +41,7 @@ demo/
 
 #
 test/
-lib/
+#lib/
 dev/
 *.map
 .vscode/
