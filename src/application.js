@@ -151,6 +151,7 @@ class Application {
         Promise.resolve(instance.startServer())
             .then(() => {
                 let lines = [];
+                lines.push(`[Master] JinghuanJs version   ${jinghuan.version}`);
                 lines.push(`[Master] HOST                 [${jinghuan.HOST}]`);
                 lines.push(`[Master] PORT                 ${jinghuan.PORT}`);
                 lines.push(`[Master] ROOT_PATH            ${jinghuan.ROOT_PATH}`);
@@ -211,7 +212,7 @@ class Application {
                 lines.push(`[Worker] Source               ${jinghuan.source}`);
                 lines.push(`[Worker] Mode                 ${jinghuan.mode}`);
                 lines.push(`[Worker] Modules              [${jinghuan.modules}]`);
-                lines.push(`[Worker] Workers              ${jinghuan.workers}`);
+                //lines.push(`[Worker] Workers              ${jinghuan.workers}`);
                 lines.push(`[Worker] Middleware           [${jinghuan.middlewares}]`);
                 lines.push(`[Worker] ID                   ${jinghuan.process_id}`);
                 this.consoleLines(lines, '=')

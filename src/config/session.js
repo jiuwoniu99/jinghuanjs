@@ -1,4 +1,3 @@
-import fileSession from "../core/session/file"
 import dbSession from "../core/session/db";
 import jwtSession from "../core/session/jwt";
 import aesSession from '../core/session/aes';
@@ -6,14 +5,7 @@ import aesSession from '../core/session/aes';
 import path from "path"
 
 export default {
-    type: 'file',
-    file: {
-        handle: fileSession,
-        options: {
-            sessionPath: path.join(jinghuan.ROOT_PATH, 'runtime/session'),
-            id: 'JHFSESSID'
-        }
-    },
+    type: 'aes',
     db: {
         handle: dbSession,
         options: {
