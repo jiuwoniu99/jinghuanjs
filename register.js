@@ -10,7 +10,7 @@ var _path2 = _interopRequireDefault(_path);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const log = console.log;
+const log = (0, _debug2.default)('register');
 
 function checkModule(name, option) {
     try {

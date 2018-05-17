@@ -1,8 +1,8 @@
 import debug from 'debug'
 import path from 'path'
 
-//const log = debug('register');
-const log = console.log;
+const log = debug('register');
+//const log = console.log;
 
 /**
  *
