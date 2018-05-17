@@ -97,20 +97,19 @@ module.exports = function (options) {
         options.watcher = true;
         options.JH_PATH = path.join(rootPath, 'dev');
         runFile = `${rootPath}/dev/application`;
-        require('./register.js')(options)
     } else if (options.mode === 'src' && fs.pathExistsSync(`${rootPath}/src/application.js`)) {
         
         options.JH_PATH = path.join(rootPath, 'src');
         runFile = `${rootPath}/src/application`;
-        require('./register.js')(options)
     } else {
         options.mode = 'lib';
-        if (options.source !== 'app') {
-            options.watcher = true;
-            require('./register.js')(options)
-        }
         options.JH_PATH = path.join(rootPath, 'lib');
         runFile = `${rootPath}/lib/application`;
+    }
+    
+    if (options.source !== 'app') {
+        options.watcher = true;
+        require('./register.js')(options)
     }
     
     options.APP_PATH = path.join(options.ROOT_PATH, options.source);

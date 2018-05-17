@@ -17,7 +17,7 @@ debug.log = console.log.bind(console);
  * 应用程序启动入口文件
  * @type {module.Application}
  */
-module.exports = class Application {
+class Application {
     
     /**
      * constructor
@@ -278,3 +278,5 @@ module.exports = class Application {
         }
     }
 };
+
+export default Application

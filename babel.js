@@ -80,4 +80,3 @@ module.exports = function (str, callback) {
 
     console.log(objects);
 };
-//# sourceMappingURL=babel.js.map
