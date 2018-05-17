@@ -43,26 +43,24 @@ program
         '                                                   ')
     .parse(process.argv);
 
+function demo() {
+    require('../index.js')({
+        ROOT_PATH: tplPath,
+        source: 'src',
+        port: 8409,
+        env: 'index',
+        modules: ['index'],
+        workers: 1,
+        mode: 'lib'
+    });
+}
 
 if (isString(program.babel)) {
     require('../babel')(program.babel, function (option) {
-    
     })
 }
 else if (program.demo) {
     let tplPath = path.join(__dirname, '../tpl');
-    
-    function demo() {
-        require('../index.js')({
-            ROOT_PATH: tplPath,
-            source: 'src',
-            port: 8409,
-            env: 'index',
-            modules: ['index'],
-            workers: 1,
-            mode: 'lib'
-        });
-    }
     
     if (cluster.isMaster && !fs.pathExistsSync(path.join(tplPath, 'node_modules'))) {
         console.log(`Running $ cd "${tplPath}" &&  npm install`);
