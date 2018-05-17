@@ -44,6 +44,15 @@ program
     .parse(process.argv);
 
 function demo(tplPath) {
+
+}
+
+if (isString(program.babel)) {
+    require('../babel')(program.babel, function (option) {
+    })
+}
+else if (program.demo) {
+    let tplPath = path.join(__dirname, '../tpl');
     require('../index.js')({
         ROOT_PATH: tplPath,
         source: 'src',
@@ -53,37 +62,6 @@ function demo(tplPath) {
         workers: 1,
         mode: 'lib'
     });
-}
-
-if (isString(program.babel)) {
-    require('../babel')(program.babel, function (option) {
-    })
-}
-else if (program.demo) {
-    let tplPath = path.join(__dirname, '../tpl');
-    
-    if (cluster.isMaster && !fs.pathExistsSync(path.join(tplPath, 'node_modules'))) {
-        console.log(`Running $ cd "${tplPath}" &&  npm install`);
-        let error = false;
-        let exec = child_process.exec;
-        exec(`cd "${tplPath}" &&  npm install`, function (err, stdout, stderr) {
-            if (err) {
-                error = true;
-                console.log(stderr);
-            } else {
-                console.log(stdout);
-            }
-        }).on('exit', function (code) {
-            if (error) {
-                process.exit(0);
-            } else {
-                demo(tplPath)
-            }
-        })
-    } else {
-        demo(tplPath)
-    }
-    
 } else {
     const rootPath = findRoot(__filename);
     

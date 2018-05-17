@@ -7,6 +7,7 @@ import loadConfig from '../loader/config';
 import get from 'lodash/get';
 import set from 'lodash/set'
 import merge from 'lodash/merge'
+import cluster from 'cluster'
 
 const LoaderConfig = new loadConfig();
 const log = debug('JH:core/config');
@@ -82,7 +83,7 @@ function configSet(name, value) {
 function config() {
     
     // 模式为lib时初始化就开始加载所有配置
-    if (jinghuan.mode === 'lib') {
+    if (jinghuan.mode === 'lib' && !cluster.isMaster) {
         Config = LoaderConfig.load(localCache);
     }
     /**
