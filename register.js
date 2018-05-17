@@ -15,7 +15,6 @@ const log = console.log;
 function checkModule(name, option) {
     try {
         let path = require.resolve(name, option.requireResolve);
-        console.log(path);
     } catch (e) {
         console.log(`npm install ${name} --save-dev`);
         process.exit(0);
