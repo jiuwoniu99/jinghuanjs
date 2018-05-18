@@ -68,8 +68,8 @@ module.exports = function (str, callback) {
         console.log(`"${appRootPath}" Not the nodejs project directory`);
         process.exit(0);
     }
-    let appSrcPath = _path2.default.join(appRootPath, 'src');
-    let appLibPath = _path2.default.join(appRootPath, 'lib');
+    let srcPath = _path2.default.join(appRootPath, 'src');
+    let appPath = _path2.default.join(appRootPath, 'app');
 
     let rootPath = (0, _findRoot2.default)(__filename);
 
@@ -121,7 +121,7 @@ module.exports = function (str, callback) {
 
     _chokidar2.default.watch(watchs, {}).on('all', (event, file, stats) => {
         file = _path2.default.normalize(file);
-        let resolve = file.replace(appSrcPath, '');
+        let resolve = file.replace(srcPath, '');
         let ext_name = _path2.default.extname(file);
 
         switch (event) {
@@ -131,29 +131,29 @@ module.exports = function (str, callback) {
                     if (config.exts.indexOf(ext_name) != -1) {
                         babel.transformFile(file, config.babel, function (err, result) {
                             if (err) console.error(err);else {
-                                let toFile = _path2.default.join(appLibPath, resolve);
+                                let toFile = _path2.default.join(appPath, resolve);
                                 _fsExtra2.default.writeFileSync(toFile, result.code);
                                 result.map.file = toFile;
                                 _fsExtra2.default.writeFileSync(toFile + '.map', _json2.default.stringify(result.map));
-                                console.log('out', _path2.default.join('app', resolve), ' -> ', _path2.default.join('lib', resolve));
+                                console.log('out', _path2.default.join('src', resolve), ' -> ', _path2.default.join('app', resolve));
                             }
                         });
                     } else {
-                        _fsExtra2.default.copySync(file, _path2.default.join(appLibPath, resolve));
-                        console.log('copy', _path2.default.join('app', resolve), ' -> ', _path2.default.join('lib', resolve));
+                        _fsExtra2.default.copySync(file, _path2.default.join(appPath, resolve));
+                        console.log('copy', _path2.default.join('src', resolve), ' -> ', _path2.default.join('app', resolve));
                     }
                 } catch (e) {
                     console.error(e);
                 }
                 break;
             case 'addDir':
-                console.log('create', _path2.default.join(appLibPath, resolve));
-                _fsExtra2.default.ensureDirSync(_path2.default.join('lib', resolve));
+                console.log('create', _path2.default.join(appPath, resolve));
+                _fsExtra2.default.ensureDirSync(_path2.default.join('app', resolve));
                 break;
             case 'unlinkDir':
             case 'unlink':
-                console.log('remove', _path2.default.join('lib', resolve));
-                _fsExtra2.default.removeSync(_path2.default.join(appLibPath, resolve));
+                console.log('remove', _path2.default.join('app', resolve));
+                _fsExtra2.default.removeSync(_path2.default.join(appPath, resolve));
                 break;
         }
     });

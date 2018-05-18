@@ -69,8 +69,8 @@ module.exports = function (str, callback) {
         console.log(`"${appRootPath}" Not the nodejs project directory`);
         process.exit(0);
     }
-    let appSrcPath = path.join(appRootPath, 'src');
-    let appLibPath = path.join(appRootPath, 'lib');
+    let srcPath = path.join(appRootPath, 'src');
+    let appPath = path.join(appRootPath, 'app');
     
     let rootPath = findRoot(__filename);
     
@@ -141,7 +141,7 @@ module.exports = function (str, callback) {
     chokidar.watch(watchs, {})
         .on('all', (event, file, stats) => {
             file = path.normalize(file);
-            let resolve = file.replace(appSrcPath, '');
+            let resolve = file.replace(srcPath, '');
             let ext_name = path.extname(file);
             
             switch (event) {
@@ -153,29 +153,29 @@ module.exports = function (str, callback) {
                                 if (err)
                                     console.error(err);
                                 else {
-                                    let toFile = path.join(appLibPath, resolve);
+                                    let toFile = path.join(appPath, resolve);
                                     fs.writeFileSync(toFile, result.code);
                                     result.map.file = toFile;
                                     fs.writeFileSync(toFile + '.map', JSON.stringify(result.map));
-                                    console.log('out', path.join('app', resolve), ' -> ', path.join('lib', resolve));
+                                    console.log('out', path.join('src', resolve), ' -> ', path.join('app', resolve));
                                 }
                             });
                         } else {
-                            fs.copySync(file, path.join(appLibPath, resolve));
-                            console.log('copy', path.join('app', resolve), ' -> ', path.join('lib', resolve));
+                            fs.copySync(file, path.join(appPath, resolve));
+                            console.log('copy', path.join('src', resolve), ' -> ', path.join('app', resolve));
                         }
                     } catch (e) {
                         console.error(e);
                     }
                     break;
                 case 'addDir':
-                    console.log('create', path.join(appLibPath, resolve));
-                    fs.ensureDirSync(path.join('lib', resolve));
+                    console.log('create', path.join(appPath, resolve));
+                    fs.ensureDirSync(path.join('app', resolve));
                     break;
                 case 'unlinkDir':
                 case 'unlink':
-                    console.log('remove', path.join('lib', resolve));
-                    fs.removeSync(path.join(appLibPath, resolve));
+                    console.log('remove', path.join('app', resolve));
+                    fs.removeSync(path.join(appPath, resolve));
                     break;
             }
         });
