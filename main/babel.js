@@ -2,8 +2,18 @@ import fs from 'fs-extra';
 import path from 'path';
 import findRoot from 'find-root';
 import set from 'lodash/set'
+import isArray from 'lodash/isArray';
+import chokidar from 'chokidar'
+import JSON from 'json5';
 
-let paths = [];
+
+function isFile(str) {
+    return fs.existsSync(str) && fs.statSync(str).isFile();
+}
+
+function isDir(str) {
+    return fs.existsSync(str) && fs.statSync(str).isDirectory();
+}
 
 /**
  *
@@ -12,11 +22,27 @@ let paths = [];
  */
 function checkModule(name, option) {
     try {
-        require.resolve(name, option.requireResolve);
+        require.resolve(name, option);
     } catch (e) {
         console.log(`npm install ${name} --save-dev`);
         process.exit(0);
     }
+}
+
+/**
+ *
+ * @param name
+ * @param option
+ * @return {*}
+ */
+function checkFile(name, option) {
+    try {
+        return require.resolve(name, option);
+    } catch (e) {
+        console.log(`Error : file (${name}) not found`);
+        process.exit(0);
+    }
+    
 }
 
 const modules = [
@@ -34,53 +60,125 @@ const modules = [
  * @param callback
  */
 module.exports = function (str, callback) {
+    let watchs = [];
+    
+    let appRootPath;
+    try {
+        appRootPath = findRoot(process.cwd());
+    } catch (e) {
+        console.log(`"${appRootPath}" Not the nodejs project directory`);
+        process.exit(0);
+    }
+    let appSrcPath = path.join(appRootPath, 'src');
+    let appLibPath = path.join(appRootPath, 'lib');
+    
+    let rootPath = findRoot(__filename);
+    
+    let paths = [
+        appRootPath,
+        rootPath,
+        path.join(appRootPath, 'node_modules'),
+        path.join(rootPath, 'node_modules'),
+    ];
+    
     for (let i in modules) {
         checkModule(modules[i], {paths});
     }
     
-    let rootPath;
-    
-    
-    try {
-        rootPath = findRoot(process.cwd())
-    } catch (e) {
-        console.log(`"${process.cwd()}" Not the nodejs project directory`);
-        process.exit(0);
+    const sourceMapSupport = require(require.resolve('source-map-support', {paths}));
+    if ('install' in sourceMapSupport) {
+        sourceMapSupport.install();
     }
     
-    let srcPath = path.join(rootPath, 'src');
-    
-    if (!fs.pathExistsSync(srcPath)) {
-        console.log(`"${srcPath}" directory does not exist`);
-        process.exit(0);
-    }
-    
-    str = str.replace(/\//g, '.');
     let keys = str.split(',');
-    let objects = {};
-    
     
     for (let i in keys) {
-        set(objects, keys[i], 1);
-    }
-    
-    for (let app in objects) {
-        let p1 = path.join(srcPath, app);
-        
-        if (!fs.pathExistsSync(p1)) {
-            console.log(`"${p1}" directory does not exist`);
+        let file = checkFile(path.join('src', keys[i], '.jinghuanjs'), {paths});
+        let json = fs.readFileSync(file);
+        try {
+            let opt = JSON.parse(json);
+            if (isArray(opt.paths)) {
+                opt.paths.map(function (name) {
+                    watchs.push(path.join(appRootPath, 'src', keys[i], name))
+                })
+            }
+            
+        } catch (e) {
+            consle.log(`Error : parse file (${file}) error`);
             process.exit(0);
         }
-        
-        for (let dir in objects[app]) {
-            let p2 = path.join(p1, dir);
-            
-            if (!fs.pathExistsSync(p2)) {
-                console.log(`"${p2}" directory does not exist`);
-                process.exit(0);
-            }
-        }
     }
     
-    console.log(objects);
+    
+    let config = {
+        exts: ['.js', '.jsx'],
+        babel: {
+            "presets": [
+                [
+                    require(require.resolve('babel-preset-env', {paths})),
+                    {
+                        "targets": {
+                            "node": "9"
+                        }
+                    }
+                ],
+                require(require.resolve('babel-preset-react', {paths})),
+                require(require.resolve('babel-preset-stage-0', {paths})),
+            ],
+            "plugins": [
+                require(require.resolve('babel-plugin-safe-require', {paths})),
+                require(require.resolve('babel-plugin-transform-decorators-legacy', {paths})),
+            ],
+            "comments": false,
+            "babelrc": false,
+            "sourceMaps": true,
+        }
+    };
+    
+    
+    let babel = require(require.resolve('babel-core', {paths}));
+    
+    chokidar.watch(watchs, {})
+        .on('all', (event, file, stats) => {
+            file = path.normalize(file);
+            let resolve = file.replace(appSrcPath, '');
+            let ext_name = path.extname(file);
+            
+            switch (event) {
+                case 'change':
+                case 'add':
+                    try {
+                        if (config.exts.indexOf(ext_name) != -1) {
+                            babel.transformFile(file, config.babel, function (err, result) {
+                                if (err)
+                                    console.error(err);
+                                else {
+                                    let toFile = path.join(appLibPath, resolve);
+                                    fs.writeFileSync(toFile, result.code);
+                                    result.map.file = toFile;
+                                    fs.writeFileSync(toFile + '.map', JSON.stringify(result.map));
+                                    console.log('out', path.join('app', resolve), ' -> ', path.join('lib', resolve));
+                                }
+                            });
+                        } else {
+                            fs.copySync(file, path.join(appLibPath, resolve));
+                            console.log('copy', path.join('app', resolve), ' -> ', path.join('lib', resolve));
+                        }
+                    } catch (e) {
+                        console.error(e);
+                    }
+                    break;
+                case 'addDir':
+                    console.log('create', path.join(appLibPath, resolve));
+                    fs.ensureDirSync(path.join('lib', resolve));
+                    break;
+                case 'unlinkDir':
+                case 'unlink':
+                    console.log('remove', path.join('lib', resolve));
+                    fs.removeSync(path.join(appLibPath, resolve));
+                    break;
+            }
+        });
+    
+    //console.log(watchs);
 }

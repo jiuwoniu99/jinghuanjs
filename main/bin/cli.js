@@ -47,8 +47,8 @@ function demo(tplPath) {
 
 }
 
-if (isString(program.babel)) {
-    require('../babel')(program.babel, function (option) {
+if (program.babel) {
+    require('../babel')(isString(program.babel) ? program.babel : '', function (option) {
     })
 }
 else if (program.demo) {

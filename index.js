@@ -135,5 +135,6 @@ function _safeRequire(obj) {
         }
     }
 
-    return obj && obj.__esModule ? obj.default : obj;
+    return obj && obj.__esModule ? obj.default || obj : obj;
 }
+//# sourceMappingURL=index.js.map

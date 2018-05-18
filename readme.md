@@ -7,7 +7,7 @@ $ npm install jinghuanjs -g
 
 Installation 2
 ```bash
-$ npm install get+https://github.com/jiuwoniu99/jinghuanjs.git
+$ npm install get+https://github.com/jiuwoniu99/jinghuanjs.git -g
 ```
 ---
 

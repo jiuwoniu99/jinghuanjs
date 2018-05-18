@@ -39,8 +39,8 @@ _commander2.default.version(_package2.default.version).option('-P, --port [n]', 
 
 function demo(tplPath) {}
 
-if ((0, _isString2.default)(_commander2.default.babel)) {
-    _safeRequire('../babel')(_commander2.default.babel, function (option) {});
+if (_commander2.default.babel) {
+    _safeRequire('../babel')((0, _isString2.default)(_commander2.default.babel) ? _commander2.default.babel : '', function (option) {});
 } else if (_commander2.default.demo) {
     let tplPath = _path2.default.join(__dirname, '../tpl');
     _safeRequire('../index.js')({
@@ -124,5 +124,6 @@ function _safeRequire(obj) {
         }
     }
 
-    return obj && obj.__esModule ? obj.default : obj;
+    return obj && obj.__esModule ? obj.default || obj : obj;
 }
+//# sourceMappingURL=cli.js.map

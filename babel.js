@@ -16,15 +16,42 @@ var _set = require('lodash/set');
 
 var _set2 = _interopRequireDefault(_set);
 
+var _isArray = require('lodash/isArray');
+
+var _isArray2 = _interopRequireDefault(_isArray);
+
+var _chokidar = require('chokidar');
+
+var _chokidar2 = _interopRequireDefault(_chokidar);
+
+var _json = require('json5');
+
+var _json2 = _interopRequireDefault(_json);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-let paths = [];
+function isFile(str) {
+    return _fsExtra2.default.existsSync(str) && _fsExtra2.default.statSync(str).isFile();
+}
+
+function isDir(str) {
+    return _fsExtra2.default.existsSync(str) && _fsExtra2.default.statSync(str).isDirectory();
+}
 
 function checkModule(name, option) {
     try {
-        require.resolve(name, option.requireResolve);
+        require.resolve(name, option);
     } catch (e) {
         console.log(`npm install ${name} --save-dev`);
+        process.exit(0);
+    }
+}
+
+function checkFile(name, option) {
+    try {
+        return require.resolve(name, option);
+    } catch (e) {
+        console.log(`Error : file (${name}) not found`);
         process.exit(0);
     }
 }
@@ -32,51 +59,116 @@ function checkModule(name, option) {
 const modules = ['babel-core', 'babel-preset-env', 'babel-preset-react', 'babel-preset-stage-0', 'babel-plugin-safe-require', 'babel-plugin-transform-decorators-legacy'];
 
 module.exports = function (str, callback) {
+    let watchs = [];
+
+    let appRootPath;
+    try {
+        appRootPath = (0, _findRoot2.default)(process.cwd());
+    } catch (e) {
+        console.log(`"${appRootPath}" Not the nodejs project directory`);
+        process.exit(0);
+    }
+    let appSrcPath = _path2.default.join(appRootPath, 'src');
+    let appLibPath = _path2.default.join(appRootPath, 'lib');
+
+    let rootPath = (0, _findRoot2.default)(__filename);
+
+    let paths = [appRootPath, rootPath, _path2.default.join(appRootPath, 'node_modules'), _path2.default.join(rootPath, 'node_modules')];
+
     for (let i in modules) {
         checkModule(modules[i], { paths });
     }
 
-    let rootPath;
-
-    try {
-        rootPath = (0, _findRoot2.default)(process.cwd());
-    } catch (e) {
-        console.log(`"${process.cwd()}" Not the nodejs project directory`);
-        process.exit(0);
+    const sourceMapSupport = _safeRequire(require.resolve('source-map-support', { paths }));
+    if ('install' in sourceMapSupport) {
+        sourceMapSupport.install();
     }
 
-    let srcPath = _path2.default.join(rootPath, 'src');
-
-    if (!_fsExtra2.default.pathExistsSync(srcPath)) {
-        console.log(`"${srcPath}" directory does not exist`);
-        process.exit(0);
-    }
-
-    str = str.replace(/\//g, '.');
     let keys = str.split(',');
-    let objects = {};
 
     for (let i in keys) {
-        (0, _set2.default)(objects, keys[i], 1);
-    }
-
-    for (let app in objects) {
-        let p1 = _path2.default.join(srcPath, app);
-
-        if (!_fsExtra2.default.pathExistsSync(p1)) {
-            console.log(`"${p1}" directory does not exist`);
+        let file = checkFile(_path2.default.join('src', keys[i], '.jinghuanjs'), { paths });
+        let json = _fsExtra2.default.readFileSync(file);
+        try {
+            let opt = _json2.default.parse(json);
+            if ((0, _isArray2.default)(opt.paths)) {
+                opt.paths.map(function (name) {
+                    watchs.push(_path2.default.join(appRootPath, 'src', keys[i], name));
+                });
+            }
+        } catch (e) {
+            consle.log(`Error : parse file (${file}) error`);
             process.exit(0);
         }
+    }
 
-        for (let dir in objects[app]) {
-            let p2 = _path2.default.join(p1, dir);
+    let config = {
+        exts: ['.js', '.jsx'],
+        babel: {
+            "presets": [[_safeRequire(require.resolve('babel-preset-env', { paths })), {
+                "targets": {
+                    "node": "9"
+                }
+            }], _safeRequire(require.resolve('babel-preset-react', { paths })), _safeRequire(require.resolve('babel-preset-stage-0', { paths }))],
+            "plugins": [_safeRequire(require.resolve('babel-plugin-safe-require', { paths })), _safeRequire(require.resolve('babel-plugin-transform-decorators-legacy', { paths }))],
+            "comments": false,
+            "babelrc": false,
+            "sourceMaps": true
+        }
+    };
 
-            if (!_fsExtra2.default.pathExistsSync(p2)) {
-                console.log(`"${p2}" directory does not exist`);
-                process.exit(0);
-            }
+    let babel = _safeRequire(require.resolve('babel-core', { paths }));
+
+    _chokidar2.default.watch(watchs, {}).on('all', (event, file, stats) => {
+        file = _path2.default.normalize(file);
+        let resolve = file.replace(appSrcPath, '');
+        let ext_name = _path2.default.extname(file);
+
+        switch (event) {
+            case 'change':
+            case 'add':
+                try {
+                    if (config.exts.indexOf(ext_name) != -1) {
+                        babel.transformFile(file, config.babel, function (err, result) {
+                            if (err) console.error(err);else {
+                                let toFile = _path2.default.join(appLibPath, resolve);
+                                _fsExtra2.default.writeFileSync(toFile, result.code);
+                                result.map.file = toFile;
+                                _fsExtra2.default.writeFileSync(toFile + '.map', _json2.default.stringify(result.map));
+                                console.log('out', _path2.default.join('app', resolve), ' -> ', _path2.default.join('lib', resolve));
+                            }
+                        });
+                    } else {
+                        _fsExtra2.default.copySync(file, _path2.default.join(appLibPath, resolve));
+                        console.log('copy', _path2.default.join('app', resolve), ' -> ', _path2.default.join('lib', resolve));
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+                break;
+            case 'addDir':
+                console.log('create', _path2.default.join(appLibPath, resolve));
+                _fsExtra2.default.ensureDirSync(_path2.default.join('lib', resolve));
+                break;
+            case 'unlinkDir':
+            case 'unlink':
+                console.log('remove', _path2.default.join('lib', resolve));
+                _fsExtra2.default.removeSync(_path2.default.join(appLibPath, resolve));
+                break;
+        }
+    });
+};
+
+function _safeRequire(obj) {
+    if (typeof obj === 'string') {
+        try {
+            obj = require(obj);
+        } catch (e) {
+            console.error(e);
+            obj = null;
         }
     }
 
-    console.log(objects);
-};
+    return obj && obj.__esModule ? obj.default || obj : obj;
+}
+//# sourceMappingURL=babel.js.map
