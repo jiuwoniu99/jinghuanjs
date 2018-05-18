@@ -1,6 +1,5 @@
 import raw from 'raw-body';
 import inflate from 'inflation';
-import qs from 'query-string';
 import parse_str from 'locutus/php/strings/parse_str';
 
 /**
