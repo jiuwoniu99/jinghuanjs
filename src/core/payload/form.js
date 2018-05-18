@@ -1,6 +1,7 @@
 import raw from 'raw-body';
 import inflate from 'inflation';
-import qs from 'querystring';
+import qs from 'query-string';
+import parse_str from 'locutus/php/strings/parse_str';
 
 /**
  *
@@ -19,6 +20,10 @@ export default function (ctx, opts = {}) {
     opts.limit = opts.limit || '1mb';
     
     return raw(inflate(req), opts)
-        .then(str => qs.parse(str))
+        .then((str) => {
+            let data = {}
+            parse_str(str, data)
+            return data;
+        })
         .then(data => ({post: data}));
 };

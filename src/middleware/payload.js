@@ -1,5 +1,4 @@
 import parse from "../core/payload/index.js"
-import querystring from 'query-string';
 import parse_str from 'locutus/php/strings/parse_str';
 
 function invokePayload(opts = {}) {

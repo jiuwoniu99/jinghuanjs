@@ -6,20 +6,20 @@ const symbol = action.name;
 const defaultOptions = {};
 
 function invokeController(options, app) {
-
+    
     options = Object.assign({}, defaultOptions, options);
-
+    
     return (ctx, next) => {
-
+        
         if (!ctx.module || !ctx.controller || !ctx.action) {
             return ctx.throw(404);
         }
-
+        
         let instance = getController(ctx, symbol);
         if (!instance) {
             return ctx.throw(404);
         }
-
+        
         // let {controllers = {}} = app;
         // if (controllers) {
         //     controllers = controllers[ctx.module] || {};
@@ -46,13 +46,13 @@ function invokeController(options, app) {
         // if (helper.isEmpty(instance.ctx)) {
         //     instance.ctx = ctx;
         // }
-
+        
         let promise = Promise.resolve();
-
+        
         if (instance.__before) {
             promise = Promise.resolve(instance.__before());
         }
-
+        
         //
         return promise.then(data => {
             if (data === false) {
@@ -60,9 +60,9 @@ function invokeController(options, app) {
             }
             let action = ctx.action;
             if (actions[action]) {
-                let param = ctx.param();
-                let post = ctx.post();
-
+                let param = ctx.param() || {};
+                let post = ctx.post() || {};
+                
                 if (actions[action].value) {
                     return actions[action].value.call(instance, param, post);
                 } else if (actions[action].initializer) {

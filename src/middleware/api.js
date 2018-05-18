@@ -3,7 +3,7 @@ import raw from 'raw-body';
 import inflate from 'inflation';
 import helper from '../core/helper';
 import extend from 'lodash/extend';
-import querystring from 'querystring';
+import parse_str from 'locutus/php/strings/parse_str';
 import md5 from 'locutus/php/strings/md5';
 import strtoupper from 'locutus/php/strings/strtoupper';
 import ksort from 'locutus/php/array/ksort';
@@ -115,7 +115,9 @@ function invokeApi(options, app) {
             opts.limit = opts.limit || '1mb';
             
             // post参数是api参数
-            let post = querystring.parse(await raw(inflate(req), opts));
+            let post = {}
+            parse_str(await raw(inflate(req), opts), post)
+            
             // get参数是通用参数
             let param = extend({}, ctx.param());
             
