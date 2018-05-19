@@ -34,10 +34,13 @@ class Loaders {
         // jinghuan.app.models = jinghuan.loader.loadModel();
         // jinghuan.app.services = jinghuan.loader.loadService();
         // jinghuan.app.logics = jinghuan.loader.loadLogic();
-        jinghuan.app.controllers = this.loader.loadController();
+        //jinghuan.app.controllers = this.loader.loadController();
         // jinghuan.app.routers = jinghuan.loader.loadRouter();
         // jinghuan.app.validators = jinghuan.loader.loadValidator();
-        jinghuan.app.sql = this.loader.loadSql();
+        //jinghuan.app.sql = this.loader.loadSql();
+        
+        define('controllers', this.loader.loadController());
+        define('sql', this.loader.loadSql());
     }
     
     /**

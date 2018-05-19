@@ -10,7 +10,7 @@ import helper from './index';
 export default function (ctx, symbol, name) {
     let {module, controller, action} = ctx;
     try {
-        let file = jinghuan.app.controllers[module][controller];
+        let file = jinghuan.controllers[module][controller];
         
         let Controller = require(file);
         if (helper.isEmpty(Controller)) {

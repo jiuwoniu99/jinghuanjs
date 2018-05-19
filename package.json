@@ -54,7 +54,6 @@
         "pako": "^1.0.6",
         "path-to-regexp": "^2.2.1",
         "pretty-bytes": "^5.0.0",
-        "querystring": "^0.2.0",
         "require-resolve": "0.0.2",
         "source-map-support": "^0.5.5",
         "stack-trace": "0.0.10",

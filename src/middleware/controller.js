@@ -81,6 +81,7 @@ function invokeController(options, app) {
                 return next();
             }
         }).catch(e => {
+            ctx.status = 500;
             console.error(e);
         });
     };

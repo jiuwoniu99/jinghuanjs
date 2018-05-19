@@ -317,7 +317,7 @@ export default {
      *
      * @param msg
      */
-    slog(msg) {
-        this.ctx.slog.info(msg);
+    get slog() {
+        return this.ctx.slog;
     }
 };

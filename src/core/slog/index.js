@@ -103,6 +103,9 @@ class Slog {
      * 发送日志给服务端
      */
     send(time) {
+        if (this._stop)
+            return;
+        
         let config = jinghuan.config('slog') || {};
         
         let {ctx} = this;
@@ -146,5 +149,8 @@ class Slog {
         });
     }
     
+    stop() {
+        this._stop = true;
+    }
 };
 export default Slog;

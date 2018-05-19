@@ -1,14 +1,17 @@
 import './ext';
 import knex from "knex"
 import builder from "knex/lib/query/builder"
+import Raw from 'knex/lib/raw';
 import strtolower from 'locutus/php/strings/strtolower';
 import trim from 'locutus/php/strings/trim';
 import isString from 'lodash/isString';
 import debug from 'debug';
 import JSSQLLexer from './lib/lexer/JSSQLLexer';
+import get from 'lodash/get';
 
-const log = debug('code.knex');
+const log = debug('JH:code/knex');
 const hasKnex = {};
+//const MAPPING = Symbol('knex-mapping')
 
 //var components = ['columns', 'join', 'where', 'union', 'group', 'having', 'order', 'limit', 'offset', 'lock'];
 //
@@ -228,16 +231,17 @@ builder.prototype._onQueryError = function (error, obj) {
  * @type {null}
  */
 builder.prototype.ctx = null;
+//builder.prototype.mapping = null;
 
 /**
  *
  * @param ctx
  * @return {builder}
  */
-builder.prototype.context = function (ctx) {
-    this.ctx = ctx;
-    return this;
-};
+//builder.prototype.context = function (ctx) {
+//    this.ctx = ctx;
+//    return this;
+//};
 
 /**
  *
@@ -249,7 +253,9 @@ const clone = builder.prototype.clone;
  *
  */
 builder.prototype.clone = function () {
-    return clone.call(this).context(this.ctx);
+    let ret = clone.call(this);
+    ret.ctx = this.ctx;
+    return ret;
 };
 
 /**
@@ -288,47 +294,83 @@ builder.prototype.then = async function () {
     //    }
     //}
     
-    for (let idx in this._statements) {
-        let _state = this._statements[idx];
-        let {column, grouping, value} = _state;
-        
-        // _mapping字段映射只针对查询字段和查询条件
-        switch (grouping) {
-            case "columns":
-                for (let i in value) {
-                    if (isString(value[i])) {
-                        let [field, asField] = value[i].split(' as ');
-                        if (this._mapping && this._mapping[field]) {
-                            value[i] = this._mapping[field] + (asField ? ` as ${asField}` : '')
-                        }
-                    }
-                }
-                break;
-            case "where":
-                if (this._mapping && this._mapping[column]) {
-                    _state.column = this._mapping[column];
-                }
-                break;
-        }
-    }
     
     const result = this.client.runner(this).run()
     return result.then.apply(result, arguments);
 };
 
+
 /**
- * 解析已
+ *
+ */
+builder.prototype.raw = knex.raw;
+
+//builder.prototype.toString = function () {
+//    console.log();
+//}
+//
+let toSQL = builder.prototype.toSQL;
+builder.prototype.toSQL = function (method, tz) {
+    
+    let Compiler = this.client.queryCompiler(this);
+    if (this._mapping) {
+        let mapping = this._mapping;
+        let {grouped, single} = Compiler;
+        
+        // select
+        if (grouped.columns) {
+            grouped.columns.map(function (select) {
+                let {value} = select;
+                (value || []).map((column, index) => {
+                    //select[index] = mapping[column] || select[index]
+                    if (isString(column)) {
+                        value[index] = mapping[column] || value[index]
+                        //console.log(column);
+                    }
+                })
+            })
+        }
+        // where
+        if (grouped.where) {
+            grouped.where.map(function (where) {
+                if (where.column && mapping[where.column]) {
+                    where.column = mapping[where.column]
+                } else if (where.value instanceof Raw) {
+                    let {sql, bindings} = where.value;
+                    let index = 0;
+                    sql.replace(/\\?\?\??/g, (match) => {
+                        if (match === '??') {
+                            var value = bindings[index];
+                            bindings[index] = mapping[value] || values
+                            index++
+                        }
+                    });
+                }
+                
+                
+            })
+        }
+    }
+    
+    
+    return Compiler.toSQL(method || this._method, tz);
+}
+
+
+/**
+ * 解析sql文件
  * @param name
  */
 builder.prototype.sql = function (name) {
     let {module} = this.ctx;
-    this._mapping = {};
-    if (jinghuan.app.sql && jinghuan.app.sql[module] && jinghuan.app.sql[module][name]) {
-        let sql = jinghuan.app.sql[module][name];
+    this._mapping = {}
+    let sql = get(jinghuan.sql, `${module}.${name}`);
+    if (isString(sql)) {
         let lines = sql.split('\n');
         let notes = [];
         let codes = [];
         
+        // 解析注解
         for (let i in lines) {
             if (lines[i].startsWith('#')) {
                 notes.push(lines[i]);
@@ -352,10 +394,10 @@ builder.prototype.sql = function (name) {
         let tokens = lexer.split(sql);
         let pts = ParseTokens(tokens);
         if (pts.select) {
-            this.select(knex.raw(pts.select));
+            this.select(this.raw(pts.select));
         }
         if (pts.from) {
-            this.from(knex.raw(pts.from));
+            this.from(this.raw(pts.from));
         }
         if (pts.where) {
             this.whereRaw(pts.where);
@@ -405,5 +447,8 @@ export default function (tableName = null, typeName = 'default') {
     /**
      *
      */
-    return hasKnex[typeName](tableName).context(this, hasKnex[typeName]);
+    let ret = hasKnex[typeName](tableName);
+    ret.ctx = this;
+    //return hasKnex[typeName](tableName).context(this, hasKnex[typeName]);
+    return ret;
 };

@@ -33,6 +33,7 @@ function invokeCross(options, app) {
             
             if (ctx.isMethod('options')) {
                 ctx.body = '';
+                ctx.slog.stop()
             } else {
                 await next();
             }
