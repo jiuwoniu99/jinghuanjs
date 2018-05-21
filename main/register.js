@@ -11,6 +11,7 @@ const log = debug('register');
 function checkModule(name, option) {
     try {
         let path = require.resolve(name, {paths: option.paths});
+        //console.log(path)
     } catch (e) {
         console.log(`npm install ${name} --save-dev`);
         process.exit(0);
@@ -66,7 +67,7 @@ module.exports = function (option) {
             }
             return true;
         },
-        cache: true,
+        cache: false,
         "presets": [
             [
                 require(require.resolve('babel-preset-env', {paths: option.paths})),

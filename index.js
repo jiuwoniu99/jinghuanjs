@@ -1,22 +1,12 @@
 'use strict';
 
-var _fsExtra = require('fs-extra');
+const fs = _safeRequire('fs-extra');
 
-var _fsExtra2 = _interopRequireDefault(_fsExtra);
+const path = _safeRequire('path');
 
-var _path = require('path');
+const findRoot = _safeRequire('find-root');
 
-var _path2 = _interopRequireDefault(_path);
-
-var _findRoot = require('find-root');
-
-var _findRoot2 = _interopRequireDefault(_findRoot);
-
-var _isString = require('lodash/isString');
-
-var _isString2 = _interopRequireDefault(_isString);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+const isString = _safeRequire('lodash/isString');
 
 let host = false;
 if (process.env.JH_HOST) {
@@ -72,24 +62,24 @@ module.exports = function (options) {
 
     let appRootPath;
     try {
-        appRootPath = (0, _findRoot2.default)(options.ROOT_PATH || process.cwd());
+        appRootPath = findRoot(options.ROOT_PATH || process.cwd());
     } catch (e) {
         console.log(`"${appRootPath}" Not the nodejs project directory`);
         process.exit(0);
     }
 
-    let rootPath = (0, _findRoot2.default)(__filename);
+    let rootPath = findRoot(__filename);
 
-    let paths = [appRootPath, rootPath, _path2.default.join(appRootPath, 'node_modules'), _path2.default.join(rootPath, 'node_modules')];
+    let paths = [rootPath, appRootPath, path.join(rootPath, 'node_modules'), path.join(appRootPath, 'node_modules')];
 
     let filename = process.mainModule.filename;
 
     options.source = options.source || source || 'src';
     options.host = options.host || host || '127.0.0.1';
-    if ((0, _isString2.default)(options.host)) options.host = [options.host];
+    if (isString(options.host)) options.host = [options.host];
 
     options.ROOT_PATH = options.ROOT_PATH || ROOT_PATH || appRootPath;
-    options.env = options.env || env || _path2.default.basename(filename, '.js');
+    options.env = options.env || env || path.basename(filename, '.js');
     options.port = options.port || port;
     options.watcher = options.watcher || watcher || false;
     options.modules = options.modules || modules || [options.env];
@@ -99,17 +89,17 @@ module.exports = function (options) {
     options.process_id = process_id;
 
     let runFile = '';
-    if (options.mode === 'dev' && _fsExtra2.default.pathExistsSync(`${rootPath}/dev/application.js`)) {
+    if (options.mode === 'dev' && fs.pathExistsSync(`${rootPath}/dev/application.js`)) {
         options.watcher = true;
-        options.JH_PATH = _path2.default.join(rootPath, 'dev');
+        options.JH_PATH = path.join(rootPath, 'dev');
         runFile = `${rootPath}/dev/application`;
-    } else if (options.mode === 'src' && _fsExtra2.default.pathExistsSync(`${rootPath}/src/application.js`)) {
+    } else if (options.mode === 'src' && fs.pathExistsSync(`${rootPath}/src/application.js`)) {
 
-        options.JH_PATH = _path2.default.join(rootPath, 'src');
+        options.JH_PATH = path.join(rootPath, 'src');
         runFile = `${rootPath}/src/application`;
     } else {
         options.mode = 'lib';
-        options.JH_PATH = _path2.default.join(rootPath, 'lib');
+        options.JH_PATH = path.join(rootPath, 'lib');
         runFile = `${rootPath}/lib/application`;
     }
 
@@ -118,7 +108,7 @@ module.exports = function (options) {
         _safeRequire('./register.js')(options);
     }
 
-    options.APP_PATH = _path2.default.join(options.ROOT_PATH, options.source);
+    options.APP_PATH = path.join(options.ROOT_PATH, options.source);
 
     let Appliaction = _safeRequire(runFile);
     let app = new Appliaction(options);
@@ -135,6 +125,6 @@ function _safeRequire(obj) {
         }
     }
 
-    return obj && obj.__esModule ? obj.default || obj : obj;
+    return obj && obj.__esModule && typeof obj.default !== "undefined" ? obj.default : obj;
 }
 //# sourceMappingURL=index.js.map

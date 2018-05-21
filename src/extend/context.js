@@ -103,7 +103,7 @@ export default {
         if (!name) {
             return this[PARAM];
         }
-        return get(this[PARAM], name);
+        return get(this[PARAM], name, {});
     },
     /**
      * get or set post data
@@ -116,7 +116,7 @@ export default {
         if (!name) {
             return this[POST];
         }
-        return get(this[POST], name);
+        return get(this[POST], name, {});
     },
     /**
      * get or set file data

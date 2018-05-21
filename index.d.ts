@@ -1,7 +1,7 @@
 import * as Knex from 'knex';
 import * as Koa from 'koa';
 // at top-level
-declare var jinghuanjs: {
+declare var jinghuan: {
     readonly props: props;
     readonly JH_ROOT: string;
     readonly APP_PATH: string;
@@ -18,12 +18,19 @@ declare var jinghuanjs: {
     readonly watcher: boolean;
     readonly version: string;
     readonly Controller: JinghuanController;
+    readonly AdminController: JinghuanController;
+    readonly ApiController: JinghuanController;
     readonly app: Koa;
-}
+};
+
 
 interface Application extends Koa {
     request: Request;
     response: Response;
+}
+
+interface JinghuanDb extends Knex.QueryBuilder {
+    sql(sql: string): JinghuanDb
 }
 
 interface Request extends Koa.Request {
@@ -44,6 +51,7 @@ interface JinghuanContext {
     readonly userAgent: string;
     readonly isGet: boolean;
     readonly isPost: boolean;
+    readonly body: any;
 
     referer(onlyHost: boolean): string;
 
@@ -73,7 +81,7 @@ interface JinghuanContext {
 
     download(filepath: string, filename?: string): void;
 
-    db(table: string, db_type: string): Knex.QueryBuilder;
+    db(table: string, db_type: string): JinghuanDb;
 }
 
 interface JinghuanController extends JinghuanContext {
@@ -82,7 +90,23 @@ interface JinghuanController extends JinghuanContext {
 
 
 interface JinghuanSlog {
-    info(): void
+    constructor(ctx: JinghuanContext)
+
+    info(msg: any): void;
+
+    debug(msg: any): void;
+
+    table(msg: any): void;
+
+    error(msg: any): void;
+
+    warn(msg: any): void;
+
+    sql(msg: any): void;
+
+    send(time: number): void
+
+    stop(): void
 }
 
 /**

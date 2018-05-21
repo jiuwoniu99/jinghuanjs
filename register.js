@@ -1,16 +1,10 @@
 'use strict';
 
-var _debug = require('debug');
+const debug = _safeRequire('debug');
 
-var _debug2 = _interopRequireDefault(_debug);
+const path = _safeRequire('path');
 
-var _path = require('path');
-
-var _path2 = _interopRequireDefault(_path);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-const log = (0, _debug2.default)('register');
+const log = debug('register');
 
 function checkModule(name, option) {
     try {
@@ -35,29 +29,29 @@ module.exports = function (option) {
 
     _safeRequire(require.resolve('babel-register', { paths: option.paths }))({
         ignore: function (filename) {
-            filename = _path2.default.normalize(filename);
+            filename = path.normalize(filename);
 
             if (option.source === 'src') {
-                if (filename.startsWith(_path2.default.join(option.APP_PATH))) {
+                if (filename.startsWith(path.join(option.APP_PATH))) {
                     log(filename);
                     return false;
                 }
 
-                if (filename.startsWith(_path2.default.join(option.ROOT_PATH, 'config'))) {
+                if (filename.startsWith(path.join(option.ROOT_PATH, 'config'))) {
                     log(filename);
                     return false;
                 }
             }
 
             if (option.mode === 'src') {
-                if (filename.startsWith(_path2.default.join(option.JH_PATH))) {
+                if (filename.startsWith(path.join(option.JH_PATH))) {
                     log(filename);
                     return false;
                 }
             }
             return true;
         },
-        cache: true,
+        cache: false,
         "presets": [[_safeRequire(require.resolve('babel-preset-env', { paths: option.paths })), {
             "targets": {
                 "node": "9"
@@ -79,6 +73,6 @@ function _safeRequire(obj) {
         }
     }
 
-    return obj && obj.__esModule ? obj.default || obj : obj;
+    return obj && obj.__esModule && typeof obj.default !== "undefined" ? obj.default : obj;
 }
 //# sourceMappingURL=register.js.map

@@ -306,11 +306,12 @@ export default {
     
     /**
      *
-     * @param a
-     * @param b
+     * @param tableName
+     * @param dbType
+     * @return {*}
      */
-    db(a, b) {
-        return this.ctx.db(a, b);
+    db(tableName, dbType) {
+        return this.ctx.db(tableName, dbType);
     },
     
     /**

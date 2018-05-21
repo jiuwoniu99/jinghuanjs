@@ -1,46 +1,30 @@
 'use strict';
 
-var _fsExtra = require('fs-extra');
+const fs = _safeRequire('fs-extra');
 
-var _fsExtra2 = _interopRequireDefault(_fsExtra);
+const path = _safeRequire('path');
 
-var _path = require('path');
+const findRoot = _safeRequire('find-root');
 
-var _path2 = _interopRequireDefault(_path);
+const set = _safeRequire('lodash/set');
 
-var _findRoot = require('find-root');
+const isArray = _safeRequire('lodash/isArray');
 
-var _findRoot2 = _interopRequireDefault(_findRoot);
+const chokidar = _safeRequire('chokidar');
 
-var _set = require('lodash/set');
-
-var _set2 = _interopRequireDefault(_set);
-
-var _isArray = require('lodash/isArray');
-
-var _isArray2 = _interopRequireDefault(_isArray);
-
-var _chokidar = require('chokidar');
-
-var _chokidar2 = _interopRequireDefault(_chokidar);
-
-var _json = require('json5');
-
-var _json2 = _interopRequireDefault(_json);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+const JSON = _safeRequire('json5');
 
 function isFile(str) {
-    return _fsExtra2.default.existsSync(str) && _fsExtra2.default.statSync(str).isFile();
+    return fs.existsSync(str) && fs.statSync(str).isFile();
 }
 
 function isDir(str) {
-    return _fsExtra2.default.existsSync(str) && _fsExtra2.default.statSync(str).isDirectory();
+    return fs.existsSync(str) && fs.statSync(str).isDirectory();
 }
 
 function checkModule(name, option) {
     try {
-        require.resolve(name, option);
+        let p = require.resolve(name, option);
     } catch (e) {
         console.log(`npm install ${name} --save-dev`);
         process.exit(0);
@@ -63,17 +47,17 @@ module.exports = function (str, callback) {
 
     let appRootPath;
     try {
-        appRootPath = (0, _findRoot2.default)(process.cwd());
+        appRootPath = findRoot(process.cwd());
     } catch (e) {
         console.log(`"${appRootPath}" Not the nodejs project directory`);
         process.exit(0);
     }
-    let srcPath = _path2.default.join(appRootPath, 'src');
-    let appPath = _path2.default.join(appRootPath, 'app');
+    let srcPath = path.join(appRootPath, 'src');
+    let appPath = path.join(appRootPath, 'app');
 
-    let rootPath = (0, _findRoot2.default)(__filename);
+    let rootPath = findRoot(__filename);
 
-    let paths = [appRootPath, rootPath, _path2.default.join(appRootPath, 'node_modules'), _path2.default.join(rootPath, 'node_modules')];
+    let paths = [rootPath, appRootPath, path.join(rootPath, 'node_modules'), path.join(appRootPath, 'node_modules')];
 
     for (let i in modules) {
         checkModule(modules[i], { paths });
@@ -87,13 +71,13 @@ module.exports = function (str, callback) {
     let keys = str.split(',');
 
     for (let i in keys) {
-        let file = checkFile(_path2.default.join('src', keys[i], '.jinghuanjs'), { paths });
-        let json = _fsExtra2.default.readFileSync(file);
+        let file = checkFile(path.join('src', keys[i], '.jinghuanjs'), { paths });
+        let json = fs.readFileSync(file);
         try {
-            let opt = _json2.default.parse(json);
-            if ((0, _isArray2.default)(opt.paths)) {
+            let opt = JSON.parse(json);
+            if (isArray(opt.paths)) {
                 opt.paths.map(function (name) {
-                    watchs.push(_path2.default.join(appRootPath, 'src', keys[i], name));
+                    watchs.push(path.join(appRootPath, 'src', keys[i], name));
                 });
             }
         } catch (e) {
@@ -119,10 +103,10 @@ module.exports = function (str, callback) {
 
     let babel = _safeRequire(require.resolve('babel-core', { paths }));
 
-    _chokidar2.default.watch(watchs, {}).on('all', (event, file, stats) => {
-        file = _path2.default.normalize(file);
+    chokidar.watch(watchs, {}).on('all', (event, file, stats) => {
+        file = path.normalize(file);
         let resolve = file.replace(srcPath, '');
-        let ext_name = _path2.default.extname(file);
+        let ext_name = path.extname(file);
 
         switch (event) {
             case 'change':
@@ -131,29 +115,29 @@ module.exports = function (str, callback) {
                     if (config.exts.indexOf(ext_name) != -1) {
                         babel.transformFile(file, config.babel, function (err, result) {
                             if (err) console.error(err);else {
-                                let toFile = _path2.default.join(appPath, resolve);
-                                _fsExtra2.default.writeFileSync(toFile, result.code);
+                                let toFile = path.join(appPath, resolve);
+                                fs.writeFileSync(toFile, result.code);
                                 result.map.file = toFile;
-                                _fsExtra2.default.writeFileSync(toFile + '.map', _json2.default.stringify(result.map));
-                                console.log('out', _path2.default.join('src', resolve), ' -> ', _path2.default.join('app', resolve));
+                                fs.writeFileSync(toFile + '.map', JSON.stringify(result.map));
+                                console.log('out', path.join('src', resolve), ' -> ', path.join('app', resolve));
                             }
                         });
                     } else {
-                        _fsExtra2.default.copySync(file, _path2.default.join(appPath, resolve));
-                        console.log('copy', _path2.default.join('src', resolve), ' -> ', _path2.default.join('app', resolve));
+                        fs.copySync(file, path.join(appPath, resolve));
+                        console.log('copy', path.join('src', resolve), ' -> ', path.join('app', resolve));
                     }
                 } catch (e) {
                     console.error(e);
                 }
                 break;
             case 'addDir':
-                console.log('create', _path2.default.join(appPath, resolve));
-                _fsExtra2.default.ensureDirSync(_path2.default.join('app', resolve));
+                console.log('create', path.join(appPath, resolve));
+                fs.ensureDirSync(path.join('app', resolve));
                 break;
             case 'unlinkDir':
             case 'unlink':
-                console.log('remove', _path2.default.join('app', resolve));
-                _fsExtra2.default.removeSync(_path2.default.join(appPath, resolve));
+                console.log('remove', path.join('app', resolve));
+                fs.removeSync(path.join(appPath, resolve));
                 break;
         }
     });
@@ -169,6 +153,6 @@ function _safeRequire(obj) {
         }
     }
 
-    return obj && obj.__esModule ? obj.default || obj : obj;
+    return obj && obj.__esModule && typeof obj.default !== "undefined" ? obj.default : obj;
 }
 //# sourceMappingURL=babel.js.map

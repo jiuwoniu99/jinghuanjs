@@ -74,10 +74,10 @@ module.exports = function (options) {
     let rootPath = findRoot(__filename);
     
     let paths = [
-        appRootPath,
         rootPath,
-        path.join(appRootPath, 'node_modules'),
+        appRootPath,
         path.join(rootPath, 'node_modules'),
+        path.join(appRootPath, 'node_modules'),
     ];
     
     

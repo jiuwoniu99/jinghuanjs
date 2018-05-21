@@ -22,7 +22,8 @@ function isDir(str) {
  */
 function checkModule(name, option) {
     try {
-        require.resolve(name, option);
+        let p = require.resolve(name, option);
+        //console.log(p)
     } catch (e) {
         console.log(`npm install ${name} --save-dev`);
         process.exit(0);
@@ -75,11 +76,13 @@ module.exports = function (str, callback) {
     let rootPath = findRoot(__filename);
     
     let paths = [
-        appRootPath,
         rootPath,
-        path.join(appRootPath, 'node_modules'),
+        appRootPath,
         path.join(rootPath, 'node_modules'),
+        path.join(appRootPath, 'node_modules'),
     ];
+    
+    //console.log(paths)
     
     for (let i in modules) {
         checkModule(modules[i], {paths});
