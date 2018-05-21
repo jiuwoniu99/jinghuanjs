@@ -15,7 +15,7 @@ import define from './core/helper/define';
  *
  * @type {helper}
  */
-let jinghuan = Object.create(helper);
+let jh = Object.create(helper);
 
 /**
  *
@@ -29,32 +29,30 @@ let app = new Koa();
  */
 global.Promise = bluebird;
 
-/**
- *
- * @type {helper}
- */
-global.jinghuan = jinghuan;
 
-define('app', app);
+Object.defineProperty(global, 'jinghuan', {
+    get() {
+        return jh;
+    }
+});
 
 Object.defineProperty(app, 'jinghuan', {
     get() {
-        return jinghuan;
+        return jh;
     }
 });
+
+define('app', app);
 define('version', pkg.version);
 define('messenger', c.messenger);
-
-class Controller {
-};
-
-define('Controller', Controller);
+define('Controller', class Controller {
+});
 
 /**
  * before start server
  * @type {Array}
  */
-const promises = [];
+//const promises = [];
 
 /**
  *

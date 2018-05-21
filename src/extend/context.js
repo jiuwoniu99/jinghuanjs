@@ -95,9 +95,8 @@ export default {
      * get or set query data
      * `query` or `get` is already used in koa
      * @param {String} name
-     * @param {Mixed} value
      */
-    param(name, value) {
+    param(name) {
         if (!this[PARAM]) {
             this[PARAM] = Object.assign({}, this.request._query || this.request.query);
         }
@@ -109,7 +108,6 @@ export default {
     /**
      * get or set post data
      * @param {String} name
-     * @param {Mixed} value
      */
     post(name) {
         if (!this[POST]) {
