@@ -129,41 +129,23 @@ class Application {
      *
      * @return {*}
      */
-    runInMaster() {
-        //return jinghuan.beforeStartServer()
-        //    .catch(err => {
-        //        jinghuan.logger.error(err);
-        //    }).then(() => {
-        //        let instance = this._getMasterInstance();
-        //        return instance.startServer();
-        //    }).then(() => {
-        //        jinghuan.logger.info(`----------------------------------------------------------------------------------`);
-        //        jinghuan.logger.info(`[Master] Running at http://${jinghuan.HOST || '127.0.0.1'}:${jinghuan.PORT}`);
-        //        jinghuan.logger.info(`[Master] JinghuanJs version: ${jinghuan.version}`);
-        //        jinghuan.logger.info(`[Master] Enviroment: ${jinghuan.env}`);
-        //        jinghuan.logger.info(`[Master] Source: ${jinghuan.source}`);
-        //        jinghuan.logger.info(`[Master] Mode: ${jinghuan.mode}`);
-        //        jinghuan.logger.info(`[Master] Workers: ${jinghuan.config('workers')}`);
-        //        jinghuan.logger.info(`----------------------------------------------------------------------------------`);
-        //        jinghuan.app.emit('appReady');
-        //    });
-        
+    runInMaster(tag = "Master") {
         let instance = this._getMasterInstance();
         Promise.resolve(instance.startServer())
             .then(() => {
                 let lines = [];
-                lines.push(`[Master] JinghuanJs version   ${jinghuan.version}`);
-                lines.push(`[Master] HOST                 [${jinghuan.HOST}]`);
-                lines.push(`[Master] PORT                 ${jinghuan.PORT}`);
-                lines.push(`[Master] ROOT_PATH            ${jinghuan.ROOT_PATH}`);
-                lines.push(`[Master] APP_PATH             ${jinghuan.APP_PATH}`);
-                lines.push(`[Master] JH_PATH              ${jinghuan.JH_PATH}`);
-                lines.push(`[Master] Enviroment           ${jinghuan.env}`);
-                lines.push(`[Master] Source               ${jinghuan.source}`);
-                lines.push(`[Master] Mode                 ${jinghuan.mode}`);
-                lines.push(`[Master] Modules              [${jinghuan.modules}]`);
-                lines.push(`[Master] Workers              ${jinghuan.workers}`);
-                lines.push(`[Master] Watcher              ${jinghuan.watcher ? 'true' : 'false'}`);
+                lines.push(`[${tag}] JinghuanJs version   ${jinghuan.version}`);
+                lines.push(`[${tag}] HOST                 [${jinghuan.HOST}]`);
+                lines.push(`[${tag}] PORT                 ${jinghuan.PORT}`);
+                lines.push(`[${tag}] ROOT_PATH            ${jinghuan.ROOT_PATH}`);
+                lines.push(`[${tag}] APP_PATH             ${jinghuan.APP_PATH}`);
+                lines.push(`[${tag}] JH_PATH              ${jinghuan.JH_PATH}`);
+                lines.push(`[${tag}] Enviroment           ${jinghuan.env}`);
+                lines.push(`[${tag}] Source               ${jinghuan.source}`);
+                lines.push(`[${tag}] Mode                 ${jinghuan.mode}`);
+                lines.push(`[${tag}] Modules              [${jinghuan.modules}]`);
+                lines.push(`[${tag}] Workers              ${jinghuan.workers}`);
+                lines.push(`[${tag}] Watcher              ${jinghuan.watcher ? 'true' : 'false'}`);
                 this.consoleLines(lines, '-')
             })
     }
@@ -180,42 +162,23 @@ class Application {
     /**
      * 子进程下运行
      */
-    runInWorker() {
-        //return jinghuan.beforeStartServer()
-        //    .catch(err => {
-        //        jinghuan.logger.error(err);
-        //    }).then(() => {
-        //        const instance = this._getWorkerInstance();
-        //        return instance.startServer();
-        //    }).then(() => {
-        //        jinghuan.logger.info(`==================================================================================`);
-        //        jinghuan.logger.info(`[Worker] Running at http://${jinghuan.HOST || '127.0.0.1'}:${jinghuan.PORT}`);
-        //        jinghuan.logger.info(`[Worker] JinghuanJs version: ${jinghuan.version}`);
-        //        jinghuan.logger.info(`[Worker] Enviroment: ${jinghuan.env}`);
-        //        jinghuan.logger.info(`[Worker] Source: ${jinghuan.source}`);
-        //        jinghuan.logger.info(`[Master] Mode: ${jinghuan.mode}`);
-        //        jinghuan.logger.info(`[Worker] Middleware: [${jinghuan.middlewares.join(',')}]`);
-        //        jinghuan.logger.info(`==================================================================================`);
-        //        jinghuan.app.emit('appReady');
-        //    });
-        
+    runInWorker(tag = "Worker") {
         let instance = this._getWorkerInstance();
         Promise.resolve(instance.startServer())
             .then(() => {
                 let lines = [];
-                lines.push(`[Worker] JinghuanJs version   ${jinghuan.version}`);
-                lines.push(`[Worker] HOST                 [${jinghuan.HOST}]`);
-                lines.push(`[Worker] PORT                 ${jinghuan.PORT}`);
-                lines.push(`[Worker] ROOT_PATH            ${jinghuan.ROOT_PATH}`);
-                lines.push(`[Worker] APP_PATH             ${jinghuan.APP_PATH}`);
-                lines.push(`[Worker] JH_PATH              ${jinghuan.JH_PATH}`);
-                lines.push(`[Worker] Enviroment           ${jinghuan.env}`);
-                lines.push(`[Worker] Source               ${jinghuan.source}`);
-                lines.push(`[Worker] Mode                 ${jinghuan.mode}`);
-                lines.push(`[Worker] Modules              [${jinghuan.modules}]`);
-                //lines.push(`[Worker] Workers              ${jinghuan.workers}`);
-                lines.push(`[Worker] Middleware           [${jinghuan.middlewares}]`);
-                lines.push(`[Worker] ID                   ${jinghuan.process_id}`);
+                lines.push(`[${tag}] JinghuanJs version   ${jinghuan.version}`);
+                lines.push(`[${tag}] HOST                 [${jinghuan.HOST}]`);
+                lines.push(`[${tag}] PORT                 ${jinghuan.PORT}`);
+                lines.push(`[${tag}] ROOT_PATH            ${jinghuan.ROOT_PATH}`);
+                lines.push(`[${tag}] APP_PATH             ${jinghuan.APP_PATH}`);
+                lines.push(`[${tag}] JH_PATH              ${jinghuan.JH_PATH}`);
+                lines.push(`[${tag}] Enviroment           ${jinghuan.env}`);
+                lines.push(`[${tag}] Source               ${jinghuan.source}`);
+                lines.push(`[${tag}] Mode                 ${jinghuan.mode}`);
+                lines.push(`[${tag}] Modules              [${jinghuan.modules}]`);
+                lines.push(`[${tag}] Middleware           [${jinghuan.middlewares}]`);
+                lines.push(`[${tag}] ID                   ${jinghuan.process_id}`);
                 this.consoleLines(lines, '=')
                 this.init = true
             })
@@ -265,7 +228,7 @@ class Application {
                 if (jinghuan.workers == 0) {
                     // 子进程
                     loaders.loadAll('worker');
-                    return this.runInWorker();
+                    return this.runInWorker('Master');
                 } else {
                     // 主进程
                     loaders.loadAll('master');
