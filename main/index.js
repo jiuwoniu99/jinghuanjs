@@ -110,7 +110,7 @@ module.exports = function (options) {
     options.workers = options.workers || workers || 0;
     options.mode = options.mode || mode || 'lib';
     options.process_id = process_id;
-    options.socket = options.socket || socket;
+   
     
     
     let runFile = '';
@@ -118,10 +118,10 @@ module.exports = function (options) {
     let devPath = path.join(rootPath, 'dev');
     
     let srcFile = path.join(rootPath, 'src', 'application.js');
-    let srcPath = path.join(rootPath, 'dev');
+    let srcPath = path.join(rootPath, 'src');
     
     let libFile = path.join(rootPath, 'lib', 'application.js');
-    let libPath = path.join(rootPath, 'dev');
+    let libPath = path.join(rootPath, 'lib');
     
     if (options.mode === 'dev' && fs.pathExistsSync(devFile)) {
         options.watcher = true;

@@ -16,7 +16,7 @@ const symbol = rpc.name;
  * @param app
  * @return {Function}
  */
-function invokeRpc(options, app) {
+function MidRpc(options, app) {
     /**
      *
      */
@@ -140,4 +140,4 @@ function invokeRpc(options, app) {
     };
 };
 
-export default invokeRpc;
+export default MidRpc;

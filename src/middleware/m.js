@@ -6,7 +6,7 @@ import prettyBytes from "pretty-bytes";
  * @param app
  * @return {function(*, *)}
  */
-function invokeJsonRpc(options, app) {
+function MidM(options, app) {
     /**
      *
      */
@@ -23,4 +23,4 @@ function invokeJsonRpc(options, app) {
     };
 };
 
-export default invokeJsonRpc;
+export default MidM;

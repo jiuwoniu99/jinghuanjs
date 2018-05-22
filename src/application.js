@@ -39,7 +39,6 @@ class Application {
         define('paths', options.paths);
         define('process_id', options.process_id);
         define('watcher', options.watcher);
-        define('socket', options.socket)
     }
     
     /**
@@ -176,7 +175,7 @@ class Application {
                 lines.push(`[${tag}] Mode                 ${jinghuan.mode}`);
                 lines.push(`[${tag}] Modules              [${jinghuan.modules}]`);
                 lines.push(`[${tag}] Middleware           [${jinghuan.middlewares}]`);
-                lines.push(`[${tag}] Socket               ${jinghuan.socket}`);
+                lines.push(`[${tag}] Socket               [${jinghuan.sockets}]`);
                 lines.push(`[${tag}] ID                   ${jinghuan.process_id}`);
                 this.consoleLines(lines, '=')
                 this.init = true

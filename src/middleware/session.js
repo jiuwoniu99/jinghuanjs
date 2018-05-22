@@ -7,7 +7,7 @@ import onFinished from "on-finished";
  * @param app
  * @return {function(*=, *)}
  */
-function invokeSession(options, app) {
+function MidSession(options, app) {
     
     
     /**
@@ -29,4 +29,4 @@ function invokeSession(options, app) {
     };
 };
 
-export default invokeSession;
+export default MidSession;

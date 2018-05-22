@@ -86,7 +86,7 @@ function error(ctx, err, field = null) {
  * @param app
  * @return {Function}
  */
-function invokeApi(options, app) {
+function MidApi(options, app) {
     /**
      *
      */
@@ -328,4 +328,4 @@ function invokeApi(options, app) {
     };
 };
 
-export default invokeApi;
+export default MidApi;
