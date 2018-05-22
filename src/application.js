@@ -12,6 +12,7 @@ import debug from 'debug';
 import define from './core/helper/define';
 import isArray from 'lodash/isArray'
 
+
 debug.log = console.log.bind(console);
 
 /**
@@ -24,10 +25,7 @@ class Application {
      * constructor
      */
     constructor(options = {}) {
-        assert(options.ROOT_PATH, 'options.ROOT_PATH must be set');
-        
-        this.options = options;
-        
+        //assert(options.ROOT_PATH, 'options.ROOT_PATH must be set');
         define('ROOT_PATH', options.ROOT_PATH);
         define('APP_PATH', options.APP_PATH);
         define('JH_PATH', options.JH_PATH);
@@ -40,8 +38,8 @@ class Application {
         define('mode', options.mode);
         define('paths', options.paths);
         define('process_id', options.process_id);
-        define('watcher', options.watcher)
-        
+        define('watcher', options.watcher);
+        define('socket', options.socket)
     }
     
     /**
@@ -49,10 +47,10 @@ class Application {
      * @param err
      */
     notifier(err) {
-        if (!this.options.notifier) {
+        if (!jinghuan.notifier) {
             return;
         }
-        let notifier = this.options.notifier;
+        let notifier = jinghuan.notifier;
         if (!isArray(notifier)) {
             notifier = [notifier];
         }
@@ -68,7 +66,7 @@ class Application {
      * @return {boolean}
      * @private
      */
-    _watcherCallBack = (fileInfo) => {
+    watcherCallBack = (fileInfo) => {
         if (this.masterInstance) {
             this.masterInstance.forceReloadWorkers();
         } else {
@@ -79,9 +77,9 @@ class Application {
                 if (module) {
                     // remove reference in module.parent
                     if (module.parent) {
-                        module.parent.children.splice(module.parent.children.indexOf(module), 1);    //释放老模块的资源
+                        module.parent.children.splice(module.parent.children.indexOf(module), 1); //释放老模块的资源
                     }
-                    require.cache[file] = null;    //缓存
+                    require.cache[file] = null; //缓存
                     jinghuan.logger.info(`[Master] Reload ${file}`);
                 }
             }
@@ -92,22 +90,22 @@ class Application {
      * 启动文件监控
      */
     startWatcher() {
-        if (!this.options.watcher) {
+        if (!jinghuan.watcher) {
             return;
         }
         const srcPath = [
-            path.join(this.options.ROOT_PATH, 'config', this.options.env),
-            path.join(this.options.ROOT_PATH, 'src/common'),
+            path.join(jinghuan.ROOT_PATH, 'config', jinghuan.env),
+            path.join(jinghuan.ROOT_PATH, 'src/common'),
         ];
         
-        for (let i in this.options.modules) {
-            srcPath.push(path.join(this.options.ROOT_PATH, jinghuan.source, this.options.modules[i]),);
+        for (let i in jinghuan.modules) {
+            srcPath.push(path.join(jinghuan.ROOT_PATH, jinghuan.source, jinghuan.modules[i]),);
         }
         
         const instance = new Watcher({
             srcPath: srcPath,
         }, fileInfo => {
-            this._watcherCallBack(fileInfo);
+            this.watcherCallBack(fileInfo);
         });
         
         instance.watch();
@@ -118,7 +116,7 @@ class Application {
      * @return {Master}
      * @private
      */
-    _getMasterInstance() {
+    getMasterInstance() {
         // 初始化集群中的主线程类
         const instance = new Cluster.Master();
         this.masterInstance = instance;
@@ -130,7 +128,7 @@ class Application {
      * @return {*}
      */
     runInMaster(tag = "Master") {
-        let instance = this._getMasterInstance();
+        let instance = this.getMasterInstance();
         Promise.resolve(instance.startServer())
             .then(() => {
                 let lines = [];
@@ -155,7 +153,7 @@ class Application {
      * @return {*}
      * @private
      */
-    _getWorkerInstance() {
+    getWorkerInstance() {
         return new Cluster.Worker();
     }
     
@@ -163,7 +161,7 @@ class Application {
      * 子进程下运行
      */
     runInWorker(tag = "Worker") {
-        let instance = this._getWorkerInstance();
+        let instance = this.getWorkerInstance();
         Promise.resolve(instance.startServer())
             .then(() => {
                 let lines = [];
@@ -178,6 +176,7 @@ class Application {
                 lines.push(`[${tag}] Mode                 ${jinghuan.mode}`);
                 lines.push(`[${tag}] Modules              [${jinghuan.modules}]`);
                 lines.push(`[${tag}] Middleware           [${jinghuan.middlewares}]`);
+                lines.push(`[${tag}] Socket               ${jinghuan.socket}`);
                 lines.push(`[${tag}] ID                   ${jinghuan.process_id}`);
                 this.consoleLines(lines, '=')
                 this.init = true
@@ -207,6 +206,13 @@ class Application {
         jinghuan.logger.info(flags.join(''));
     }
     
+    initApp() {
+        let Koa = require('koa');
+        let socket = require('./core/socket');
+        let app = socket(new Koa())
+        define('app', app);
+    }
+    
     /**
      * 运行
      * @return {*}
@@ -221,11 +227,12 @@ class Application {
             this.startWatcher();
         }
         
-        const loaders = new Loaders(this.options);
+        const loaders = new Loaders(jinghuan);
         
         try {
             if (cluster.isMaster) {
                 if (jinghuan.workers == 0) {
+                    this.initApp();
                     // 子进程
                     loaders.loadAll('worker');
                     return this.runInWorker('Master');
@@ -236,6 +243,7 @@ class Application {
                 }
             } else {
                 // 子进程
+                this.initApp();
                 loaders.loadAll('worker');
                 return this.runInWorker();
             }

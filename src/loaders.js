@@ -28,17 +28,7 @@ class Loaders {
      * load app data
      */
     loadData() {
-        // add data to koa application
         let events = this.loader.loadEvents();
-        
-        // jinghuan.app.models = jinghuan.loader.loadModel();
-        // jinghuan.app.services = jinghuan.loader.loadService();
-        // jinghuan.app.logics = jinghuan.loader.loadLogic();
-        //jinghuan.app.controllers = this.loader.loadController();
-        // jinghuan.app.routers = jinghuan.loader.loadRouter();
-        // jinghuan.app.validators = jinghuan.loader.loadValidator();
-        //jinghuan.app.sql = this.loader.loadSql();
-        
         define('controllers', this.loader.loadController());
         define('sql', this.loader.loadSql());
     }
@@ -54,11 +44,24 @@ class Loaders {
     }
     
     /**
+     * 加载中间件
+     */
+    loadSocket() {
+        const sockets = this.loader.loadSocket();
+        sockets.forEach(socket => {
+            jinghuan.app.ws.use(socket);
+        });
+    }
+    
+    /**
      * 加载扩展
      */
     loadExtend() {
         
-        let {JH_PATH, ROOT_PATH} = jinghuan;
+        let {
+            JH_PATH,
+            ROOT_PATH
+        } = jinghuan;
         
         let exts = this.loader.loadExtend(path.join(JH_PATH));
         
@@ -66,11 +69,7 @@ class Loaders {
             ['jinghuan', jinghuan],
             ['application', jinghuan.app],
             ['context', jinghuan.app.context],
-            // ['request', jinghuan.app.request],
-            // ['response', jinghuan.app.response],
             ['controller', jinghuan.Controller.prototype],
-            //['logic', jinghuan.Logic.prototype],
-            //['service', jinghuan.Service.prototype]
         ];
         
         list.forEach(item => {
@@ -124,18 +123,15 @@ class Loaders {
      * load all data
      */
     loadAll(type) {
-        
         this.loader = new Loader();
-        
         define('config', Config());
-        
         if (type !== 'master') {
             // 加载 扩展
             this.loadExtend();
             this.loadData();
             this.loadMiddleware();
+            this.loadSocket()
         }
-        
     }
 };
 

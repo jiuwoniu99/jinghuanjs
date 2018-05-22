@@ -58,6 +58,19 @@ if (process.env.JH_PROCESS_ID) {
     process_id = process.env.JH_PROCESS_ID;
 }
 
+let socket = false;
+if (process.env.JH_SOCKET) {
+    socket = process.env.JH_SOCKET;
+}
+
+function checkModule(name, option) {
+    try {
+        return require.resolve(name, option);
+    } catch (e) {
+        return false;
+    }
+}
+
 module.exports = function (options) {
 
     let appRootPath;
@@ -87,25 +100,42 @@ module.exports = function (options) {
     options.workers = options.workers || workers || 0;
     options.mode = options.mode || mode || 'lib';
     options.process_id = process_id;
+    options.socket = options.socket || socket;
 
     let runFile = '';
-    if (options.mode === 'dev' && fs.pathExistsSync(`${rootPath}/dev/application.js`)) {
-        options.watcher = true;
-        options.JH_PATH = path.join(rootPath, 'dev');
-        runFile = `${rootPath}/dev/application`;
-    } else if (options.mode === 'src' && fs.pathExistsSync(`${rootPath}/src/application.js`)) {
+    let devFile = path.join(rootPath, 'dev', 'application.js');
+    let devPath = path.join(rootPath, 'dev');
 
-        options.JH_PATH = path.join(rootPath, 'src');
-        runFile = `${rootPath}/src/application`;
+    let srcFile = path.join(rootPath, 'src', 'application.js');
+    let srcPath = path.join(rootPath, 'dev');
+
+    let libFile = path.join(rootPath, 'lib', 'application.js');
+    let libPath = path.join(rootPath, 'dev');
+
+    if (options.mode === 'dev' && fs.pathExistsSync(devFile)) {
+        options.watcher = true;
+        options.JH_PATH = devPath;
+        runFile = devFile;
+    } else if (options.mode === 'src' && fs.pathExistsSync(srcFile)) {
+        options.watcher = true;
+        options.JH_PATH = srcPath;
+        runFile = srcFile;
     } else {
         options.mode = 'lib';
-        options.JH_PATH = path.join(rootPath, 'lib');
-        runFile = `${rootPath}/lib/application`;
+        options.JH_PATH = libPath;
+        runFile = libFile;
     }
 
     if (options.source !== 'app') {
         options.watcher = true;
         _safeRequire('./register.js')(options);
+    } else {
+        if (checkModule('source-map-support')) {
+            const sourceMapSupport = _safeRequire(require.resolve('source-map-support', { paths }));
+            if ('install' in sourceMapSupport) {
+                sourceMapSupport.install();
+            }
+        }
     }
 
     options.APP_PATH = path.join(options.ROOT_PATH, options.source);

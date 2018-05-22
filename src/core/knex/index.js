@@ -9,55 +9,22 @@ import debug from 'debug';
 import JSSQLLexer from './lib/lexer/JSSQLLexer';
 import get from 'lodash/get';
 
+
 const log = debug('JH:code/knex');
 const hasKnex = {};
-//const MAPPING = Symbol('knex-mapping')
 
-//var components = ['columns', 'join', 'where', 'union', 'group', 'having', 'order', 'limit', 'offset', 'lock'];
-//
-//compiler.prototype.select = function () {
-//    let sql = this.with();
-//
-//    const statements = components.map(component =>
-//        this[component](this)
-//    );
-//    sql += compact(statements).join(' ');
-//    return sql;
-//}
-//
-//compiler.prototype.columns = function () {
-//    let distinct = false;
-//    if (this.onlyUnions()) return ''
-//    const columns = this.grouped.columns || []
-//    let i = -1, sql = [];
-//    if (columns) {
-//        while (++i < columns.length) {
-//            const stmt = columns[i];
-//            if (stmt.distinct) distinct = true
-//            if (stmt.type === 'aggregate') {
-//                sql.push(this.aggregate(stmt))
-//            }
-//            else if (stmt.type === 'aggregateRaw') {
-//                sql.push(this.aggregateRaw(stmt))
-//            }
-//            else if (stmt.value && stmt.value.length > 0) {
-//                sql.push(this.formatter.columnize(stmt.value))
-//            }
-//        }
-//    }
-//    if (sql.length === 0) sql = ['*'];
-//    return `select ${distinct ? 'distinct ' : ''}` +
-//        sql.join(', ') + (this.tableName
-//            ? ` from ${this.single.only ? 'only ' : ''}${this.tableName}`
-//            : '');
-//}
-
+/**
+ * 
+ * 
+ * @param {any} tokens 
+ * @returns 
+ */
 function ParseTokens(tokens) {
     let brackets = 0;
     let is_string = null;
     let translation = false;
     let is_field = false;
-    
+
     let select = [];
     let from = [];
     let where = [];
@@ -65,8 +32,8 @@ function ParseTokens(tokens) {
     let having = [];
     let order = [];
     let temp = null;
-    
-    
+
+
     for (let k in tokens) {
         let token = tokens[k];
         if (translation && (token !== "\"" || token !== "'")) {
@@ -85,9 +52,7 @@ function ParseTokens(tokens) {
             }
         } else if (token === "`" && !is_string) {
             is_field = !is_field;
-        } else if (is_string) {
-        } else if (is_field) {
-        } else {
+        } else if (is_string) {} else if (is_field) {} else {
             switch (strtolower(token)) {
                 case "(":
                     brackets++;
@@ -95,7 +60,7 @@ function ParseTokens(tokens) {
                 case ")":
                     brackets--;
                     break;
-                //#转译
+                    //#转译
                 case "select":
                     if (brackets == 0)
                         temp = select;
@@ -124,14 +89,14 @@ function ParseTokens(tokens) {
         }
         temp && temp.push(token)
     }
-    
+
     select = select.slice(1);
     from = from.slice(1);
     where = where.slice(1);
     group = group.slice(3);
     having = having.slice(1);
     order = order.slice(3);
-    
+
     return {
         select: trim(select.join("")),
         from: trim(from.join("")),
@@ -231,17 +196,16 @@ builder.prototype._onQueryError = function (error, obj) {
  * @type {null}
  */
 builder.prototype.ctx = null;
-//builder.prototype.mapping = null;
 
 /**
  *
  * @param ctx
  * @return {builder}
  */
-//builder.prototype.context = function (ctx) {
-//    this.ctx = ctx;
-//    return this;
-//};
+builder.prototype.context = function (ctx) {
+   this.ctx = ctx;
+   return this;
+};
 
 /**
  *
@@ -274,27 +238,27 @@ builder.prototype.then = async function () {
         .on('query', this._onQuery)
         .on('query-response', this._onQueryResponse)
         .on('query-error', this._onQueryError);
-    
-    //let table = this._single.table;
-    //let builder = this.client.queryBuilder();
-    //
-    //// 获取表的结构并缓存
-    //if (/[a-zA-Z_0-9]+/.test(table)
-    //    && this.client.config.fields
-    //    && !this.client.config.fields[table]
-    //    && this._method !== 'columnInfo'
-    //    && helper.isString(table)) {
-    //    try {
-    //        this.client.config.fields[table] = await builder
-    //            .table(table)
-    //            .context(this.ctx)
-    //            .columnInfo();
-    //    } catch (ex) {
-    //
-    //    }
-    //}
-    
-    
+
+    let table = this._single.table;
+
+    // 获取表的结构并缓存
+    if (/[a-zA-Z_0-9]+/.test(table) &&
+        this.client.config.tableInfos &&
+        !this.client.config.tableInfos[table] &&
+        this._method !== 'columnInfo' &&
+        isString(table)) {
+        try {
+
+            let builder = this.client.queryBuilder();
+            builder.ctx = this.ctx;
+            let tableInfo = await builder
+                .table(table)
+                .columnInfo();
+            this.client.config.tableInfos[table] = tableInfo;
+        } catch (ex) {
+            console.error(ex);
+        }
+    }
     const result = this.client.runner(this).run()
     return result.then.apply(result, arguments);
 };
@@ -303,24 +267,27 @@ builder.prototype.then = async function () {
 /**
  *
  */
-builder.prototype.raw = knex.raw;
+builder.prototype.raw = function (...args) {
+    return this.client.raw(...args);
+};
 
-//builder.prototype.toString = function () {
-//    console.log();
-//}
-//
 let toSQL = builder.prototype.toSQL;
 builder.prototype.toSQL = function (method, tz) {
-    
+
     let Compiler = this.client.queryCompiler(this);
     if (this._mapping) {
         let mapping = this._mapping;
-        let {grouped, single} = Compiler;
-        
+        let {
+            grouped,
+            single
+        } = Compiler;
+
         // select
         if (grouped.columns) {
             grouped.columns.map(function (select) {
-                let {value} = select;
+                let {
+                    value
+                } = select;
                 (value || []).map((column, index) => {
                     //select[index] = mapping[column] || select[index]
                     if (isString(column)) {
@@ -336,7 +303,10 @@ builder.prototype.toSQL = function (method, tz) {
                 if (where.column && mapping[where.column]) {
                     where.column = mapping[where.column]
                 } else if (where.value instanceof Raw) {
-                    let {sql, bindings} = where.value;
+                    let {
+                        sql,
+                        bindings
+                    } = where.value;
                     let index = 0;
                     sql.replace(/\\?\?\??/g, (match) => {
                         if (match === '??') {
@@ -346,13 +316,11 @@ builder.prototype.toSQL = function (method, tz) {
                         }
                     });
                 }
-                
-                
+
+
             })
         }
     }
-    
-    
     return Compiler.toSQL(method || this._method, tz);
 }
 
@@ -362,14 +330,16 @@ builder.prototype.toSQL = function (method, tz) {
  * @param name
  */
 builder.prototype.sql = function (name) {
-    let {module} = this.ctx;
+    let {
+        module
+    } = this.ctx;
     this._mapping = {}
     let sql = get(jinghuan.sql, `${module}.${name}`);
     if (isString(sql)) {
         let lines = sql.split('\n');
         let notes = [];
         let codes = [];
-        
+
         // 解析注解
         for (let i in lines) {
             if (lines[i].startsWith('#')) {
@@ -378,18 +348,18 @@ builder.prototype.sql = function (name) {
                 codes.push(lines[i])
             }
         }
-        
-        
+
+
         for (let i in notes) {
             let [field, mapping] = notes[i].substr(1).split(/\s+/);
             if (field && mapping) {
                 this._mapping[field] = mapping
             }
         }
-        
-        
+
+
         sql = codes.join('\n')
-        
+
         let lexer = new JSSQLLexer();
         let tokens = lexer.split(sql);
         let pts = ParseTokens(tokens);
@@ -420,12 +390,22 @@ builder.prototype.sql = function (name) {
  * @param tableName 表名
  * @param typeName 配置名称
  */
-export default function (tableName = null, typeName = 'default') {
-    
+export default function (tableName = 'jh', typeName = 'default') {
+
     //数据库配置
     let config = jinghuan.config(`database.${typeName}`);
-    let {type, port, host, user, password, database, min, max, logSql} = config;
-    
+    let {
+        type,
+        port,
+        host,
+        user,
+        password,
+        database,
+        min,
+        max,
+        logSql
+    } = config;
+
     //hash值对应的 knex 配置
     if (!hasKnex[typeName]) {
         hasKnex[typeName] = knex({
@@ -437,18 +417,17 @@ export default function (tableName = null, typeName = 'default') {
                 password,
                 database,
             },
-            pool: {min: min || 0, max: max || 255},
+            pool: {
+                min: min || 0,
+                max: max || 255
+            },
             logSql,
-            fields: {}
-            //debug: true
+            tableInfos: {}
         });
     }
-    
-    /**
-     *
-     */
+
+    // 获取一个新实力
     let ret = hasKnex[typeName](tableName);
     ret.ctx = this;
-    //return hasKnex[typeName](tableName).context(this, hasKnex[typeName]);
     return ret;
 };

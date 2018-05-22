@@ -7,10 +7,11 @@ import pkg from '../package.json';
 import helper from './core/helper';
 import c from './core/cluster';
 import events from './core/events';
-import pm2 from './core/pm2';
+//import pm2 from './core/pm2';
 import define from './core/helper/define';
 //import isFunction from 'lodash/isFunction'
-
+//import IO from 'koa-socket-2';
+//import cluster from 'cluster';
 /**
  *
  * @type {helper}
@@ -21,7 +22,16 @@ let jh = Object.create(helper);
  *
  * @type {Application|module.Application|*}
  */
-let app = new Koa();
+//let app = new Koa();
+
+
+//if(cluster.isMaster){
+//    let io = new IO();
+//    io.on('message', (ctx, data) => {
+//        console.log('client sent data to message endpoint', data);
+//    });
+//    io.attach(app);
+//}
 
 /**
  *
@@ -36,13 +46,13 @@ Object.defineProperty(global, 'jinghuan', {
     }
 });
 
-Object.defineProperty(app, 'jinghuan', {
-    get() {
-        return jh;
-    }
-});
+//Object.defineProperty(app, 'jinghuan', {
+//    get() {
+//        return jh;
+//    }
+//});
 
-define('app', app);
+//define('app', app);
 define('version', pkg.version);
 define('messenger', c.messenger);
 define('Controller', class Controller {
@@ -75,11 +85,11 @@ define('Controller', class Controller {
 
 let pattern = '';
 
-if (pm2.inPM2) {
-    pattern = '%d{yyyy-MM-dd hh:mm:ss} [%6z] [%5.5p] - %m';
-} else {
-    pattern = '%[%d{yyyy-MM-dd hh:mm:ss} [%6z] [%5.5p] %] - %m';
-}
+//if (pm2.inPM2) {
+pattern = '%d{yyyy-MM-dd hh:mm:ss} [%6z] [%5.5p] - %m';
+//} else {
+//    pattern = '%[%d{yyyy-MM-dd hh:mm:ss} [%6z] [%5.5p] %] - %m';
+//}
 /**
  *
  */
