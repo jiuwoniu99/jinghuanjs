@@ -82,6 +82,7 @@ class Application {
                         module.parent.children.splice(module.parent.children.indexOf(module), 1);    //释放老模块的资源
                     }
                     require.cache[file] = null;    //缓存
+                    jinghuan.logger.info(`[Master] Reload ${file}`);
                 }
             }
         }
