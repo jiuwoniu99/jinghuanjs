@@ -25,22 +25,34 @@ const COOKIE_STORE = Symbol('cookie-store');
  */
 export default {
     /**
-     * get userAgent header
+     *
+     * @return {*}
      */
     get userAgent() {
         return this.header['user-agent'];
     },
+    
     /**
-     * is get request
+     *
+     * @return {boolean}
      */
     get isGet() {
         return this.method === 'GET';
     },
+    
     /**
-     * is post request
+     *
+     * @return {boolean}
      */
     get isPost() {
         return this.method === 'POST';
+    },
+    /**
+     *
+     * @return {boolean}
+     */
+    get isSocket() {
+        return this.websocket != null;
     },
     /**
      * get referer header

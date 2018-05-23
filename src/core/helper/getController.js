@@ -1,4 +1,5 @@
 import helper from './index';
+import get from 'lodash/get';
 
 /**
  *
@@ -10,7 +11,7 @@ import helper from './index';
 export default function (ctx, symbol, name) {
     let {module, controller, action} = ctx;
     try {
-        let file = jinghuan.controllers[module][controller];
+        let file = get(jinghuan.controllers, `${module}.${controller}`);
         
         let Controller = require(file);
         if (helper.isEmpty(Controller)) {

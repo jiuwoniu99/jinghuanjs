@@ -3,13 +3,8 @@ import isString from "lodash/isString"
 //import isArray from "lodash/isArray"
 //import isObject from "lodash/isObject"
 import http from "http"
+import parse_str from 'locutus/php/strings/parse_str'
 
-//const style = {
-//    error: 'font-size:12px;color:#d9534f;',
-//    info: 'font-size:12px;color:#00a65a;',
-//    debug: 'font-size:12px;color:#337ab7;',
-//    warn: 'font-size:12px;color:#f0ad4e;'
-//};
 
 const logger = (jinghuan && jinghuan.logger) || console;
 const trigger = 'jinghuanjs';
@@ -39,7 +34,7 @@ class Slog {
         if (isString(socketlog)) {
             let match = socketlog.match(/SocketLog\((.*?)\)/);
             let data = {};
-            php.strings.parse_str(match[1], data);
+            parse_str(match[1], data);
             this.client_id = data['client_id'];
             this.tabid = data['tabid'];
         }
@@ -109,7 +104,7 @@ class Slog {
         let config = jinghuan.config('slog') || {};
         
         let {ctx} = this;
-        let info = `[REQUEST] ${date('Y-m-d H:i:s')} ${ctx.method} ${ctx.host}${ctx.url} ${ctx.status} ${time}ms`;
+        let info = `[REQUEST] ${ctx.request.ip} ${ctx.method} ${ctx.host}${ctx.url} ${ctx.status} ${time}ms`;
         
         logger.info(info);
         
