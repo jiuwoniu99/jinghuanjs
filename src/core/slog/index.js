@@ -104,7 +104,8 @@ class Slog {
         let config = jinghuan.config('slog') || {};
         
         let {ctx} = this;
-        let info = `[REQUEST] ${ctx.request.ip} ${ctx.method} ${ctx.host}${ctx.url} ${ctx.status} ${time}ms`;
+        let tag = ctx.isSocket ? 'SOCKET' : 'REQUEST'
+        let info = `[${tag}] ${ctx.request.ip} ${ctx.method} ${ctx.host}${ctx.url} ${ctx.status} ${time}ms`;
         
         logger.info(info);
         
