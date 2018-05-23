@@ -6,7 +6,7 @@ import compress from 'koa-compress';
  * @param app
  * @return {Function}
  */
-function invokeCompress(options, app) {
+function MidCompress(options, app) {
     /**
      *
      */
@@ -16,4 +16,4 @@ function invokeCompress(options, app) {
     })
 }
 
-export default invokeCompress;
+export default MidCompress;

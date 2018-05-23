@@ -7,7 +7,7 @@ const symbol = Symbol(uuid.v4());
  * @param props
  * @return {Function}
  */
-function PropsRest(props) {
+function PropsSocket(props) {
     return function (target, name, descriptor) {
         let {initializer, value} = descriptor;
         
@@ -20,7 +20,7 @@ function PropsRest(props) {
             });
         }
         
-        Object.defineProperty(target[symbol], name, {
+        Object.defineProperty(target[symbol], props.name, {
             configurable: false,
             enumerable: false,
             writable: false,
@@ -33,11 +33,11 @@ function PropsRest(props) {
     };
 };
 
-Object.defineProperty(PropsRest, 'name', {
+Object.defineProperty(PropsSocket, 'name', {
     configurable: false,
     enumerable: false,
     writable: false,
     value: symbol
 });
 
-export default PropsRest;
+export default PropsSocket;

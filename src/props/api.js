@@ -1,12 +1,13 @@
 import uuid from 'uuid';
 
 const symbol = Symbol(uuid.v4());
+
 /**
  *
  * @param props
  * @return {Function}
  */
-const api = function (props) {
+function PropsApi(props) {
     return function (target, name, descriptor) {
         let {initializer, value, get, set} = descriptor;
         if (!target[symbol]) {
@@ -33,11 +34,11 @@ const api = function (props) {
     };
 };
 
-Object.defineProperty(api, 'name', {
+Object.defineProperty(PropsApi, 'name', {
     configurable: false,
     enumerable: false,
     writable: false,
     value: symbol
 });
 
-export default api;
+export default PropsApi;

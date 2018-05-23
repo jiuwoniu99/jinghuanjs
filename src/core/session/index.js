@@ -32,8 +32,10 @@ class Session {
         if (!this.cache[key])
             this.cache[key] = new Adapter(this.ctx, this.options.options);
         
-        
-        if (helper.isEmpty(value)) {
+        if (name === null) {
+            return await this.cache[key].delete()
+        }
+        else if (helper.isEmpty(value)) {
             return await this.cache[key].get(name)
         } else {
             return await this.cache[key].set(name, value)

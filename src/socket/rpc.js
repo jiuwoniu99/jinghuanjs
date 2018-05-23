@@ -12,24 +12,13 @@ const {props: {rpc}} = jinghuan;
 const symbol = rpc.name;
 
 
-//function defineProperty(ctx, name, defval) {
-//    Object.defineProperty(ctx, name, {
-//        get: function () {
-//            return defval;
-//        },
-//        set: function (val) {
-//            defval = val;
-//        }
-//    });
-//}
-
 /**
  *
  * @param options
  * @param app
  * @return {Function}
  */
-function socketRpc(options, app) {
+function SocketRpc(options, app) {
     
     
     /**
@@ -49,7 +38,7 @@ function socketRpc(options, app) {
                 try {
                     json = JSON.parse(ctx.message);
                 } catch (e) {
-                    send(new JsonRpcResponse(null, new JsonRpcError.ParseError(e.message)));
+                    ctx.body = (new JsonRpcResponse(null, new JsonRpcError.ParseError(e.message)));
                     return;
                 }
                 
@@ -60,7 +49,7 @@ function socketRpc(options, app) {
                         
                         log('JSON is not correct JSON-RPC2 request: %O', json);
                         
-                        send(new JsonRpcResponse(json.id || null, new JsonRpcError.InvalidRequest()));
+                        ctx.body = (new JsonRpcResponse(json.id || null, new JsonRpcError.InvalidRequest()));
                         return;
                     }
                     
@@ -71,7 +60,7 @@ function socketRpc(options, app) {
                     
                     
                     if (!module || !controller || !action) {
-                        send(new JsonRpcResponse(json.id || null, new JsonRpcError.MethodNotFound()));
+                        ctx.body = (new JsonRpcResponse(json.id || null, new JsonRpcError.MethodNotFound()));
                         return;
                     }
                     
@@ -143,4 +132,4 @@ function socketRpc(options, app) {
     };
 };
 
-export default socketRpc;
+export default SocketRpc;

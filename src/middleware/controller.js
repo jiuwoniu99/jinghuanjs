@@ -5,7 +5,14 @@ const symbol = action.name;
 
 const defaultOptions = {};
 
-function invokeController(options, app) {
+/**
+ *
+ * @param options
+ * @param app
+ * @return {Function}
+ * @constructor
+ */
+function MidController(options, app) {
     
     options = Object.assign({}, defaultOptions, options);
     
@@ -87,4 +94,4 @@ function invokeController(options, app) {
     };
 }
 
-export default invokeController;
+export default MidController;

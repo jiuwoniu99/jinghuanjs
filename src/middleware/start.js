@@ -1,5 +1,4 @@
 import isArray from 'lodash/isArray'
-import prettyBytes from 'pretty-bytes';
 
 /**
  * 程序在初始化时开始执行
@@ -7,7 +6,7 @@ import prettyBytes from 'pretty-bytes';
  * @param app
  * @return {function(*=, *)}
  */
-function invokeStart(options, app) {
+function MidStart(options, app) {
     /**
      *
      */
@@ -29,4 +28,4 @@ function invokeStart(options, app) {
     };
 };
 
-export default invokeStart;
+export default MidStart;

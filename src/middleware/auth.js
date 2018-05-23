@@ -4,7 +4,7 @@
  * @param app
  * @return {function(*, *)}
  */
-function invokeAuth(options, app) {
+function MidAuth(options, app) {
     /**
      *
      */
@@ -19,4 +19,4 @@ function invokeAuth(options, app) {
     };
 };
 
-export default invokeAuth;
+export default MidAuth;

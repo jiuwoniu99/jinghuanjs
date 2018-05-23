@@ -4,7 +4,7 @@
  * @param app
  * @return {Function}
  */
-function invokeCross(options, app) {
+function MidCross(options, app) {
     
     /**
      *
@@ -43,4 +43,4 @@ function invokeCross(options, app) {
     }
 }
 
-export default invokeCross
+export default MidCross

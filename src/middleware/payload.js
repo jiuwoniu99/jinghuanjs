@@ -1,7 +1,13 @@
 import parse from "../core/payload/index.js"
 import parse_str from 'locutus/php/strings/parse_str';
 
-function invokePayload(opts = {}) {
+/**
+ *
+ * @param opts
+ * @return {Function}
+ * @constructor
+ */
+function MidPayload(opts = {}) {
     const extendTypes = Object.assign({
         json: [],
         form: [],
@@ -93,4 +99,4 @@ function invokePayload(opts = {}) {
     }
 };
 
-export default invokePayload;
+export default MidPayload;

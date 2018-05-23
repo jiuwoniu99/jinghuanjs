@@ -58,11 +58,13 @@ const matchRoute = (path, route) => {
 };
 
 /**
- * serve wrapper by koa-send
+ *
  * @param options
- * @returns {serve}
+ * @param app
+ * @return {serve}
+ * @constructor
  */
-function invokeResource(options) {
+function MidResource(options, app) {
     options = helper.extend({}, defaultOptions, options || {});
     
     const root = options.root;
@@ -91,4 +93,4 @@ function invokeResource(options) {
     };
 };
 
-export default invokeResource;
+export default MidResource;

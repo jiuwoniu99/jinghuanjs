@@ -7,7 +7,7 @@ import prettyBytes from 'pretty-bytes';
  * @param app
  * @return {function(*=, *)}
  */
-function sokketStart(options, app) {
+function SocketStart(options, app) {
     /**
      *
      */
@@ -27,4 +27,4 @@ function sokketStart(options, app) {
     };
 };
 
-export default sokketStart;
+export default SocketStart;

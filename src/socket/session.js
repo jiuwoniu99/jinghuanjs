@@ -1,5 +1,5 @@
 import session from "../core/session";
-//import onFinished from "on-finished";
+import onFinished from "on-finished";
 
 /**
  * 程序在初始化时开始执行
@@ -7,26 +7,28 @@ import session from "../core/session";
  * @param app
  * @return {function(*=, *)}
  */
-function MidSession(options, app) {
+function SocketSession(options, app) {
     
     
     /**
      *
      */
     return async (ctx, next) => {
-        let Session = new session(ctx);
+        if (ctx.websocket && !ctx.websocket.session) {
+            ctx.websocket.session = new session(ctx);
+        }
         try {
             Object.defineProperty(ctx, 'session', {
                 get() {
-                    return Session.run;
+                    return ctx.websocket.session.run;
                 }
             });
             await next();
         } catch (ex) {
         } finally {
-            await Session.finish();//ctx.events.emit('finish');
+            //await Session.finish();
         }
     };
 };
 
-export default MidSession;
+export default SocketSession;
