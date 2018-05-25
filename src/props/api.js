@@ -28,7 +28,10 @@ function PropsApi(props) {
                 value,
                 props,
                 get,
-                set
+                set,
+                target,
+                descriptor,
+                name
             }
         });
     };

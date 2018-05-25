@@ -1,8 +1,10 @@
+import path from 'path';
+import fs from 'fs-extra';
 import getController from '../core/helper/getController';
+import getProps from '../core/helper/getProps';
 
-const {props: {action}} = jinghuan;
-const symbol = action.name;
-
+const actionSymbol = PropAction.name;
+const validateSymbol = PropValidate.name;
 const defaultOptions = {};
 
 /**
@@ -22,44 +24,20 @@ function MidController(options, app) {
             return ctx.throw(404);
         }
         
-        let instance = getController(ctx, symbol);
+        let instance = getController(ctx, actionSymbol);
         if (!instance) {
             return ctx.throw(404);
         }
         
-        // let {controllers = {}} = app;
-        // if (controllers) {
-        //     controllers = controllers[ctx.module] || {};
-        // }
-        // let Controller = controllers[ctx.controller];
-        //
-        let actions = instance[symbol];
-        //
-        // if (!actions[ctx.action]) {
-        //     return ctx.throw(404);
-        // }
-        //
-        // //
-        // if (helper.isEmpty(Controller)) {
-        //     const emptyController = options.emptyController;
-        //     if (emptyController && controllers[emptyController]) {
-        //         Controller = controllers[emptyController];
-        //     } else {
-        //         return next();
-        //     }
-        // }
-        //
-        // const instance = new Controller(ctx);
-        // if (helper.isEmpty(instance.ctx)) {
-        //     instance.ctx = ctx;
-        // }
-        
+        let errors = jinghuan.valid.ctx(ctx);
+        let actions = instance[actionSymbol];
         let promise = Promise.resolve();
+        let param = ctx.param() || {};
+        let post = ctx.post() || {};
         
         if (instance.__before) {
-            promise = Promise.resolve(instance.__before());
+            promise = Promise.resolve(instance.__before(param, post, errors));
         }
-        
         //
         return promise.then(data => {
             if (data === false) {
@@ -67,9 +45,6 @@ function MidController(options, app) {
             }
             let action = ctx.action;
             if (actions[action]) {
-                let param = ctx.param() || {};
-                let post = ctx.post() || {};
-                
                 if (actions[action].value) {
                     return actions[action].value.call(instance, param, post);
                 } else if (actions[action].initializer) {

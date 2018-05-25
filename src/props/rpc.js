@@ -27,7 +27,10 @@ function PropsRpc(props) {
             value: {
                 initializer,
                 value,
-                props
+                props,
+                target,
+                descriptor,
+                name
             }
         });
     };

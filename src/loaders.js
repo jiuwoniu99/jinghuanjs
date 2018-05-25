@@ -130,7 +130,9 @@ class Loaders {
             this.loadExtend();
             this.loadData();
             this.loadMiddleware();
-            this.loadSocket()
+            if (jinghuan.socket) {
+                this.loadSocket()
+            }
         }
     }
 };

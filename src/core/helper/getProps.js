@@ -4,11 +4,11 @@ import get from 'lodash/get';
 /**
  *
  * @param ctx
- * @param symbol
- * @param create
+ * @param props
+ * @param name
  * @return {*}
  */
-export default function (ctx, symbol, create = true) {
+export default function (ctx, props, name) {
     let {module, controller, action} = ctx;
     try {
         let file = get(jinghuan.controllers, `${module}.${controller}`);
@@ -18,20 +18,13 @@ export default function (ctx, symbol, create = true) {
             return false;
         }
         
-        if (!Controller.prototype[symbol]) {
+        let prop = Controller.prototype[props.name];
+        
+        if (!prop || !prop[name]) {
             return false;
         }
-        if (create) {
-            const instance = new Controller(ctx);
-            if (helper.isEmpty(instance.ctx)) {
-                instance.ctx = ctx;
-            }
-            
-            return instance;
-        } else {
-            return Controller;
-        }
         
+        return prop[name];
     } catch (e) {
         return false;
     }

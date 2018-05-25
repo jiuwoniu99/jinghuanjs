@@ -208,7 +208,7 @@ export default {
         return knex;
     },
     /**
-     * 预留功能由中间件完成
+     * session 预留功能由中间件完成
      * @return {Function}
      */
     get session() {
@@ -227,7 +227,7 @@ export default {
     },
     
     /**
-     *
+     * cache 预留功能由中间件完成
      * @return {Function}
      */
     get cache() {

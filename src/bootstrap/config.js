@@ -1,7 +1,7 @@
 /**
  * default config
  */
-module.exports = {
+export default {
     //port: 8360, // server port
     // host: '127.0.0.1', // server host
     //workers: 0, // server workers num, if value is 0 then get cpus num

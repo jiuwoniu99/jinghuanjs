@@ -110,7 +110,7 @@ module.exports = function (options) {
     options.workers = options.workers || workers || 0;
     options.mode = options.mode || mode || 'lib';
     options.process_id = process_id;
-   
+    options.socket = options.socket || socket || false;
     
     
     let runFile = '';

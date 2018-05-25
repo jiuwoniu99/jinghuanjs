@@ -1,37 +1,13 @@
-import Koa from 'koa';
 import bluebird from 'bluebird';
-//import assert from 'assert';
 import log4js from 'log4js';
 import jwt from 'jsonwebtoken';
 import pkg from '../package.json';
 import helper from './core/helper';
 import c from './core/cluster';
 import events from './core/events';
-//import pm2 from './core/pm2';
 import define from './core/helper/define';
-//import isFunction from 'lodash/isFunction'
-//import IO from 'koa-socket-2';
-//import cluster from 'cluster';
-/**
- *
- * @type {helper}
- */
-let jh = Object.create(helper);
+import valid from './core/vlaid';
 
-/**
- *
- * @type {Application|module.Application|*}
- */
-//let app = new Koa();
-
-
-//if(cluster.isMaster){
-//    let io = new IO();
-//    io.on('message', (ctx, data) => {
-//        console.log('client sent data to message endpoint', data);
-//    });
-//    io.attach(app);
-//}
 
 /**
  *
@@ -39,22 +15,10 @@ let jh = Object.create(helper);
  */
 global.Promise = bluebird;
 
-
-Object.defineProperty(global, 'jinghuan', {
-    get() {
-        return jh;
-    }
-});
-
-//Object.defineProperty(app, 'jinghuan', {
-//    get() {
-//        return jh;
-//    }
-//});
-
-//define('app', app);
+define('jinghuan', Object.create(helper), global);
 define('version', pkg.version);
 define('messenger', c.messenger);
+define('valid', new valid());
 define('Controller', class Controller {
 });
 
@@ -83,13 +47,8 @@ define('Controller', class Controller {
 //    return Promise.race([promise, timeoutPromise]);
 //};
 
-let pattern = '';
+let pattern = '%d{yyyy-MM-dd hh:mm:ss} [%6z] [%5.5p] - %m';
 
-//if (pm2.inPM2) {
-pattern = '%d{yyyy-MM-dd hh:mm:ss} [%6z] [%5.5p] - %m';
-//} else {
-//    pattern = '%[%d{yyyy-MM-dd hh:mm:ss} [%6z] [%5.5p] %] - %m';
-//}
 /**
  *
  */

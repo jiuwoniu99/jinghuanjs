@@ -11,6 +11,7 @@ import Cluster from './core/cluster';
 import debug from 'debug';
 import define from './core/helper/define';
 import isArray from 'lodash/isArray'
+import fs from 'fs-extra'
 
 
 debug.log = console.log.bind(console);
@@ -39,6 +40,7 @@ class Application {
         define('paths', options.paths);
         define('process_id', options.process_id);
         define('watcher', options.watcher);
+        define('socket', options.socket);
     }
     
     /**
@@ -98,7 +100,16 @@ class Application {
         ];
         
         for (let i in jinghuan.modules) {
-            srcPath.push(path.join(jinghuan.ROOT_PATH, jinghuan.source, jinghuan.modules[i]),);
+            let jhFile = path.join(jinghuan.ROOT_PATH, jinghuan.source, jinghuan.modules[i], '.jinghuanjs');
+            if (fs.pathExistsSync(jhFile)) {
+                let conf = fs.readJsonSync(jhFile);
+                for (let cpath of conf.paths || {}) {
+                    srcPath.push(path.join(jinghuan.ROOT_PATH, jinghuan.source, jinghuan.modules[i], cpath));
+                }
+            }
+            //else {
+            //    srcPath.push(path.join(jinghuan.ROOT_PATH, jinghuan.source, jinghuan.modules[i]));
+            //}
         }
         
         const instance = new Watcher({
@@ -207,9 +218,14 @@ class Application {
     
     initApp() {
         let Koa = require('koa');
-        let socket = require('./core/socket');
-        let app = socket(new Koa())
-        define('app', app);
+        if (jinghuan.socket) {
+            let socket = require('./core/socket');
+            let app = socket(new Koa())
+            define('app', app);
+        } else {
+            let app = new Koa()
+            define('app', app);
+        }
     }
     
     /**

@@ -1,4 +1,5 @@
 import session from "../core/session";
+
 //import onFinished from "on-finished";
 
 /**
@@ -23,6 +24,8 @@ function MidSession(options, app) {
             });
             await next();
         } catch (ex) {
+            console.error(ex);
+            return ctx.throw(500);
         } finally {
             await Session.finish();//ctx.events.emit('finish');
         }

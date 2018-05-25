@@ -6,6 +6,8 @@ import helper from '../core/helper';
 import getController from "../core/helper/getController";
 import JSON from 'json5';
 import isArray from 'lodash/isArray';
+import parse_str from 'locutus/php/strings/parse_str'
+import url from 'url';
 
 const log = debug('JH:middleware/rpc');
 const {props: {rpc}} = jinghuan;
@@ -76,7 +78,14 @@ function SocketRpc(options, app) {
                     if (helper.isEmpty(instance.ctx)) {
                         instance.ctx = ctx;
                     }
+                    let params = {};
                     
+                    let Uri = url.parse(ctx.req.url);
+                    parse_str(Uri.query, params);
+                    
+                    ctx.request.body = {};
+                    ctx.request.body.post = json || {};
+                    ctx.request.body.get = params || {};
                     
                     let actions = instance[symbol] || {};
                     
@@ -96,9 +105,9 @@ function SocketRpc(options, app) {
                         if (actions[method]) {
                             
                             if (actions[method].value) {
-                                return actions[method].value.call(instance, {}, json.params || {});
+                                return actions[method].value.call(instance, params, json.params || {});
                             } else if (actions[method].initializer) {
-                                return actions[method].initializer.call(instance)({}, json.params || {});
+                                return actions[method].initializer.call(instance)(params, json.params || {});
                             }
                         }
                     }).then(data => {

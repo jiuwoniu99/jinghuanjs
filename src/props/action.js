@@ -26,7 +26,10 @@ function PropsAction(props) {
             value: {
                 initializer,
                 value,
-                props
+                props,
+                target,
+                descriptor,
+                name
             }
         });
     };
@@ -38,4 +41,4 @@ Object.defineProperty(PropsAction, 'name', {
     writable: false,
     value: symbol
 });
-module.exports = PropsAction;
+export default PropsAction;

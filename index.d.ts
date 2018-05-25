@@ -1,5 +1,12 @@
 import * as Knex from 'knex';
 import * as Koa from 'koa';
+
+declare var PropApi: PropApi;
+declare var PropRpc: PropRpc;
+declare var PropAction: PropAction;
+declare var PropSocket: PropSocket;
+declare var PropValidate: PropValidate;
+
 // at top-level
 declare var jinghuan: {
     readonly props: props;
@@ -39,11 +46,7 @@ interface Request extends Koa.Request {
 interface Response extends Koa.Response {
 }
 
-interface JinghuanContext {
-    readonly request: Request;
-    readonly response: Response;
-    readonly req: Request;
-    readonly res: Response;
+interface JinghuanContext extends Koa.Context {
     readonly slog: JinghuanSlog
     readonly module: string;
     readonly controller: string;
@@ -113,29 +116,45 @@ interface JinghuanSlog {
  *
  */
 interface props {
+    api: PropApi;
+    action: PropAction
+    rcp: PropRpc;
+    socket: PropSocket;
+    validate: PropValidate;
+}
+
+interface PropApi {
+    (): Decorators;
+}
+
+interface PropRpc {
+    (): Decorators;
+}
+
+interface PropSocket {
+    /**
+     *
+     * @param {{event: string}} option
+     * @return {Decorators}
+     */
+    (option: { event: string }): Decorators
+}
+
+
+interface PropAction {
 
     /**
      *
-     *
-     * @returns {Function}
-     * @memberof props
+     * @param {{auth: boolean; login: boolean}} option
+     * @return {Decorators}
      */
-    api(): Function;
+    (option: { auth: boolean, login: boolean }): Decorators
+}
 
-    /**
-     *
-     *
-     * @param {{ auth: boolean, login: boolean }} option
-     * @returns {Function}
-     * @memberof props
-     */
-    action(option: { auth: boolean, login: boolean }): Function;
+interface PropValidate {
+    (option: { method: string[] }): Decorators
+}
 
-    /**
-     *
-     *
-     * @returns {Function}
-     * @memberof props
-     */
-    rcp(): Function;
+interface Decorators {
+    (target: any, name: any, descriptor: any): void
 }
