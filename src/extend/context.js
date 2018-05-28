@@ -233,5 +233,11 @@ export default {
     get cache() {
         return async (name, value, option) => {
         };
+    },
+    
+    get model() {
+        return (name) => {
+        
+        }
     }
 };

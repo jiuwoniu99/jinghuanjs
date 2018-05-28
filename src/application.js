@@ -96,21 +96,20 @@ class Application {
         }
         const srcPath = [
             path.join(jinghuan.ROOT_PATH, 'config', jinghuan.env),
-            path.join(jinghuan.ROOT_PATH, 'src/common'),
+            //path.join(jinghuan.ROOT_PATH, 'src/common'),
         ];
         
-        for (let i in jinghuan.modules) {
-            let jhFile = path.join(jinghuan.ROOT_PATH, jinghuan.source, jinghuan.modules[i], '.jinghuanjs');
+        let newModules = jinghuan.modules.concat('common');
+        
+        newModules.map((dirName) => {
+            let jhFile = path.join(jinghuan.ROOT_PATH, jinghuan.source, dirName, '.jinghuanjs');
             if (fs.pathExistsSync(jhFile)) {
                 let conf = fs.readJsonSync(jhFile);
                 for (let cpath of conf.paths || {}) {
-                    srcPath.push(path.join(jinghuan.ROOT_PATH, jinghuan.source, jinghuan.modules[i], cpath));
+                    srcPath.push(path.join(jinghuan.ROOT_PATH, jinghuan.source, dirName, cpath));
                 }
             }
-            //else {
-            //    srcPath.push(path.join(jinghuan.ROOT_PATH, jinghuan.source, jinghuan.modules[i]));
-            //}
-        }
+        })
         
         const instance = new Watcher({
             srcPath: srcPath,
