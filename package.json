@@ -8,10 +8,8 @@
     "dev": "babel src --out-dir dev --copy-files --source-maps --watch",
     "lib": "babel src --out-dir lib --copy-files --watch",
     "test": "babel test/src --out-dir test/lib --copy-files --source-maps --watch",
-    "test babel": "babel babel/src --out-dir babel/lib --copy-files --source-maps --watch $NODE_DEBUG_OPTION",
     "publish": "babel src --out-dir lib --copy-files",
-    "demo": "jinghuanjs demo",
-    "start": "jinghuanjs demo"
+    "demo": "jinghuanjs demo"
   },
   "bin": {
     "jinghuanjs": "./bin/cli.js"
